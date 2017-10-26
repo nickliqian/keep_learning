@@ -58,7 +58,7 @@ Ralph NG是一个简单而强大的 资产管理，DCIM和CMDB数据中心和后
 现在，将您的浏览器指向`http:// localhost:8000`并登录。Happy Ralphing!
 
 ### Docker安装（试验版）
-您可以在https://github.com/allegro/ralph/tree/ng/contrib目录中找到试验版的docker-compose配置。请注意，它仍然是测试版。
+您可以在[https://github.com/allegro/ralph/tree/ng/contrib](https://github.com/allegro/ralph/tree/ng/contrib)目录中找到试验版的docker-compose配置。请注意，它仍然是测试版。
 
 #### 安装
 首先安装`docker`和`docker-compose`。
@@ -106,7 +106,7 @@ Ralph应该可以通过`http://127.0.0.1`进行访问（或者如果您正在使
       'propagate': True,
       'level': 'DEBUG',
       }
-您将需要配置LDAP连接以及将远程用户和组映射到本地连接。有关详细信息，请参阅官方django-auth-ldap文档http://packages.python.org/django-auth-ldap。例如，连接到Active Directory服务可能如下所示：
+您将需要配置LDAP连接以及将远程用户和组映射到本地连接。有关详细信息，请参阅官方django-auth-ldap文档[http://packages.python.org/django-auth-ldap](http://packages.python.org/django-auth-ldap)。例如，连接到Active Directory服务可能如下所示：
 
     import ldap
     from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
@@ -306,7 +306,7 @@ Ralph帮助您存储有关的信息：
 ##### 添加数据中心资产
 我们添加一个新的Blade System，它将作为“负载平衡器”系统。我们希望在垂直视图下可视化，并为其分配一些支持和许可证。要做到这一点，去`Data Center -> Hardware -> Add data center asset`菜单。
 
-![](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-add-asset.png)
+![添加资产](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-add-asset.png)
 
 添加新服务器只需要3个字段：
 
@@ -315,115 +315,132 @@ Ralph帮助您存储有关的信息：
 - `service environment`
 但是首先我们需要设置它们。
 
-# ------矫正位置记录------
 
 ##### 添加模型
-`Model`字段可帮助您组织许多相同型号的设备。您可以输入“Model”字段，并从现有数据库模型开始输入以搜索模型。但不要担心，如果列表为空。添加模型很容易，不用离开表单。只需点击+模型字段中的按钮即可。在新窗口中，只需命名此模型，例如：“PowerEdge R620”。从“三喜”菜单中选择类别。不要忘记将型号设置为“数据中心” - 在数据中心模块中使用。您也可以添加办公室模型 - 只需切换type字段。
+`Model`字段可帮助您组织许多相同型号的设备。您可以输入`Model`字段，并从现有数据库模型开始输入以搜索模型。如果列表为空也无需担心。在没有表单的情况下添加模型也很容易。只需点击模型字段中的‘+按钮’即可。在新窗口中，只需命名此modle，例如：“PowerEdge R620”。从“three-like”菜单中选择类别。不要忘记将type设置为“数据中心” -并 在数据中心模块中使用。您也可以添加office模型 - 只需切换`type`字段。
 
-快速启动模型
+![Model视图](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-model.png)
 
 ##### 添加服务
-Service现场组合了许多相同目的的设备。一个例子可能是 - “内部负载平衡系统”，“客户端Joe的硬件”等。此字段是向系统添加新资产所必需的。
+`Service`字段组织了许多相同用途的设备在一起。可以举这样一个例子 - “内部负载平衡系统”，“客户端Joe的硬件”等。此字段是向系统添加新资产所必需的。
 
-Service Environment是关于服务的下一级细节 - 我们称之为“环境”。示例：生产，测试，开发或简单的“prod，test，dev”。这是决定如何修补系统，部署它，处理升级的非常重要的信息，因此我们在Ralph系统周围使用这些信息。
+`Service Environment`是关于服务的下一级细节 - 我们称之为“environments”。示例：生产，测试，开发或简单的“prod，test，dev”。这是决定如何修补系统，部署系统，处理系统升级的非常重要的信息，因此我们在Ralph系统周围使用这些信息。
 
-我们添加“负载均衡 - 生产”服务。为此，请单击Service字段旁边的小循环按钮，然后在下一个窗口中单击“添加服务环境”按钮。
+让我们添加“Load balancing - production（负载均衡 - 生产）”服务。为此，请单击`Service`字段旁边的小loop按钮，然后在下一个窗口中单击“Add Service Env”按钮。
 
-备注是您对此服务的评论的通用占位符
-服务 - 添加到系统的服务列表
-环境 - 给定服务的环境清单
-标签（可选） - 如果要更好地组织数据，您可以分配“标签”。有关更多信息，请参见“标签”一章。
-你可以看到，没有一个。我们必须添加一些信息。首先点击+按钮，添加服务。
+- Remarks 是您对此服务的评论的generic placeholder（通用占位符）
+- Service 添加到系统的服务列表
+- Environment 给定服务的环境清单
+- Tags(optional) 如果要更好地组织数据，您可以分配“标签”。有关更多信息，请参见“标签”一章。
+
+跟你看到的一样，没有任何一个信息。我们必须添加一些信息。首先点击`+`按钮，添加Service（服务）。
 
 输入数据如下：
 
-名称：“负载平衡”
-活动：当服务在整个系统中可见时检查
+
+- Name：“负载平衡”
+- Active：当服务在整个系统中可见时检查
+
 可选字段：
 
-UID：您可以为服务（例如公司的项目）分配外部ID或标签
-利润中心 - 如果所有服务均由一个组织（公司）提供服务，则可以为该项目从会计系统添加利润中心
-业务和技术所有者 - 这是负责服务，业务（功能，开发）和技术（sla，正常运行时间）意义的人员列表。例如，对于我们的负载平衡（业务负责人）来说，它是赞助商，技术负责人负责服务的稳定性，往往是技术团队负责人。
-支持团队 - 负责维护和运行的管理员团队
-添加新服务后，请添加以下一些环境： prod, test, dev
+- UID：您可以为服务（例如公司的项目）分配外部ID或标签
+- Profit Center -  如果所有服务均由一个组织（公司）提供，则可以为该项目从会计系统中添加profit center
+- Business and Technical Owners  -  这是意味着负责特定服务，业务（功能，开发）和技术（sla，uptime）人员列表。例如，对于我们的 Load Balancing负载平衡项目来说，业务人员负赞助，技术人员负责服务的稳定性，往往是技术 team leader。
+- Support team - 负责维护和运行的管理员团队
 
-快速启动，附加服务
 
-就是这样 这是一次性设置，因此您可以在系统周围使用用户服务。
+添加新服务后，请添加以下一些环境： `prod, test, dev`
 
-##### 指定位置
-若要查看DC视图资产，我们需要指定位置，并添加一些物件如Racks和Server Rooms。然后，您可以在整个应用程序中自由使用它。
 
-机架 - 点击+添加一个。命名为“Rack1”，然后在下一个窗口中添加名为“Room1”的服务器机房 - 这不是必需的，但方便。
-方向，column number并row number 用于直流可视化，所以请留下它，我们稍后会回来。
-机架配件 - 您可以指定位置，例如刷子，配线架，在给定的机架上，现在，只要离开它。
-现在，让我们把你的注意力放在Position现场Asset view。它是机架内的U级位置。
+![快速启动，附加服务](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-add-service.png)
 
-position是机架内的U级位置。如果要安装电源，例如安装在背面的机架上，请选择0作为位置。然后，您可以选择“方向”了解更多详细信息。
-slot - DC中的某些类型的设备可以占据单个位置（U）。一个例子可能是刀片系统，可以将刀片服务器存储在同一U位置。在这种情况下，我们使用“插槽”字段在DC可视化中正确查看它们。您可以使用以前使用的“模型”添加表单设置插槽数，使用“前/后大小”字段的布局。
-在我们的情况下，离开slot，而且 - 因为我们想把我们的刀片系统放在6型6型的position领域。
+就是这样。这是一次性的设置，所以你可以在整个系统中使用用户服务。
+
+##### 特定位置
+若要查看DC视图资产，我们需要指定位置，并添加一些物件如`Racks`和`Server Rooms`。然后，您可以在整个应用程序中自由使用它。
+
+
+- rack - 点击`+`添加一个。命名为“Rack1”，然后在下一个窗口中添加名为“Room1”的服务器机房 - 这不是必需的，但很方便。
+- orientation，`column number`，`row number` 用于垂直可视化，所以请保留它，我们稍后再回过来看。
+- rack accesories - 您可以在给定的Rack上指定例如brushes, patch panels的位置，但现在不需要关注这个。
+
+现在，让我们把注意力放在`Asset view`的`Position`字段。它是rack内的U-level position。
+
+- `position`是rack内的U-level position。如果要安装电源，例如安装在背面的rack上，请选择0作为position。然后您可以选择“Orientation”作为详细信息。
+- `slot` - DC中的某些类型的设备可以占据单个位置（U）。一个可能的例子是blade systems，可以将blade servers存储在同一个U位置。在这种情况下，我们使用`solts`字段在DC可视化中正确查看它们。您可以使用以前的“Model”添加表单设置slots数，使用“前/后的布局尺寸”字段的布局。
+
+
+我们的情况是，leave slot未设置 ，而且 - 因为我们想把我们的blade systems放在`6-position-type 6`的`position`领域。
 
 ##### 把它包起来
 最后一件事是填写条形码（例如：123456）并保存。
 
-而已。恭喜！
+这样就好了。恭喜！
 
-你有： 添加新的服务，使用它到处 设置新的数据中心，并添加了Rack *安装的新资产
+你的动作： 添加新的服务，使用它在任何位置设置新的DataCenter，并添加了Rack *安装的新的资产。
 
-那很简单！现在去DataCenter - >硬件到资产列表。之后，请去DC Vizualization在地图上看到机架。
+简单吧！现在去DataCenter - > Hardware to assets listing。然后到DC Vizualization看map上的Rack。
 
 #### 数据中心可视化
-##### 找到你的机架
-在本教程中，您将学习如何管理数据中心的图形表示。
+##### 找到你的rack
+在本教程中，您将学习如何管理DataCenter的graphical representation图形表示。
 
-我们来到“数据中心可视化”菜单项，找到你的数据中心。你应该看到一个新的架子在地图上可见。
+我们来到“Data Center visualization”菜单项，找到你的数据中心。你应该可以在map上看到一个新的rack。
 
-快速入门，dcview
+![快速入门，dcview](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-dcview.png)
 
-单击“编辑”功能并尝试
+单击“Edit”功能并尝试
 
-将机架拖到新位置
-通过点击“旋转”按钮旋转它
-通过点击铅笔按钮重命名它
+- 将rack拖到新位置
+- 通过点击“rotate”按钮旋转
+- 通过点击 pencil按钮重命名
+
+
 提示：
 
-您可以通过更改“数据中心”网格列和行数来扩展数据中心布局。
+您可以通过更改“Data center”网格列和行数来扩展数据中心布局。
 
-##### 直接从直流视图添加新机架
-您可以从直流可视化快速添加多个新机架。
+##### 直接从dc视图添加新的rack
+您可以从 dc visualization快速添加多个新rack。
 
-要做到这一点，输入“编辑模式”，并使用“加号光标”点击视图添加多个机架。您可以分开编辑它们，但请记住，完成后点击“保存”按钮。
+要做到这一点，输入“Edit mode”，并使用“plus cursor加号光标”点击视图添加多个rack。您可以分别编辑它们，但要记住完成后点击“Save”按钮。
 
-##### 快速启动-多机架
+![快速启动-多机架](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-multiple-racks.png)
 
-加入DC检查员
-我们在教程开始时搜索“Rack1”。单击直流机架视图进入机架详细信息视图。
+##### Accesing the DC inspector 访问DC Inspector
+我们在教程开始时先搜索“Rack1”。单击直流机架视图进入机架详细信息视图。
 
+（此处无法加载ytb视频）
 
-显示机架的后侧和前侧。
+显示Rack的后侧和前侧。
 
 ##### 访问编辑资产表单
-如果您在美丽的机架上播放了一些，请点击“机架检查器”中的“编辑资源”，返回资产视图。
+如果您在Rack搭建了一些资产，请点击“Rack Inspector”中的“Edit asset”，返回资产视图。
 
-在这里我们可以解释资产的其他不明显的领域。
+在这里我们可以解释Asset'的其他不清晰的字段。
 
-inventory number - 在许多情况下，可能是您自己的内部ID，例如：从旧系统导入一些数据时。
-task url - 可以在您现有的工作流系统（如jira）中使用，如果您使用它。
-force deprecation - 在某些例外情况下，您希望强制给定的资产被弃用，即使它仍处于弃用期。
-required support - 检查您是否知道此资产将来需要供应商的支持。
-parent - 层次结构中的父对象，通常不需要。几个例子：
-刀片服务器的父代是刀片系统
-虚拟机的父代是管理程序
-openstack vm的父母是openstack的租户
+- `inventory number` - 在许多情况下，可能是您自己的内部ID，例如：从旧系统导入一些数据时。
+- `task url` - 可以在您现有的工作流系统（例如jira）中使用，如果需要。
+- `force deprecation` - 在某些例外情况下，您希望强制给某些资产作为弃用状态，即使它仍处于弃用期。
+- `required support` - 检查您是否知道此资产将来需要供应商的支持。
+- `parent` - 层次结构中的父对象，通常不需要。几个例子：
+
+> - blade server的父代是blade system
+- virtual machine的父代是hypervisor
+- openstack vm的父代是openstack tenant
+
+
 ###### 技巧和窍门
 
-如果不使用其中的一些，您可以减少settings->权限中可见的字段数。 有关权限的信息，请参阅我们的高级指南
+如果不使用其中的某些功能，您可以在settings->permissions中设置并减少可见的字段数。 有关权限的信息，请参阅我们的高级指南。
 
 #### 分配许可证
 有两种使用许可证模块的方法。
 
-转到许可证模块（许可证 - >许可证）添加您购买的新许可证。
-转到特定资产视图 - >许可证。在这里，您可以访问分配给给定资产的许可证。
+- 转到许可证模块（Licenses - >Licenses）添加您购买的新许可证。
+- 转到特定资产视图 - >Licenses。在这里，您可以访问分配给给定资产的许可证。
+
+
 我们走第一条路线。假设我们已经为微软Office 2015购买了10位用户许可证。
 
 ##### 创建新的许可证
