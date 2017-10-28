@@ -381,7 +381,7 @@ Ralph帮助您存储有关的信息：
 
 简单吧！现在去DataCenter - > Hardware to assets listing。然后到DC Vizualization看map上的Rack。
 
-#### 数据中心可视化
+#### 数据中心可视化 Data Center visualization
 ##### 找到你的rack
 在本教程中，您将学习如何管理DataCenter的graphical representation图形表示。
 
@@ -434,67 +434,764 @@ Ralph帮助您存储有关的信息：
 
 如果不使用其中的某些功能，您可以在settings->permissions中设置并减少可见的字段数。 有关权限的信息，请参阅我们的高级指南。
 
-#### 分配许可证
+#### 分配许可证 Assigning licenses
 有两种使用许可证模块的方法。
 
 - 转到许可证模块（Licenses - >Licenses）添加您购买的新许可证。
 - 转到特定资产视图 - >Licenses。在这里，您可以访问分配给给定资产的许可证。
 
 
-我们走第一条路线。假设我们已经为微软Office 2015购买了10位用户许可证。
+我们走第一条路线。假设我们已经购买了10位微软Office 2015用户许可证。
 
 ##### 创建新的许可证
 点击添加许可证添加一个。你必须选择：
 
-快速启动，附加许可证
 
-许可证类型（每个用户，每个核心等）
-软件（例如“Microsoft Office 2015”） - 点击+添加新的。在下一个窗口中，当你想使用这个许可证（dc + back office）时，所以选择“全部”
-库存编号是您的内部公司编号
-区域（例如：pl，en，de）允许在单独的位置使用单独的数据。将其视为单独的国家/地区使用的单一软件。当您在单个位置使用Ralph时，只需创建一些“默认”作为解决方法。
-S / N是您存储软件许可证密钥/序列号的字段。
-购买的商品数量 - 设置许可证数量很重要。当您有单个许可证密钥时，您不应该为批量购买的每个许可证添加另一个记录。你只需要在这里设置项目数量。
-如您所见，免费许可证的数量将自动显示在整个应用程序中。
+![快速启动，附加许可证](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-add-license.png)
+
+- 许可证类型`license type`（每个用户，每个核心core等）
+- 软件`software`（例如“Microsoft Office 2015”） - 点击`+`添加新的。在下一个窗口中，当你想使用这个许可证（`dc + back office`）时，所以选择`All`
+- 库存编号`inventory number` - 是您的内部公司编号
+- 区域`region`（例如：pl，en，de）允许您在不同的位置使用不同的数据。将其视为不同的国家/地区使用的单一软件。当您在不同位置使用Ralph时，只需创建一些“默认default”作为解决方法。
+- `S / N`是您存储软件许可证密钥/序列号的字段。
+- 购买的商品数量`Number of purchased items` - 设置许可证license数量很重要。当您有单个许可证密钥时，您不应该为批量购买的每个许可证添加另一个记录。你只需要在这里设置项目数量。
+
+
+**如您所见，免费许可证的数量将自动显示在整个应用程序中。**
 
 ##### 分配许可证
-您可以在硬件许可证的情况下使用“分配”选项卡进行分配，或在每个用户许可证案例中分配“分配给用户”。
+您可以在硬件许可证`hardware license`的情况下使用“分配`Assignments`”选项卡进行分配，或在每个用户许可证案例中分配“分配给用户`Assigned to users`”。
 
-如果您将软件标记为启用了后台和数据中心，则可以在此快速入门教程开始时添加资产 - 只需输入123456条形码，或使用“循环”图标进行搜索。
+如果您将软件标记为启用了后台`back office`和数据中心`data center`，则可以在此快速入门教程开始时添加资产 - 只需输入`123456`条形码 `barcode`，或使用“循环`Loop`”图标进行搜索。
 
-如果您输入“10”许可证，您将使用所有可用的许可证（“0免费”）。
+如果您输入“10”许可证 `licenses`，您将使用所有可用的许可证（“0 free”）。
 
-快速入门指派许可
+![快速入门指派许可](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-assign-license.png)
 
-##### 许可证报告
+##### 许可证报告 Licenses reports
 您可以通过使用我们的一个报告来分析许可证的详细信息使用情况。
 
-快速入门的许可证的报告
 
-#### 供应商支持
-支持模块类似于许可证（它由资产的标签“支持”和主菜单（“支持”）中的单独模块组成，但该模块存储不同类型的数据。支持是从供应商处购买的产品的一种服务，用作SLA，维护或升级服务。
+![快速入门的许可证的报告](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-licences-reports.png)
+
+#### 供应商支持 Vendor supports
+支持模块`Supports module`类似于许可证（它由资产的标签“Supports”和主菜单（“Supports”）)中的单独模块组成，但该模块存储不同类型的数据。支持Supports是从供应商处购买的产品的一种服务，用作SLA，维护或升级服务。
 
 许可证模块的显着差异：
 
-支持只能添加到资产，而不是用户（很明显，对吗？;-)）
-支持有额外的“状态”字段来区分过期的支持与活动。
-快速启动，支持
+- `Supports`只能添加到资产，而不是用户（很明显，对吗？;-)）
+- `Supports`有额外的`Status`字段来区分过期的supports 与active。
+
+![快速启动，支持](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-supports.png)
 
 像往常一样，您可以随意添加附件（例如支持合同的pdf扫描）。
 
-#### 盘点
-在业务领域，必须对公司拥有的资产的数量和条件进行验证。拉尔夫简化了这个繁琐的过程，为员工提供了工具，允许员工毫不费力地几乎没有时间地报告分配的项目的状态。
+#### 盘点 Stock-taking
+在业务领域，必须对公司拥有的资产的数量和条件进行验证。Ralph简化了这个繁琐的过程，为员工提供了工具，允许员工毫不费力地几乎没有时间地报告分配的项目的状态。
 
-开始拍卖过程：
+开始 stock-taking过程：
 
-仓库管理面板中的复选框（启用与给定仓库相关的所有资产的库存）
-区域管理面板中的复选框（启用归属于分配给给定区域的用户的所有资产）
-现在用户可以选择查看分配的项目信息My equipment： 快速入门 - 盘点
+- 仓库管理面板 warehouse admin panel中的复选框（启用与给定仓库相关的所有资产的库存）
+- 区域管理面板region admin panel 中的复选框（启用归属于分配给给定区域的用户的所有资产）
 
-一旦用户确认他们有特定的资产清单标签被添加到数据库中的资产记录，并记录在硬件历史记录中。标签可以使用设置文件和仓库管理员配置。自我拍卖过程与常规采购没有冲突。完成后，您可以简单地取消勾选管理面板中的框。
+现在用户可以在`My equipment`中选择查看分配的项目信息： 
+
+![快速入门 - 盘点](http://ralph-ng.readthedocs.io/en/latest/img/stock-taking.png)
+
+一旦用户确认他们有特定的资产清单标签被添加到数据库中的资产记录，并记录在硬件历史记录中。标签可以使用设置文件和仓库管理员配置。Self-stock-taking过程与regular stock-taking没有冲突。完成后，您可以简单地取消勾选管理面板中的框。
 
 ----
 
-所以，这是它！恭喜，您已经完成了我们的快速入门！
+就是这些了！恭喜，您已经完成了我们的快速入门！
 
-您可能想要学习工作流（转换）教程和自定义，PDF模板，权限定制等等 - 只需按照高级用户指南
+您可能想要学习工作流（转换）教程和自己定制，PDF模板，权限定制等等 - 只需参考高级用户指南。
 
+## 高级指南 Advanced guide
+本指南处理更高级的主题，如定制和工作流系统。
+
+### 工作流系统 Workflow system
+[待记录]
+
+### PDF输出 PDF outprints
+[待记录]
+
+### 权限 Permissions
+[待记录]
+
+### 用户资产视图 User assets view
+[待记录]
+
+
+## DCIM
+### 介绍
+TODO
+Data Center Infrastructure Management
+数据中心基础设施管理
+
+### 配置路径 Configuration path
+您可以选择指定配置路径`configuration path`为您的数据中心对象` Data Center objects`，如  `Data Center Asset`，`Virtual Server`或`Cloud Host`。此路径可以稍后用作配置管理工具的输入，如Puppet或Ansible。
+
+首先，您应该定义（层次结构）配置模块（`http://<YOU_RALPH_URL>/assets/configurationmodule/`）。您可以将配置模块存储在树形（使用`parent`关系）中以对多个配置进行分组。树结构可用于反映存储配置文件的目录结构。
+
+- 如果您使用Puppet，配置模块可以直接映射到[Puppet模块](https://docs.puppet.com/puppet/latest/reference/modules_fundamentals.html)。
+
+- 如果您使用Ansible，请使用配置模块对多个配置进行分组。
+
+然后可以添加配置类（`http://<YOUR_RALPH_URL>/assets/configurationclass/`）。此类将被用于标记host所持有的此配置。
+
+- 在Puppet的情况下，它直接映射到Puppet class.。
+
+- 对于Ansible，这可以映射到Playbook。
+
+最后，您可以附加配置到你的主机 your host（`Data Center Asset`，`Virtual Server` 等）`configuration path`字段。这可以仅用于管理员信息，但您也可以使用它自动化您的配置管理工具！只需简单根据Ralph的API 从主机获取`configuration_path`，并将其应用于您的工具。
+
+您可以使用自定义字段来设置传递给配置管理工具的一些变量。要在`REST API`中显示`configuration_variables`字段下的自定义字段，请选择`use as configuration variable`设置。有关更多信息，请参阅自定义字段部分。
+
+
+## 部署 Deployment
+### 介绍
+TODO
+
+### 预启动配置 Preboot configuration
+`Preboot configuration`允许您定义正在执行的自定义文件  `Deployment`。如`kickstart`，`iPXE`或`preseed`。
+
+要定义`preboot configuration` ，您需要：
+- 访问`Preboot configuration`（`/ deployment / prebootconfiguration /`）页面
+- 单击“添加预启动配置`Add preboot configuration`”
+- 在新页面上有一个表单与几个字段，如：
+
+```
+- Name (This is the name, by which you could reference this `preboot
+  configuration` in future)
+- Type (one of these options: 'kickstart`, `iPXE`)
+- Configuration
+- Description
+```
+
+`Configuration`字段：此字段允许你写`kickstart`，`preseed`，`iPXE`或一些常规`script`配置。可以包含来自Ralph的变量。这些是：
+
+```
+- configuration_class_name (eg. 'www')
+- configuration_module (eg. 'ralph')
+- configuration_path (eg. 'ralph/www')
+- dc (eg. 'data-center1')
+- deployment_id (eg. 'ea9ea3a0-1c4d-42b7-a19b-922000abe9f7')
+- domain (eg. 'dc1.mydc.net')
+- done_url (eg. 'http://127.0.0.1:8000/deployment/ea9ea3a0-1c4d-42b7-a19b-922000abe9f7/mark_as_done')
+- hostname (eg. 'ralph123.dc1.mydc.net')
+- initrd (eg. 'http://127.0.0.1:8000/deployment/ea9ea3a0-1c4d-42b7-a19b-922000abe9f7/initrd')
+- kernel (eg. 'http://127.0.0.1:8000/deployment/ea9ea3a0-1c4d-42b7-a19b-922000abe9f7/kernel')
+- kickstart (eg. 'http://127.0.0.1:8000/deployment/ea9ea3a0-1c4d-42b7-a19b-922000abe9f7/kickstart')
+- preseed (eg. 'http://127.0.0.1:8000/deployment/ea9ea3a0-1c4d-42b7-a19b-922000abe9f7/preseed')
+- script (eg. 'http://127.0.0.1:8000/deployment/ea9ea3a0-1c4d-42b7-a19b-922000abe9f7/script')
+- ralph_instance (eg. 'http://127.0.0.1:8000')
+- service_env (eg. 'Backup systems - prod')
+- service_uid (eg. 'sc-123')`
+```
+
+要使用特定变量，请将其包装在`{{ }}`大括号中，例如{{ domain }}。
+
+以上所有链接（如：链接 `http://127.0.0.1:8000/deployment/ea9ea3a0-1c4d-42b7-a19b-922000abe9f7/mark_as_done` ）以
+`http://127.0.0.1:8000`开头。因为默认设置`default settings`是
+
+    RALPH_INSTANCE = 'http://127.0.0.1:8000'
+
+您应该自定义`RALPH_INSTANCE`变量以适应您的设置。
+
+#### 例：
+这是`kickstart`使用上述变量（`hostname`）之一的文件示例
+
+```
+lang en_US
+langsupport en_US
+keyboard us
+
+echo {{ hostname }}
+```
+
+
+## 域名联系 Domain Contracts
+### 介绍
+TLDR;   
+这是一个域名`domain `所有权模块，而不是DNS管理工具。对于DNS记录集成查看[django-powerdns-dnssec](https://github.com/allegro/django-powerdns-dnssec)模块和PowerDNS服务器
+
+`Domain Contracts `模块处理与域相关的优惠，目的和付款信息。它也可以用于Domain交易公司。这个模块与前面提到的`django-powerdns-dnssec`很相似。
+
+
+### 快速开始 - 添加域 Quickstart - adding the domain
+1. 单击  Domain -> Domains -> Add domain
+2. 输入域名“allegrogroup.com”。
+3. 不设置上级域名，因为它是顶级域名。
+4. Service/env 描述了为此域创建的特定原因。创建名为“`Auction service`”的新服务，例如，环境称为“生产production”。对于内部域，我们可以使用“测试testing”环境。
+5. 从列表中选择所需的域状态 domain Status - 例如，如果域被主动使用，则为“"Active”。
+6. 当您想要将domains组合在一起时，业务部门 Business segment 就会帮助您，创建一个示例“Marketplaces市场”。
+7. 选择负责域名和子域名管理的业主人员。
+8. 选择负责域名技术维护的技术负责人。
+9. Domain Holder是一家接收域名的公司，例如“Allegro Group”。
+10. 现在您必须在给定期间填写域名价格。输入域名到期日，注册人姓名（例如：“CNC”，“售后”），最后是域名价格。
+11. 您可以重复此过程以添加 适当的子域appropriate subdomains，例如添加名称为“test.allegrogroup.com”的新域new domain， parent设置为“allegrogroup.com”。
+
+
+## 自定义字段 Custom fields
+Ralph的定制字段有这些特征：
+
+- 它可以附加到任何模型model
+- 字段可能对值类型有限制（例如，必须是int，string，url，bool）
+- 字段可能会限制可能的选择（如html的选择字段）
+
+
+### 定义您自己的自定义字段
+要定义自己的自定义字段 `custom fields`，请转到`http://<YOUR-RALPH-URL>/custom_fields/customfield/`或在菜单中选择它`Settings > Custom fields`。
+
+可选项：
+
+- `name` - 您的自定义字段的名称
+- `attribute name` - 这是自定义字段的名称。它是使用API时其中的关键。
+- `type` - 自定义字段类型。可能的选择是：
+> - `string`
+> - `integer`
+> - `date`
+> - `url`
+> - `choice list`
+- `choices` - 如果您选择了`choices`类型，请填写它。这是自定义字段的可能选择的列表。使用 `|`分开选项，例如 `abc|def|ghi`。
+- `default value` - 如果您填写它，该值将被用作您的自定义字段的默认值，
+- `use as configuration variable` - 设置时，此变量将在“`configuration_variables`”字段中的API中公开。您稍后可以在配置管理工具（如Puppet或Ansible）中使用。
+
+
+**例：**
+
+![自定义字段定义](http://ralph-ng.readthedocs.io/en/latest/img/custom-field-add.png)
+
+### 将自定义字段附加到对象 Attaching custom fields to objects
+您可以将自定义字段附加到任何对象类型（如果由开发人员为特定类型启用）。
+
+Ralph的自定义字段与这里的任何其他字段几乎相同。第一个类型（部分）自定义字段的名称到该`Key`字段中。
+
+![自定义字段，自动完成](http://ralph-ng.readthedocs.io/en/latest/img/custom-field-autocomplete.png)
+
+然后在自动填充列表中选择您选择的自定义字段。请注意（对于某些类型）字段的值可能会更改其类型，例如选择列表。键入或选择所需的值并保存更改！
+
+
+![自定义字段，选择价值](http://ralph-ng.readthedocs.io/en/latest/img/custom-field-select-value.png)
+
+对于任何对象，每个自定义字段最多可以包含一个值（换句话说，您不能将相同的自定义字段多次附加到单个对象）。
+
+### API
+您可以通过Ralph API更改自定义字段，就像使用它的GUI一样简单！
+
+### 阅读自定义字段
+自定义字段以只读形式附加到任何API（适用）资源作为键值字典。
+
+此字典中的关键字`attribute_name`定义在自定义字段中。如上所述，它是自定义字段的名称。
+
+例：
+```
+{
+    ...
+    "custom_fields": {
+        "monitoring": "zabbix",
+        "docker_version": "1.11"  # this field doesn't have `use_as_configuration_variable` checked, so it won't be visible in `configuration_variables` field
+    },
+    "configuration_variables": {
+        "monitoring": "zabbix"
+    },
+    ...
+}
+```
+### 过滤 Filtering
+您可以通过您选择的自定义字段的值轻松地过滤对象。预先计划`attribute_name`通过`customfield__`在对象名单，URL只选择匹配您所选择的自定义字段，例如：`http://<YOUR-RALPH-URL>/api/data-center-assets/?customfield__docker_version=1.10`。
+
+### 更改自定义字段
+要预览 REST-friendly way 中的 自定义字段，去 `http://<YOUR-RALPH-URL>/api/<YOUR-RESOURCE-URL>/customfields/`，例如` http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/`。在这里，您有自定义字段附加到此特定对象（在本例中为model id 1234）。
+
+例：
+
+{
+    "count": 2,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "custom_field": {
+                "name": "docker version",
+                "attribute_name": "docker_version",
+                "type": "string",
+                "default_value": "1.10"
+            },
+            "value": "1.11",
+            "url": "http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/1/"
+        },
+        {
+            "id": 29,
+            "custom_field": {
+                "name": "monitoring",
+                "attribute_name": "monitoring",
+                "type": "choice list",
+                "default_value": "zabbix"
+            },
+            "value": "zabbix",
+            "url": "http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/29/"
+        }
+    ]
+}
+您可以在此添加此对象的新自定义字段值（在自定义字段列表中设置POST请求）或更新任何现有自定义字段值（对所选自定义字段值进行PUT或PATCH请求，例如`http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/29/）`。例如，您可以使POST以`http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/`请求以下数据将新的自定义字段附加到 Asset Model with ID `1234`：
+
+```
+{
+    "value": "http://ralph.allegrogroup.com/manual.pdf",
+    "custom_field": "manual_url"
+}
+```
+您可以使用自定义字段ID或属性名称将其指向API。
+
+请注意，这里的每个动作都将发生在特定对象的上下文中 - 每个自定义字段都将附加到当前url（ex ` /assetmodels/1234`）指向的资源中。
+
+
+## 仪表板 Dashboards
+Dashboard 提供了通过条形图或饼图显示数据的基本机制。
+
+## 与statsd集成 Integration with statsd
+statsd - 单机搭建
+每个图形都可以将数据推送到statsd。您必须添加`STATSD_GRAPHS_PREFIX`到您的 settings，并设置`ALLOW_PUSH_GRAPHS_DATA_TO_STATSD`和`COLLECT_METRICS`为True。接下来，检查`Push to statsd`具体图表，并使用Ralph的管理命令`push_graphs_to_statsd`将您的数据推送到statsd。
+
+### 入门
+本教程中的所有示例数据均由Ralph的命令生成`ralph make_demo_data`。
+
+## 目标
+在每个数据中心显示带有数量资产的图表。
+
+## 第一个仪表板
+首先，我们必须在Ralph中创建新的dasboard对象，方法是在菜单中`Dashboards > Dashboards`单击`Add new dashboard`以添加新的对象。
+
+![添加仪表板](http://ralph-ng.readthedocs.io/en/latest/img/dashboard-create-dasboard.png)
+
+下一步是创建图形并对其进行配置。 
+
+
+![添加图表](http://ralph-ng.readthedocs.io/en/latest/img/dashboard-create-dasboard.png)
+
+以上形式的重要字段是`Params`- 此字段接受JSON格式的图形配置。键`labels`，`series`，`filters`是必需的。以下这些字段的简短描述：
+
+- `labels` - 模型中的哪个字段是字符串表示，
+- `series` - 这个字段的聚合，合计
+- `filters`- 根据条件过滤查询，类似于Django ORM的查询（有关更多信息，请访问Django文档），
+- `excludes`- 排除结果中的项目 - 与`filters`相反，
+- `aggregate_expression`- 默认情况下与`series`一致，您可以通过正确的聚合表达式（例如*或 path to field）覆盖此值，
+- `target`-包含键：`model`，`filter`，`value`，此选项可更改可点击图的默认视图。
+
+OK，保存我们的新的 dashboard object。现在我们可以在`Graphs`字段中看到`item`- `DC Capacity` 并选择它们。保存后，选择`Dashboards > Dashboards`在列表视图中单击`Link`。 
+
+![链接到仪表板](http://ralph-ng.readthedocs.io/en/latest/img/dashboard-link.png)
+
+最后结果：
+
+![链接仪表板结果](http://ralph-ng.readthedocs.io/en/latest/img/dashboard-final-dc.png)
+
+### 聚合选项 Aggregating options
+#### 不同的值 distinct
+`series`允许通过不同的值聚合。要使用它， 可以使用管道`|distinct`修饰器 扩展`series`查询
+```
+{
+    "labels": "name",
+    "series": "serverroom__rack|distinct",
+    "filters": {
+        "series__lt": 5
+    },
+}
+```
+#### 比例 Ratio
+`series`允许计算两个聚合字段的比例。设置图表的`Aggregate type`图为`Ratio`，并为`series`使用两个值的列表：
+```
+{
+    "labels": "service_env__service__name",
+    "series": [
+        "securityscan__is_patched",
+        "id"
+    ]
+}
+```
+#### 按日期分组 Grouping by date
+`series`允许基于部分日期的聚合，如year或  month：
+```
+{
+    "labels": "service_env__service__name",
+    "series": "created|year",
+}
+```
+
+### 特殊的过滤器和字段 Special filters and fields
+特殊过滤器是有时候会有帮助。
+
+#### series
+`series` 是包含所有注释值的特殊字段，可以像其他文件一样进行过滤：
+```
+{
+    "labels": "name",
+    "series": "serverroom__rack",
+    "filters": {
+        "series__lt": 5
+    },
+}
+```
+#### or, and
+`or`，`and`扩展查询有关的额外条件，如：
+```
+{
+    "labels": "name",
+    "series": "serverroom__rack",
+    "excludes": {
+        "name__exact|or": [null, ''],
+    },
+}
+```
+过滤器接受元素的参数列表。
+
+#### from_now
+对于`filters`，`from_now`仅在日期和日期时间字段中使用，例如：
+```
+{
+    "labels": "name",
+    "series": "serverroom__rack__datacenterasset",
+    "filters": {
+        "created__gt|from_now": "-1y",
+    },
+}
+```
+上面的过滤器将限制查询一年内创建的对象。周期可能变化：
+
+- `y` - 年，
+- `m` - 月，
+- `d` - 天，
+
+
+## Ralph API consumption（消耗）
+Ralph通过REST-wide WEB API公开了许多资源和操作，可用于查询数据库和使用数据填充数据。Ralph API使用 Django Rest框架，所以每个与之相关的主题都应该在Ralph API中工作。
+
+### 认证 Authentication
+每个用户都有自动生成的用于API认证的个人令牌。您可以通过访问您的个人资料页面或发送请求来获取您的令牌api-token-auth：
+
+    curl -H "Content-Type: application/json" -X POST https://<YOUR-RALPH-URL>/api-token-auth/ -d '{"username": "<YOUR-USERNAME>", "password": "<YOUR-PASSWORD>"}'
+    {"token":"79ee13720dbf474399dde532daad558aaeb131c3"}
+
+如果您没有分配API令牌，请将请求发送到上面 - 它会自动生成API令牌。
+
+在API的每个请求中，您必须在请求标头中使用您的API令牌密钥：
+
+    curl -X GET https://<YOUR-RALPH-URL>/api/ -H 'Authorization: Token <YOUR-TOKEN>'
+
+### API版本控制 API Versioning
+Api要求客户端在Accept标头中指定版本。
+
+    Example:
+    GET /bookings/ HTTP/1.1
+    Host: example.com
+    Accept: application/json; version=v1
+
+### 输出格式 Output format
+Ralph API支持JSON输出格式（默认情况下）和浏览器中的HTML预览（转到 `https：/// api /` 预览）。
+
+### 可用资源 Available resources
+`work in progress`
+
+### HTTP methods
+可以在API中使用以下方法。请参考具体模块的API参考，以获得更准确的解释。
+
+方法	在集合	在单一资源上
+得到	获取完整的资源列表	获取资源详情
+POST	添加新资源	-
+放	-	编辑资源（您需要提供所有数据）
+补丁	-	编辑资源（您只需要提供更改的数据）
+删除	-	删除资源
+
+| Method        | On a collection           | On a single resource  |
+| ------------- |:-------------:| -----:|
+| GET     | 获取完整的资源列表 | 获取资源详情 |
+|POST     | 添加新资源     |   $12 |
+| PUT | --      |    编辑资源（您需要提供所有数据） |
+| PATCH | --     |    编辑资源（您只需要提供更改的数据） |
+| DELETE | --     |   删除资源 |
+
+
+### 获取样本资源 Get sample resource
+使用HTTP GET方法获取资源的详细信息。例：
+
+
+    curl https://<YOUR-RALPH-URL>/api/data-center-assets/1/ | python -m json.tool
+
+结果是：
+```
+{
+    "id": 11105,
+    "url": "http://127.0.0.1:8000/api/data-center-assets/1/",
+    "hostname": "aws-proxy-1.my-dc",
+    "status": "used",
+    "sn": "12345",
+    "barcode": "54321",
+    "price": "55500.00",
+    "remarks": "Used as proxy to AWS",
+    "position": 12,
+    "orientation": "front",
+    "configuration_path": "/aws_proxy/prod",
+    "service_env": {
+        "id": 11,
+        "url": "http://127.0.0.1:8000/api/service-environments/11/",
+        "service": {
+            "id": 1,
+            "url": "http://127.0.0.1:8000/api/services/1/",
+            "name": "AWS Proxy",
+            ...
+        },
+        "environment": {
+            "id": 2,
+            "url": "http://127.0.0.1:8000/api/environments/2/",
+            "name": "prod",
+        }
+    }
+    },
+    "model": {
+        "id": 168,
+        "url": "http://127.0.0.1:8000/api/asset-models/168/",
+        "name": "R630",
+        "type": "data_center",
+        "power_consumption": 1234,
+        "height_of_device": 1.0,
+        "cores_count": 8,
+        "has_parent": false,
+        "manufacturer": {
+            "id": 33,
+            "url": "http://127.0.0.1:8000/api/manufacturers/33/",
+            "name": "Dell",
+            ...
+        },
+        ...
+    },
+    "rack": {
+        "id": 15,
+        "url": "http://127.0.0.1:8000/api/racks/15/",
+        "name": "Rack 123",
+        "server_room": {
+            "id": 1,
+            "url": "http://127.0.0.1:8000/api/server-rooms/1/",
+            "name": "Room 1",
+            "data_center": {
+                "id": 99,
+                "url": "http://127.0.0.1:8000/api/data-centers/99/",
+                "name": "New York",
+            }
+        },
+        ...
+    },
+    ...
+}
+```
+为了可读性，响应的一部分被跳过。
+
+### 您可以通过标签搜索记录：
+    curl https://<YOUR-RALPH-URL>/api/data-center-assets/?tag=tag1&tag=tag2 | python -m json.tool
+
+您将找到包含所有指定标签的所有记录。
+
+### 保存样本资源
+PATCH data center asset with data:
+PATCH数据中心的资产与数据：
+```
+{
+    "hostname": "aws-proxy-2.my-dc",
+    "status": "damaged",
+    "service_env": 12,
+    "licences": [1, 2, 3]
+}
+```
+请注意：在此示例中： 设置相关对象（not-simple，如字符串或数字）只传递其ID（请参阅service_env） 设置许多相关对象，将其传递到列表中（请参阅licences）*可以传递文本选择字段的值（状态），即使它存储为数字。
+
+### 过滤 Filtering
+Ralph API支持多个查询文件管理器：
+
+您可以通过向发送`OPTIONS`请求特定资源（查看`filtering`项目）来检查可能的字段用以过滤。
+
+- 过滤（精确）字段值（例如`<URL>?hostname=s1234.local`）
+- 使用Django `__`用法查询过滤器（有关详细信息，请参阅Django Field文档），例如。`<URL>?hostname__startswith=s123`或者`<URL>?invoice_date__lte=2015-01-01`
+- 扩展过滤器 - 允许使用单个查询参数对多个字段进行过滤 - 它对于多态模型（如`BaseObject`）来说是有用的- 例如通过`name`参数过滤，您将按`DataCenterAsset`主机名过滤`BackOfficeAssetHostname`等。示例：`<URL>/base-objects/?name=s1234.local`
+- 使用`tag`查询参数过滤标签。可以在url查询中指定多个标签。例：`<URL>?tag=abc&tag=def&tag=123`
+
+
+字段查找也使用扩展过滤器`BaseObject`，例如。<URL>/base-objects/?name__startswith=s123
+
+### 转换API
+所选模型的可用转换列表
+
+    GET /api/data_center/datacenterasset/46/transitions/
+
+结果是：
+```
+{
+    "count": 2,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 5,
+            "url": "<URL>/api/transitions/5/",
+            "source": [
+                "new",
+                "in use",
+                "free",
+                "damaged",
+                "liquidated",
+                "to deploy"
+            ],
+            "target": "Keep orginal status",
+            "name": "Change rack",
+            "run_asynchronously": true,
+            "async_service_name": "ASYNC_TRANSITIONS",
+            "model": "<URL>/api/transitions-model/2/",
+            "actions": [
+                "<URL>/api/transitions-action/22/"
+            ]
+        },
+...
+```
+运行转换的POST参数列表：
+List of POST parameters to run transition for transition:
+
+    OPTIONS <URL>/api/virtual/virtualserver/767/transitions/Initialization/
+
+结果是：
+```
+{
+  "name": "Transition",
+  "description": "Transition API endpoint for selected model.\n\nExample:\n    OPTIONS: /api/<app_label>/<model>/<pk>/transitions/<transition_name>\n    or <transiton_id>",
+  "renders": [
+    "application/json",
+    "text/html",
+    "application/xml"
+  ],
+  "parses": [
+    "application/json",
+    "application/x-www-form-urlencoded",
+    "multipart/form-data",
+    "application/xml"
+  ],
+  "actions": {
+    "POST": {
+      "network_environment": {
+        "type": "choice",
+        "required": true,
+        "read_only": false,
+        "label": "Network environment",
+        "choices": [
+          {
+            "display_name": "aa0003bb (testowa)",
+            "value": "1"
+          },
+          {
+            "display_name": "Other",
+            "value": "__other__"
+          }
+        ]
+      },
+    ...
+```
+
+## ralph-cli
+
+`ralph-cli`是一个开源工具（参见它的GitHub repo），意味着Ralph可以作为一种命令行接口。其目标是为所有Ralph的功能提供“Swiss Army knife瑞士军刀”，这种功能足以将其从网页GUI引入终端。
+
+此时，您可以使用它来发现硬件的组件（使用  `scan` 命令），但我们将来会扩展功能（请参阅  Ideas for Future Development）。值得一提的是，  `ralph-cli`也有能力发现MAC地址，这是必要的，如果你想从Ralph部署你的主机（当然，你可以手动输入所有这些数据到Ralph，但ralph-cli大大方便这个过程）。
+
+如果您想开始使用它，请参阅其文档 - 特别是快速入门部分，也可能是关键概念部分。
+
+如果您发现任何问题`ralph-cli`（或者您有任何建议/想法），请在此处创建一个问题。如果你想贡献一些代码（在我们鼓励你做的事情中），你可能也想阅读 开发部分（BTW，`ralph-cli`写在Go中，但是使用Python作为scan scripts）。
+
+
+## We are open :-)
+
+Ralph是一个开源系统，它允许以简单直接的方式管理数据中心。我们不只是提供来源，我们所有的开发过程，包括规划，蓝图，甚至项目迭代都在公开环境完成！该项目背后的灵活和适应性强的架构鼓励开发人员尝试其需求和期望。如何成为开发过程的一部分？
+
+### 简而言之
+这是您如何修复错误或添加功能在几个快速步骤：
+
+1. fork us on GitHub,
+2. checkout your fork,
+3. write a code (with PEP8 rules), test, commit,
+4. push changes to your fork,
+5. open a pull request.
+
+
+## 成为贡献者
+### 你好 ！
+在我们的Gitter聊天https://gitter.im/allegro/ralph上介绍自己，当前与Ralph相关的问题和疑虑被提出，分享和解决。
+
+### 发展环境
+使您的软件兼容Ralph开发要求。
+
+1. 装git和Vagrant应用。
+2. 然后, `git clone https://github.com/allegro/ralph`.  "ng" 的github 分支是用的 Ralph 3.0, 这是最新的软件版本, 目前正在开发. 对于2.x版本我们不会做更多的开发了。
+3. 在“vagrant”目录中，您将找到设置开发环境的Vagrantfile。只需键入`vagrant up`即可启动完整的开发环境。
+4. 现在登录虚拟框环境`vagrant ssh`。
+5. 虚拟环境自动激活 - shell脚本位于`〜/ bin / activate`中。
+6. 运行`make menu`。
+7. 运行ralph实例`make run`，使用账号`ralph：ralph` 登录到`localhost：8000`。
+
+然后，你们都设置好了。对于设置中有可能出现的所有问题，请参考`https://github.com/allegro/ralph/tree/ng/vagrant`
+
+如果您想通过自己的Django应用程序扩展Ralph，请将您的配置放在  `vagrant/Vagrantfile.local`（例如同步的文件夹）中。您还可以在其中附加自定义供应脚本`vagrant/provision.local.s`h。
+
+### 错误跟踪器和冲刺 Bug tracker & sprints
+Github issues tracker 把握我们的开发。我们使用`milestones`用于我们的迭代（每一周或者两周），并有一些预计的发布日期。使用浏览器访问：用于 Scrum board的`https://waffle.io/allegro/ralph?label=ng`（使用milestone 字段进行过滤）以获取更多详细信息。
+
+### Blueprints 蓝图
+我们使用所谓的“蓝图”来讨论Github上的每个设计决策。这只是一些Github问题，有一些设计草案，图表和一般性讨论。您可以通过在问题列表上使用“蓝图”标签来识别蓝图。
+
+### 技术文档
+准备编码？请参考 我们的技术/架构文档
+
+## Do's and don't's
+### Do's
+如果您想得到快速回复，请通知@ vi4m Gitter在“issue”部分中，在Github上开始您的item。我们的主页是讨论性质。随意探索Python编程的魅力。贡献/分享代码很重要。
+
+### Don't's
+"When is it ready?"的答案应该是"When it is ready"。
+“什么时候准备好？”这个问题的答案应该是已经准备好了！
+
+### Django's template standard
+有几个简单的规则：
+
+1. 在`load`和模板的其他部分之间 有一个空行。
+2. 每一块/段代码之间应该 有一个空行。
+3. 如果您打开一些HTML tag 或 Django template tag，那么您必须缩进行，不包括简单代码，自我关闭标签（查找 `inline block`和`{% url ... %}`示例）。
+4. 而最后一个（最重要的）：当你写模板，有一些常用知识。
+
+所有的这些规定都是为了可读性而不是为了浏览器的解析。
+
+例：
+```
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans 'Users' %}{% endblock %}
+
+{% block sidebar %}
+  {% if users %}
+    <ul>
+      {% for user in users %}
+        <li>
+            <a href="{% url admin:users user.pk %}">{{ user }}</a>
+        </li>
+      {% endif %}
+    </ul>
+  {% endif %}
+{% endblock %}
+```
+
+---------here-------
+
+## 找到你的方式来源
+### 概念
+整个应用程序是基于高度可操作的django模型。Django框架自己生成用户界面窗体。由于简单性是我们的主要关注点，我们更倾向于保持模型的胖和用户界面更薄。这就是为什么我们依靠Django管理面板来管理用户界面。
+
+### 主要模块
+拉尔夫分为单独的模型，如：资产 - 存储有关固定资产的大量信息 - 扫描 - 发现数据中心的设备 - 许可证 - 管理软件和硬件的许可证 - CMDB - 配置管理数据库
+
+注意：帮助我们改进此文档！:-)
