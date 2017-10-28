@@ -1185,13 +1185,145 @@ Github issues tracker 把握我们的开发。我们使用`milestones`用于我�
 {% endblock %}
 ```
 
----------here-------
-
-## 找到你的方式来源
-### 概念
-整个应用程序是基于高度可操作的django模型。Django框架自己生成用户界面窗体。由于简单性是我们的主要关注点，我们更倾向于保持模型的胖和用户界面更薄。这就是为什么我们依靠Django管理面板来管理用户界面。
+## Finding your way around the sources ？
+### 概念 Concept
+整个应用程序是基于高度可操作的django模型。Django框架自己生成用户界面表单。由于简单性是我们的主要关注点，我们更倾向于保持models更加丰富和用户接口更加细致。这就是为什么我们依靠Django管理面板来管理用户界面。
 
 ### 主要模块
-拉尔夫分为单独的模型，如：资产 - 存储有关固定资产的大量信息 - 扫描 - 发现数据中心的设备 - 许可证 - 管理软件和硬件的许可证 - CMDB - 配置管理数据库
+Ralph分为不同的模型，如：
+- 资产 存储有关固定资产的大量信息
+- 扫描 发现数据中心的设备
+- 许可证 管理软件和硬件的许可证
+- CMDB 配置管理数据库
 
-注意：帮助我们改进此文档！:-)
+注意：请帮助我们改进此文档！:-)
+
+
+## Ralph Admin
+Ralph Admin class（`ralph.admin.mixins.RalphAdmin`）建立在常规Django Admin之上，并具有一系列扩展功能。其中一些列在下面。
+
+### 导入和导出 Import-Export
+Ralph Admin内置了支持导入和导出对象的模块（使用django-import-export）。可能的配置如下：
+
+#### 资源类 Resource class
+在您的Admin中定义`resouce_class`，以指定`django-import-export`的资源类，用于处理该模型的导入和导出。
+
+例：
+
+    class SupportAdmin(RalphAdmin):
+    ...
+   	 resource_class = resources.SupportResource
+    ...
+#### 导出查询 Export queryset
+在您的Admin中定义`_export_queryset_manager`属性，以指定将用于处理导出查询的管理器。这应该是字符串与模型的属性名称的适当管理器。
+
+例：
+
+    class SupportAdmin(RalphAdmin):
+    ...
+    	_export_queryset_manager = 'objects_with_related'
+    ...
+从Admin导出默认情况下，使用`get_queryset`从Django's admin正确处理所有过滤等。从Admin导出时，您的资源中定义的`get_queryset`不被使用，但将它们指向相同的对象管理器是一个很好的做法。
+
+### 获取相关对象 Fetching related objects
+默认情况下，Ralph Admin 选择并预取Resource's Meta中定义的所有相关对象。
+
+
+## 自定义字段 Custom fields
+### 如何将自定义字段附加到模型？
+将`WithCustomFieldsMixin`类混合到你的model definition（从`ralph.lib.custom_fields.models`导入）
+
+### 管理员集成 Admin integration
+要在Django Admin中为您的模型使用自定义字段，请将`CustomFieldValueAdminMaxin`类混合到您的model admin（从ralph.lib.custom_fields.admin导入）
+
+### Django Rest框架集成 
+要在`Django Rest Framework`中使用自定义字段，`WithCustomFieldsSerializerMixin`请将类混合到您的API序列化程序（从`ralph.lib.custom_fields.api`导入）
+
+
+
+## 转换 Transitions
+对象从一个到另一个的转换（例如状态） - 这有助于产品生命周期管理。对于每个对象（asset, support, licence），您可以定义一些工作流（set of transitions），并为每个转换提供特殊的操作。
+
+### 定义动作
+您可以通过添加方法将新的操作添加到您的类中并进行装饰`@transition_action`。例如：
+```
+class Order(models.Model, metaclass=TransitionWorkflowBase):
+    status = TransitionField(
+        default=OrderStatus.new.id,
+        choices=OrderStatus(),
+    )
+
+    @classmethod
+    @transition_action
+    def pack(cls, instances, request, **kwargs):
+        notify_buyer('We pack your order for you.')
+
+    @classmethod
+    @transition_action
+    def go_to_post_office(cls, instances, request, **kwargs):
+        notify_buyer('We send your order to you.')
+```
+当您可以指定工作流程时，现在可以在管理面板中执行操作。
+添加转换
+
+#### 额外的参数 Extra parameters
+如果您的操作需要额外的参数来执行，您可以添加字段：
+```
+from django import forms
+
+ALLOW_COMMENT = True
+
+    ...
+    @classmethod
+    @transition_action(
+        form_fields = {
+            'comment': {
+                'field': forms.CharField(),
+                'condition': lambda obj: (obj.status > 2) and ALLOW_COMMENT
+            }
+        }
+    )
+    def pack(cls, instances, request, **kwargs):
+        notify_buyer(
+            'We pack your order for you.',
+            pickers_comment=kwargs['comment'],
+        )
+
+```
+额外的参数
+
+允许参数字段:: `field`-标准表单字段，例如从`django.forms`，  `condition`-功能至极接受一个参数，并返回boolean值，当条件都满足的字段将被显示。
+
+如果转换只是一个动作要求，设置`only_one_action`为`True`。
+
+如果操作返回附件（例如：PDF文档），设置`return_attachment`为`True`。
+
+#### 在转换历史记录中存储其他数据
+如果您想向转换历史记录添加其他信息，则需要在操作中添加到字典`history_kwargs`：
+```
+    def unassign_user(cls, instances, request, **kwargs):
+        for instance in instances:
+            kwargs['history_kwargs'][instance.pk][
+                'affected_user'
+            ] = str(instance.user)
+            instance.user = None
+```
+#### 在操作之间共享数据
+您还可以使用`shared_params`在连续操作之间共享额外的数据，就像`history_kwargs`一样
+
+#### 重新操作 Rescheduling actions
+异步转换（操作）能够稍后重新安排（例如，当等待某些条件满足时，而不是主动等待）。为此，只需在你的操作中抛出`ralph.lib.transitions.exceptions.RescheduleAsyncTransitionActionLater`异常。
+
+当操作过会重置时， `history_kwargs`和`shared_params`都可以妥善进行处理（和恢复）。
+
+
+
+
+
+
+
+
+
+
+
+
