@@ -1320,10 +1320,195 @@ ALLOW_COMMENT = True
 
 
 
+## 扩展 Extending Ralph
+Ralph NG很容易扩展，例如在Asset Review上下文中提供自定义选项卡。
+
+注意：我们鼓励开发人员提供新功能和集成功能！请阅读本文档了解更多信息。
+
+### 扩展细节视图 Extending the Detail View
+为asset detail view提供自定义子页面是将另一个Django应用程序的内容集成到Ralph admin页面中的最方便的方法。所有注册视图将由ralph 网站上的标签表示。请注意，单视图类不能在多个管理站点中重复使用。
+
+您必须编写自己的类视图和模板。添加额外的视图有两种可能：装饰器和类'属性。
+
+### Your view
+它必须是从`RalphListView`或`RalphDetailView`继承的正常视图（CBV ）（与视图的意图有关）。
+
+#### RalphListView
+这个类专门用于列表视图。
+
+#### RalphDetailView
+这个类专门用于细节视图。类的实例提供了其他属性：
+
+- `model` - 实际模型类，
+- `object`- 具体对象，来自`model`和`id`。
+您可以从template 访问object。
+
+#### RalphDetailViewAdmin
+如果要显示标准 admin model 为标签，请使用此类。类接受来自`django.contrib.admin.ModelAdmin`的两个基本属性：
+
+- `inlines`，
+- `fieldsets`。
+
+
+例：
+```
+class NetworkInline(TabularInline):
+    model = IPAddress
+
+
+class NetworkView(RalphDetailViewAdmin):
+    icon = 'chain'
+    name = 'network'
+    label = 'Network'
+    url_name = 'network'
+
+    inlines = [NetworkInline]
+```
+
+#### 模板 Template
+每个模板必须从`BASE_TEMPLATE`继承extends 。
+
+基本模板：
+```
+{% extends BASE_TEMPLATE %}
+
+{% block content %}
+    {{ var }}
+{% endblock %}
+```
+您的模板必须放在预定义的路径之一中：
+
+- `model/name.html`
+- `app_label/model/name.html`
+
+Where：
+
+`app_label`- `app_label`提取自`model`，
+`model`- 小写名称`model`，
+`name` - 视图的名称来自视图的实例。
+
+
+#### 通过类属性注册视图
+注意：如果您直接在Ralph进行开发，请使用此方法。
+
+在`admin.py`中：
+```
+from ralph.admin import RalphAdmin, register
+from ralph.admin.views import RalphDetailView
+from ralph.back_office.models import Warehouse
+
+
+class ExtraView(RalphDetailView):
+    name = 'extra_list'
+    label = 'Extra Detail View'
+
+
+@register(Warehouse)
+class WarehouseAdmin(RalphAdmin):
+    change_views = [ExtraView]
+```
+
+#### 通过装饰器注册视图
+注意：此方法推荐用于外部应用。
+
+你的应用程序的某个地方：
+```
+from ralph.admin.decorators import register_extra_view
+from ralph.admin.views import RalphDetailView
+from ralph.back_office.models import Warehouse
+
+
+@register_extra_view(Warehouse, register_extra_view.CHANGE)
+class ExtraView(RalphDetailView):
+    name = 'extra_details'
+    label = 'Extra Detail View'
+```
+
+### 使用高级搜索过滤器 Using advanced search filters
+您可以轻松地定义自己的高级搜索过滤器（通过文本，日期等进行搜索）。可用的过滤器有：
+
+- BooleanFilter（`ralph.admin.filters.BooleanFilter`）
+- ChoicesFilter（`ralph.admin.filters.ChoicesFilter`）
+- DateFilter（`ralph.admin.filters.DateFilter`）
+- TextFilter（`ralph.admin.filters.TextFilter`）
+
+
+要使用过滤器定义你的class，您可以在其中指定字段的标题和参数，以对结果进行过滤:
+```
+class BarcodeFilter(TextFilter):
+    title = _('Barcode')
+    parameter_name = 'barcode'
+```
+然后在你的admin class定义中简单地将此类添加到`list_filter`属性中：
+```
+class MyAdmin(RalphAdmin):
+    list_filter = [BarcodeFilter]
+```
+要使用`ChoicesFilter`，您需要指定一个附加的参数：`choices_list`。`choices_list`是可供选择的列表（此处推荐使用`dj.choices.Choices`实例）。
+
+#### 附加过滤器选项： Additional filters options:
+##### 过滤标题 Filter title
+```
+class ServerRoom(models.Model):
+    data_center = models.ForeignKey(DataCenter, verbose_name=_("data center"))
+    data_center._filter_title = _('data center')
+```
+如果`_filter_title`被附加到字段，过滤器将在列表中显示被输入的名称，而不是从模型的字段获取。
+
+##### 自动完成 Autocomplete
+```
+class ServerRoom(models.Model):
+    data_center = models.ForeignKey(DataCenter, verbose_name=_("data center"))
+    data_center._autocomplete = False
+```
+对于每个字段ForeignKey，默认情况下使用 autocomplete widget（组件）。如果你希望这是可选字段，可以将`_autocomplete`设置为False。
 
 
 
 
+## Deb packaging HOWTO 怎样安装Deb包
+我们使用`dh_virtualenv`可以方便的从虚拟环境安装所有的依赖包。然后，我们将deb二进制文件上传到bintray.com，以方便管理。
+
+#### 发布新的deb快照 Issuing the new deb snapshot
+Vagrant内：
+
+1. 确保您有`export BINTRAY_APIKEY=APIKEYHERE` - 二进制上传的 bintray api key set （密钥集）。
+2. `make package`构建包`./packaging/build` ，然后将其`./packaging/upload`上传到bintray。
+3. 内部名称将会是“ralph-3.0.0-＃BUILDNUMBER”
+
+
+注1：在内部我们运行dch debian工具来帮助我们生成代码，并生成`debian/changelog. file`。发布新的“major”版本后，需要在`debian/changelog`文件中使用dch实用程序来手动预设新版本。记得在发布新的文件后提交这个文件！
+
+注2：未来我们可能会以某种方式将其完全自动化;-)
+
+#### 来源
+- `/packaging` 包含构建和上传到bintray.com服务器的构建脚本
+- `/debian` 需要为一些源代码指定位置。
+- `debian/rules`和`debian/control`具有一些构建配置
+- `debian/changelog` - 跟踪构建代号
 
 
 
+
+## 常问问题 FAQ
+### 附加额外的视图到admin class后， 报错`ImproperlyConfigured`
+单个额外的视图类不能重复使用在多个管理站点。要在多个管理站点中使用它，请创建分开的类别的额外视图：
+```
+class MyView(RalphDetailViewAdmin):
+    icon = 'chain'
+    ...
+
+class MyView2(MyView):
+    pass
+```
+然后在你的admin中使用它：
+```
+@register(MyModel)
+class MyAdmin(RalphAdmin):
+    change_views = [MyView]
+
+@register(MyModel2)
+class MyAdmin2(RalphAdmin):
+    change_views = [MyView2]
+```
+Attachments app是此机制的示例用法 - 对于每个使用`AttachmentsMixin`的admin site，都创建了不同的AttachmentsView类。
