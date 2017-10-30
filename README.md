@@ -1,12 +1,18 @@
-# ralph_doc_to_chinese
-ralph_doc_to_chinese
+# Ralph Project Doc Translate To Chinese
+翻译AMS项目[Ralph NG](http://ralph-ng.readthedocs.io/en/latest/)开发文档。
+
 
 # Ralph NG
-Ralph NG是一个简单而强大的 资产管理，DCIM和CMDB数据中心和后台系统。
+Ralph NG是一个简单而强大的资产管理系统，DCIM和CMDB数据中心和后台系统。
+
+|缩写| 英文全称| 中文名称|
+|-|-|-|
+|DCIM|Data Center Infrastructure Management|数据中心基础设施管理|
+|CMDB|Configuration Management Database|配置管理数据库|
 
 特征：
 - 跟踪资产购买及其生命周期
-- 自动发现现有硬件
+- 自动发现现有的硬件
 - 生成灵活而准确的成本报告
 
 免责声明：Ralph NG是Ralph 2.x的精简和简化版本。 本文档不包括可在此处访问的旧版本。
@@ -317,7 +323,7 @@ Ralph帮助您存储有关的信息：
 
 
 ##### 添加模型
-`Model`字段可帮助您组织许多相同型号的设备。您可以输入`Model`字段，并从现有数据库模型开始输入以搜索模型。如果列表为空也无需担心。在没有表单的情况下添加模型也很容易。只需点击模型字段中的‘+按钮’即可。在新窗口中，只需命名此modle，例如：“PowerEdge R620”。从“three-like”菜单中选择类别。不要忘记将type设置为“数据中心” -并 在数据中心模块中使用。您也可以添加office模型 - 只需切换`type`字段。
+`Model`字段可帮助您组织许多相同型号的设备。您可以输入`Model`字段，并从现有数据库模型开始输入以搜索模型。如果列表为空也无需担心。在没有表单的情况下添加模型也很容易。只需点击模型字段中的‘+按钮’即可。在新窗口中，只需命名此modle，例如：“PowerEdge R620”。从“three-like”菜单中选择category。不要忘记将type设置为“数据中心” -并 在数据中心模块中使用。您也可以添加office模型 - 只需切换`type`字段。
 
 ![Model视图](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-model.png)
 
@@ -553,7 +559,7 @@ Data Center Infrastructure Management
 TODO
 
 ### 预启动配置 Preboot configuration
-`Preboot configuration`允许您定义正在执行的自定义文件  `Deployment`。如`kickstart`，`iPXE`或`preseed`。
+`Preboot configuration`允许您在定义正在`Deployment`中执行的自定义文件 。如`kickstart`，`iPXE`或`preseed`。
 
 要定义`preboot configuration` ，您需要：
 - 访问`Preboot configuration`（`/ deployment / prebootconfiguration /`）页面
@@ -702,10 +708,10 @@ Ralph的自定义字段与这里的任何其他字段几乎相同。第一个类
 您可以通过您选择的自定义字段的值轻松地过滤对象。预先计划`attribute_name`通过`customfield__`在对象名单，URL只选择匹配您所选择的自定义字段，例如：`http://<YOUR-RALPH-URL>/api/data-center-assets/?customfield__docker_version=1.10`。
 
 ### 更改自定义字段
-要预览 REST-friendly way 中的 自定义字段，去 `http://<YOUR-RALPH-URL>/api/<YOUR-RESOURCE-URL>/customfields/`，例如` http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/`。在这里，您有自定义字段附加到此特定对象（在本例中为model id 1234）。
+要预览 REST-friendly way 中的 自定义字段，访问 `http://<YOUR-RALPH-URL>/api/<YOUR-RESOURCE-URL>/customfields/`，例如` http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/`。在这里，您有自定义字段附加到此特定对象（在本例中为model id 1234）。
 
 例：
-
+```
 {
     "count": 2,
     "next": null,
@@ -735,6 +741,7 @@ Ralph的自定义字段与这里的任何其他字段几乎相同。第一个类
         }
     ]
 }
+```
 您可以在此添加此对象的新自定义字段值（在自定义字段列表中设置POST请求）或更新任何现有自定义字段值（对所选自定义字段值进行PUT或PATCH请求，例如`http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/29/）`。例如，您可以使POST以`http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/`请求以下数据将新的自定义字段附加到 Asset Model with ID `1234`：
 
 ```
@@ -874,7 +881,7 @@ Ralph通过REST-wide WEB API公开了许多资源和操作，可用于查询数�
     curl -H "Content-Type: application/json" -X POST https://<YOUR-RALPH-URL>/api-token-auth/ -d '{"username": "<YOUR-USERNAME>", "password": "<YOUR-PASSWORD>"}'
     {"token":"79ee13720dbf474399dde532daad558aaeb131c3"}
 
-如果您没有分配API令牌，请将请求发送到上面 - 它会自动生成API令牌。
+如果您没有分配API令牌，请发送上面的请求 - 它会自动生成API令牌。
 
 在API的每个请求中，您必须在请求标头中使用您的API令牌密钥：
 
@@ -907,7 +914,7 @@ POST	添加新资源	-
 | Method        | On a collection           | On a single resource  |
 | ------------- |:-------------:| -----:|
 | GET     | 获取完整的资源列表 | 获取资源详情 |
-|POST     | 添加新资源     |   $12 |
+|POST     | 添加新资源     |  - |
 | PUT | --      |    编辑资源（您需要提供所有数据） |
 | PATCH | --     |    编辑资源（您只需要提供更改的数据） |
 | DELETE | --     |   删除资源 |
@@ -1120,14 +1127,14 @@ Ralph是一个开源系统，它允许以简单直接的方式管理数据中心
 
 
 ## 成为贡献者
-### 你好 ！
+### Hello!
 在我们的Gitter聊天https://gitter.im/allegro/ralph上介绍自己，当前与Ralph相关的问题和疑虑被提出，分享和解决。
 
-### 发展环境
+### 开发环境
 使您的软件兼容Ralph开发要求。
 
 1. 装git和Vagrant应用。
-2. 然后, `git clone https://github.com/allegro/ralph`.  "ng" 的github 分支是用的 Ralph 3.0, 这是最新的软件版本, 目前正在开发. 对于2.x版本我们不会做更多的开发了。
+2. `git clone https://github.com/allegro/ralph`.  "ng" 的github 分支是用的 Ralph 3.0, 这是目前正在开发最新版本. 对于2.x版本我们不会做更多的开发了。
 3. 在“vagrant”目录中，您将找到设置开发环境的Vagrantfile。只需键入`vagrant up`即可启动完整的开发环境。
 4. 现在登录虚拟框环境`vagrant ssh`。
 5. 虚拟环境自动激活 - shell脚本位于`〜/ bin / activate`中。
@@ -1366,7 +1373,7 @@ class NetworkView(RalphDetailViewAdmin):
 ```
 
 #### 模板 Template
-每个模板必须从`BASE_TEMPLATE`继承extends 。
+每个模板必须继承自`BASE_TEMPLATE`。
 
 基本模板：
 ```
