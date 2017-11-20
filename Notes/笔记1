@@ -1,0 +1,205 @@
+django笔记
+
+### 禁止添加新实例
+@register(BaseObject)
+class BaseObjectAdmin(RalphAdmin):
+    # 禁止添加新实例
+    def has_add_permission(self, request):
+        return False
+
+### 针对不同模型生成一个django可以重定向的url
+reverse('admin:view_on_site', args=(obj.base_object.content_type_id,obj.base_object.id))
+>>> /r/37/5/
+'admin:view_on_site'
+view_on_site 是 admin 里面定义好的和url相关的name
+源码：
+1
+url(r'^r/(?P<content_type_id>\d+)/(?P<object_id>.+)/$', wrap(contenttype_views.shortcut),name='view_on_site')
+2
+动态的构造
+url name='admin:{}_{}_change' % (app_label, model_name)
+根据应用和模型动态生成url 这里动态的进行重定向
+return reverse('admin:{}_{}_change'.format(opts.app_label, opts.model_name), args=(self.pk,))
+
+
+## 封装好的AdminAbsoluteUrlMixin
+class AdminAbsoluteUrlMixin(object):
+    def get_absolute_url(self):
+        opts = self._meta
+        # support for proxy
+        if opts.proxy:
+            opts = opts.concrete_model._meta
+        # 构造一个 url name 为 ‘admin:AppName_ModelName’ 参数为 obj.pk
+        return reverse(
+            'admin:{}_{}_change'.format(
+                opts.app_label, opts.model_name
+            ), args=(self.pk,)
+        )
+
+## MPTTModel from mptt.models import MPTTModel, TreeForeignKey get_ancestors(include_self=True)
+创建一个包含这个模型实例的祖先的“QuerySet”。
+这默认是降序（根祖先第一，直接父母最后）; 为``ascending``参数传递``True``会颠倒顺序（直接的父对象，最后的祖先对象）。
+如果“include_self”是“True”，则“QuerySet”也将包含这个模型实例。
+
+
+## django 自定义筛选 继承ListFilter BaseCustomFilter相关的类
+class EthernetBaseObjectFilter(RelatedAutocompleteFieldListFilter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.title = _('以太网设备') # 筛选器呈现的名称
+重写 def queryset(self, request, queryset):
+	# queryset 是所有的查询结果
+    	# request 是请求字段
+    	# self.value() 是清洗过后的请求值 需要自己写方法
+	return queryset （处理后的 queryset）
+可以选用不同的filter类，也可以自己写模板和规则
+使用 在 admin.py 中
+@register(IPAddress)
+class IPAddressAdmin(ParentChangeMixin, RalphAdmin):
+ list_filter = [
+        ('ethernet__base_object', EthernetBaseObjectFilter),  # 修改 title
+    ]
+
+
+
+## 在 model.py 中
+    # 定义筛选器呈现的名称
+    字段名称._filter_title = ...
+    address._filter_title = _('Network Class')
+
+
+
+## class QuerySet 对象很重，常用于自定义查询，显示结果等等
+
+
+
+## 自定义的一种筛选方法
+class TestListFilter(admin.SimpleListFilter):
+
+    title = _('decade born')
+    parameter_name = 'decade'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('80s', _('in the eighties')),
+            ('90s', _('in the nineties')),
+        )
+
+    def queryset(self, request, queryset):
+
+            return queryset
+
+
+## re split & pattern
+re.compile(r'[;|]').pattern
+>>> '[;|]' # 直接打印字符串
+re.compile(r'[;|]').split('192 | 168')
+>>> ['192', '168'] # 使用正则匹配来分割
+
+
+## queryset里面累积条件
+# 新建一个Q对象：用于查询，可以使用 and-& or-| 条件判断符
+# 遍历 指定的符号， 如果 self.value() 可以使用 ; or | 分开，则‘query |= Q(’会叠加或条件，知道最后传入queryset去判断
+# **字典解包为赋值函数 'mac__icontains' = 'B0:C0:D0:A0:B0:E2'
+
+
+
+
+
+## context for change_list
+('module_name', 'user of hosts')
+('opts', <Options for UserOfHost>)
+('site_url', '/')
+('actions_on_bottom', False)
+('actions_on_top', True)
+('has_add_permission', True)
+('to_field', None)
+('selection_note', '0 of 3 selected')
+('preserved_filters', '')
+('site_header', <django.utils.functional.lazy.<locals>.__proxy__ object at 0x7fdc62a5ceb8>)
+('is_popup', False)
+('has_permission', True)
+('actions_selection_counter', True)
+('title', 'Select user of host to change')
+('media', <django.forms.widgets.Media object at 0x7fdc605093c8>)
+('selection_note_all', 'All 3 selected')
+('site_title', <django.utils.functional.lazy.<locals>.__proxy__ object at 0x7fdc62a5ce10>)
+('cl', <django.contrib.admin.views.main.ChangeList object at 0x7fdc66b92940>)
+('action_form', <ActionForm bound=False, valid=Unknown, fields=(action;select_across)>)
+
+
+## 字典扩充 dict.update(extra_context or {})
+
+## 字典内嵌套的作用 多个参数同样可以被解开
+d = {'a': 'a'}
+context = dict(d,b=1,c=2)
+==> context = {'a':'a','b':'1','c':'2'}
+
+## 字典打印 [print(i) for i in context.items()]
+
+
+
+
+
+## django admin url pattern : urlconf_module
+------------------------------
+<RegexURLPattern auth_group_changelist ^$>
+<RegexURLPattern auth_group_add ^add/$>
+<RegexURLPattern auth_group_history ^(.+)/history/$>
+<RegexURLPattern auth_group_delete ^(.+)/delete/$>
+<RegexURLPattern auth_group_change ^(.+)/change/$>
+<RegexURLPattern None ^(.+)/$>
+------------------------------
+------------------------------
+<RegexURLPattern auth_user_password_change ^(.+)/password/$>
+<RegexURLPattern auth_user_changelist ^$>
+<RegexURLPattern auth_user_add ^add/$>
+<RegexURLPattern auth_user_history ^(.+)/history/$>
+<RegexURLPattern auth_user_delete ^(.+)/delete/$>
+<RegexURLPattern auth_user_change ^(.+)/change/$>
+<RegexURLPattern None ^(.+)/$>
+------------------------------
+------------------------------
+<RegexURLPattern host_userofhost_changelist ^$>
+<RegexURLPattern host_userofhost_add ^add/$>
+<RegexURLPattern host_userofhost_history ^(.+)/history/$>
+<RegexURLPattern host_userofhost_delete ^(.+)/delete/$>
+<RegexURLPattern host_userofhost_change ^(.+)/change/$>
+<RegexURLPattern None ^(.+)/$>
+------------------------------
+------------------------------
+<RegexURLPattern index ^$>
+<RegexURLPattern login ^login/$>
+<RegexURLPattern logout ^logout/$>
+<RegexURLPattern password_change ^password_change/$>
+<RegexURLPattern password_change_done ^password_change/done/$>
+<RegexURLPattern jsi18n ^jsi18n/$>
+<RegexURLPattern view_on_site ^r/(?P<content_type_id>\d+)/(?P<object_id>.+)/$>
+<RegexURLResolver <RegexURLPattern list> (None:None) ^auth/group/>
+<RegexURLResolver <RegexURLPattern list> (None:None) ^auth/user/>
+<RegexURLResolver <RegexURLPattern list> (None:None) ^host/userofhost/>
+<RegexURLPattern app_list ^(?P<app_label>auth|host)/$>
+------------------------------
+------------------------------
+<RegexURLPattern user-list ^users/$>
+<RegexURLPattern user-list ^users\.(?P<format>[a-z0-9]+)/?$>
+<RegexURLPattern user-detail ^users/(?P<pk>[^/.]+)/$>
+<RegexURLPattern user-detail ^users/(?P<pk>[^/.]+)\.(?P<format>[a-z0-9]+)/?$>
+<RegexURLPattern userofhost-list ^userofhost/$>
+<RegexURLPattern userofhost-list ^userofhost\.(?P<format>[a-z0-9]+)/?$>
+<RegexURLPattern userofhost-detail ^userofhost/(?P<pk>[^/.]+)/$>
+<RegexURLPattern userofhost-detail ^userofhost/(?P<pk>[^/.]+)\.(?P<format>[a-z0-9]+)/?$>
+<RegexURLPattern api-root ^$>
+<RegexURLPattern api-root ^\.(?P<format>[a-z0-9]+)/?$>
+------------------------------
+<module 'rest_framework.urls' from '/home/nick/forRestTest/lib/python3.5/site-packages/djangorestframework-3.7.3-py3.5.egg/rest_framework/urls.py'>
+
+
+
+## include(arg, namespace=None, app_name=None) -> return (urlconf_module, app_name, namespace)
+arg -> 
+
+
+## url() -> 
+
+
