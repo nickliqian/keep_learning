@@ -203,3 +203,5 @@ arg ->
 ## url() -> 
 
 
+## 使用ManyToManyField.through集成中介表
+

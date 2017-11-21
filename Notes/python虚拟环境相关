@@ -1,0 +1,10 @@
+ubuntu
+python 安装路径：
+/usr/local/lib/py2/
+/usr/local/lib/py3/
+python快捷脚本路径：/usr/local/bin/
+virtualenv 脚本：/usr/local/bin/virtualenv.py
+virtualenvwrapper脚本：/usr/local/bin/virtualenvwrapper.sh
+注意：virtualenvwrapper.sh运行会调用系统的 /usr/bin/python和此目录下的 virtualenv
+由于 安装2和3版本的virtualenv时，virtualenv.py会互相覆盖，所以需要注意 virtualenv 文件的版本，可见此文件第一行。
+如果要同时使用 2和3 的workon ,则需要在覆盖另一个版本之前，修改命令的名称和脚本里面的参数。

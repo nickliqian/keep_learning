@@ -1,7 +1,7 @@
 from sklearn.feature_extraction import DictVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
 
 
+# 预处理-特征抽取
 def dict_vect():
 
     # 实例化
@@ -18,10 +18,6 @@ def dict_vect():
     print(dc.get_feature_names())
     # 抽取后的数据
     print(data)
-
-
-def tfidf_vect():
-    pass
 
 
 if __name__ == "__main__":
