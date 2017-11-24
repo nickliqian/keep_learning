@@ -1,0 +1,206 @@
+指令
+ng-app 指令初始化一个 AngularJS 应用程序。
+ng-init 指令初始化应用程序数据。
+<div ng-app="" ng-init="firstName='John'">
+*ng-app 指令告诉 AngularJS，<div> 元素是 AngularJS 应用程序 的"所有者"。
+
+ng-model 指令把元素值（比如输入域的值）绑定到应用程序。
+<p>姓名：<input type="text" ng-model="firstName"></p>
+
+数据绑定表达式{{ 变量 }}
+<p>你输入的为： {{ firstName }}</p>
+
+ng-repeat 会重复一个HTML元素
+data-ng-repeat
+<li data-ng-repeat="x in names">
+  {{ x }}
+</li>
+对于数组names，元素都是对象
+  <li ng-repeat="x in names">
+  {{ x.name + ', ' + x.country }}</li>
+
+<div ng-app="">
+     <p>我的第一个表达式: {{ 5 + 5 }}</p>
+</div>
+
+ng-bind
+显示到标签内容
+<div ng-app="" ng-init="firstName='John'">
+<p>姓名为 <span ng-bind="firstName"></span></p>
+</div>
+
+
+自定义属性 data-
+<div data-ng-app="" data-ng-init="firstName='John'">
+<p>姓名为 <span data-ng-bind="firstName"></span></p>
+</div>
+
+
+表达式在标签内容里面输出
+使用 {{  }}
+与 ng-bind="quantity * cost" 类似
+
+AngularJS 模块（Module） 定义了 AngularJS 应用。
+AngularJS 控制器（Controller） 用于控制 AngularJS 应用。
+ng-app指令定义了应用, ng-controller 定义了控制器。
+
+
+// 指定了应用和控制器
+<div ng-app="myApp" ng-controller="myCtrl">
+名: <input type="text" ng-model="firstName"><br>
+姓: <input type="text" ng-model="lastName"><br>
+<br>
+姓名: {{firstName + " " + lastName}}
+</div>
+
+
+// 定义了应用 app= xxx
+<script>
+var app = angular.module('myApp', []);
+// 定义了应用的控制器  app.controller(xxx)...
+app.controller('myCtrl', function($scope) {
+    $scope.firstName= "John";
+    $scope.lastName= "Doe";
+});
+</script>
+
+// 对象
+<div ng-app="" ng-init="person={firstName:'John',lastName:'Doe'}">
+<p>姓为 {{ person.lastName }}</p>
+</div>
+
+// 数组
+<div ng-app="" ng-init="points=[1,15,19,2,40]">
+<p>第三个值为 {{ points[2] }}</p>
+</div>
+
+
+1.ng-app是一个特殊的指令，一个HTML文档只出现一次，如出现多次也只有第一个起作用；ng-app可以出现在html文档的任何一个元素上。
+2.ng-app作用：告诉子元素指令是属于angularJs。
+3.ng-app的值可以为空（练习），项目中一定要赋值，后面所说的模块。
+
+
+var app = angular.module("myApp", []);
+app.directive("runoobDirective", function() {
+    return {
+        template : "<h1>自定义指令!</h1>"
+    };
+});
+
+在 myApp HTML 中调用：
+<runoob-directive></runoob-directive>
+<div runoob-directive></div>
+<div class="runoob-directive"></div>
+<!-- directive: runoob-directive -->
+
+
+通过添加 restrict 属性,并设置值为 "A", 来设置指令只能通过属性的方式来调用:
+
+
+ng-model 指令用于绑定应用程序数据到 HTML 控制器(input, select, textarea)的值。
+
+
+ng-invalid:未通过验证的表单
+ng-valid:布尔型属性，它指示表单是否通过验证。如果表单当前通过验证，他将为true
+ng-dirty:布尔值属性，表示用户是否修改了表单。如果为 ture，表示有修改过；false 表示修没有修改过
+ng-touched:布尔值属性，表示用户是否和控件进行过交互
+ng-pristine:布尔值属性，表示用户是否修改了表单。如果为ture，表示没有修改过；false表示修改过
+
+ng-valid: 验证通过
+ng-invalid: 验证失败
+ng-valid-[key]: 由$setValidity添加的所有验证通过的值
+ng-invalid-[key]: 由$setValidity添加的所有验证失败的值
+ng-pristine: 控件为初始状态
+ng-dirty: 控件输入值已变更
+ng-touched: 控件已失去焦点
+ng-untouched: 控件未失去焦点
+ng-pending: 任何为满足$asyncValidators的情况
+
+
+Scope(作用域) 是应用在 HTML (视图) 和 JavaScript (控制器)之间的纽带。
+Scope 是一个对象，有可用的方法和属性。
+Scope 可应用在视图和控制器上。
+
+
+AngularJS 应用组成如下：
+View(视图), 即 HTML。
+Model(模型), 当前视图中可用的数据。scope 是模型。scope 是一个 JavaScript 对象，带有属性和方法，这些属性和方法可以在视图和控制器中使用。
+Controller(控制器), 即 JavaScript 函数，可以添加或修改属性。
+
+
+使用函数
+<button ng-click='sayHello()'>点我</button>
+    $scope.sayHello = function() {
+        $scope.greeting = 'Hello ' + $scope.name + '!';
+    };
+
+
+有的应用都有一个 $rootScope，它可以作用在 ng-app 指令包含的所有 HTML 元素中。
+$rootScope 可作用于整个应用中。是各个 controller 中 scope 的桥梁。用 rootscope 定义的值，可以在各个 controller 中使用。
+$rootscope设置的变量在所有controller里面都是可以直接用{{$root.变量名}}来显示的，当然也可以赋值给$scope.
+
+
+controller：
+.controller(控制器名称, [传递参数列表, function(...){}])
+.controller(控制器名称, [传递参数列表, FunctionName])
+.controller('myCtrl', FunctionName)
+.controller('customersCtrl', function($scope, $location)
+控制器的 $scope （相当于作用域、控制范围）用来保存AngularJS Model(模型)的对象。
+
+
+大型的应用程序中，通常是把控制器存储在外部文件中。
+只需要把 <script> 标签中的代码复制到名为 personController.js 的外部文件中即可：
+
+
+其他实例
+以下实例创建一个新的控制器文件:
+angular.module('myApp', []).controller('namesCtrl', function($scope) {
+    $scope.names = [
+        {name:'Jani',country:'Norway'},
+        {name:'Hege',country:'Sweden'},
+        {name:'Kai',country:'Denmark'}
+    ];
+});
+
+
+过滤器
+currency	格式化数字为货币格式。
+filter	从数组项中选择一个子集。
+lowercase	格式化字符串为小写。
+orderBy	根据某个表达式排列数组。
+uppercase	格式化字符串为大写。
+<ul>
+  <li ng-repeat="x in names | orderBy:'country'">
+    {{ x.name + ', ' + x.country }}
+  </li>
+</ul>
+
+自定义过滤器
+app.filter('reverse', function() { //可以注入依赖
+    return function(text) {
+        return text.split("").reverse().join("");
+    }
+});
+
+
+$location 服务，它可以返回当前页面的 URL 地址
+$http 是 AngularJS 应用中最常用的服务。 服务向服务器发送请求，应用响应服务器传送过来的数据。
+AngularJS $timeout 服务对应了 JS window.setTimeout 函数。
+AngularJS $interval 服务对应了 JS window.setInterval 函数。
+你可以创建自定义服务，链接到你的模块中：
+
+
+
+angular.module('name', [依赖], configFn)
+
+
+
+
+
+
+
+
+
+
+
+
