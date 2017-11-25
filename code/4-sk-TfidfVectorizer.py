@@ -45,7 +45,7 @@ def tfidf_vect():
     c1, c2, c3 = cut_word()
 
     print("分词结果：", c1, c2, c3)
-
+    print(type(c1))
     # 实例化
     tf = TfidfVectorizer(stop_words=['一种', '不会'])
 
@@ -53,6 +53,21 @@ def tfidf_vect():
 
     print(tf.get_feature_names())
     print(data.toarray())
+
+    '''
+        [str, str, str]
+            --> -->
+            ['w w w w',
+             'w w w w',
+             'w w w w']
+            --> -->
+          w w w w w w w w
+        [
+        [ n n n n n n n n ]
+        [ n n n n n n n n ]
+        [ n n n n n n n n ]
+                          ]
+    '''
 
     return None
 
@@ -66,10 +81,12 @@ def countvec():
 
     # 实例化
     cv = CountVectorizer()
+
     data = cv.fit_transform([c1, c2, c3])
 
     print(cv.get_feature_names())
     print(data.toarray())
+    # 模型
 
 
 if __name__ == "__main__":

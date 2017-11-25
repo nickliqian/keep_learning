@@ -46,7 +46,8 @@ def main():
     # 特征值数据集标准化
     std = StandardScaler()
     x_train = std.fit_transform(x_train)
-    x_test = std.fit_transform(x_test)
+    # 测试集 只用转换就可以了
+    x_test = std.transform(x_test)
 
     # 进入estimator流程
     knn = KNeighborsClassifier(n_neighbors=5)
@@ -54,6 +55,7 @@ def main():
     knn.fit(x_train, y_train)
     # 使用这个（带有标签的）测试集来计算分数
     score = knn.score(x_test, y_test)
+
     print(score)
 
 
