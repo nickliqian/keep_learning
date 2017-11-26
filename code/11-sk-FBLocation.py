@@ -2,7 +2,7 @@ from sklearn.neighbors import KNeighborsClassifier
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 
 def main():
     # 导入数据集
@@ -57,6 +57,17 @@ def main():
     score = knn.score(x_test, y_test)
 
     print(score)
+
+    # 通过网格搜索进行预测
+    param = {"n_neighbors": [1, 3, 5]}
+    gc = GridSearchCV(knn, param_grid=param, cv=2)
+    gc.fit(x_train, y_train)
+
+    print('准确率：', gc.score(x_test, y_test))
+    print('交叉验证集中最好结果：', gc.best_score_)
+    print('最好参数：', gc.best_params_)
+    print('最好模型：', gc.best_estimator_)
+    print('交叉验证过程：', gc.cv_results_)
 
 
 if __name__ == "__main__":
