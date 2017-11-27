@@ -4,9 +4,10 @@
 	2. 可以设定 @score.setter，从而使用 's.score = 60' == 's.set_score(60)' 设定属性并检查值。
 '''
 
-from newclass import func
-class Student(object):
+from .newclass import func
 
+
+class Student(object):
     @property
     def score(self):
         return self._score
@@ -19,11 +20,11 @@ class Student(object):
             raise ValueError('score must between 0 ~ 100!')
         self._score = value
 
-s = Student()
-s.score = 60 # OK，实际转化为s.set_score(60)
-s.score = 90
-print(s.score) # OK，实际转化为s.get_score()
 
+s = Student()
+s.score = 60  # OK，实际转化为s.set_score(60)
+s.score = 90
+print(s.score)  # OK，实际转化为s.get_score()
 
 '''
 	admin.site.urls
