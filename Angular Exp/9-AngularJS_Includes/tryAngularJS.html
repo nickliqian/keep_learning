@@ -1,0 +1,54 @@
+<html>
+<head>
+    <title>Angular JS Includes 示例</title>
+    <script src="../angular.min.js"></script>
+    <meta charset="UTF-8">
+
+    <style>
+        table, th, td {
+            border: 1px solid grey;
+            border-collapse: collapse;
+            padding: 5px;
+        }
+
+        table tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<h2>AngularJS Include示例</h2>
+<div ng-app="mainApp" ng-controller="studentController">
+    <!--需要部署服务器才能看到效果 ng-include 把HTML嵌入HTML-->
+    <div ng-include="main.html"></div>
+    <div ng-include="subjects.html"></div>
+</div>
+<script>
+    var mainApp = angular.module("mainApp", []);
+
+    mainApp.controller('studentController', function ($scope) {
+        $scope.student = {
+            firstName: "周",
+            lastName: "杰伦",
+            fees: 500,
+            subjects: [
+                {name: '物理', marks: 78},
+                {name: '化学', marks: 82},
+                {name: '语文', marks: 68},
+                {name: '外语', marks: 79},
+                {name: 'Java', marks: 87}
+            ],
+            fullName: function () {
+                var studentObject;
+                studentObject = $scope.student;
+                return studentObject.firstName + " " + studentObject.lastName;
+            }
+        };
+    });
+</script>
+</body>
+</html>

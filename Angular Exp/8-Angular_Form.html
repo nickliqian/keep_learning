@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="angular.min.js"></script>
+</head>
+<style>
+    table, th, td {
+        border: 1px solid grey;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    table tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+</style>
+<body>
+<h2>AngularJS 表单应用示例</h2>
+<!--声明控制器-->
+<div ng-app="mainApp" ng-controller="studentController">
+    <!--使用 novalidate 以及表单来声明禁止浏览器做特定的验证-->
+    <form name="studentForm" novalidate>
+        <table border="0">
+            <tr>
+                <td>姓氏:</td>
+                <!--required 验证是否输入字符-->
+                <td><input name="firstname" type="text" ng-model="firstName" required>
+                <!--$dirty - 状态指示值已被改变 $invalid- 指示值的状态是无效的 $error- 指出确切的错误-->
+                    <span style="color:red" ng-show="studentForm.firstname.$dirty && studentForm.firstname.$invalid">
+                        <!--指定ng-show指令的条件：输入为空时会执行-->
+      <span ng-show="studentForm.firstname.$error.required">姓氏不可为空.</span>
+   </span>
+                </td>
+            </tr>
+            <tr>
+                <td>名字:</td>
+                <td><input name="lastname" type="text" ng-model="lastName" required>
+                    <span style="color:red" ng-show="studentForm.lastname.$dirty && studentForm.lastname.$invalid">
+      <span ng-show="studentForm.lastname.$error.required">名字必填.</span>
+   </span>
+                </td>
+            </tr>
+            <tr>
+                <td>Email:</td>
+                <td><input name="email" type="email" ng-model="email" length="100" required>
+                    <span style="color:red" ng-show="studentForm.email.$dirty && studentForm.email.$invalid">
+      <span ng-show="studentForm.email.$error.required">Email 必填.</span>
+                        <!--指定ng-show指令的条件：email无效时会执行-->
+	  <span ng-show="studentForm.email.$error.email">无效的Email地址.</span>
+   </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <!--ng-click 点击会执行关联指令-->
+                    <button ng-click="reset()">重置</button>
+                </td>
+                <td>
+                    <!--验证不通过则使提交键无效-->
+                    <button
+                            ng-disabled="studentForm.firstname.$dirty && studentForm.firstname.$invalid ||
+			  studentForm.lastname.$dirty && studentForm.lastname.$invalid ||
+			  studentForm.email.$dirty && studentForm.email.$invalid"
+                            ng-click="submit()">提交
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script>
+    var mainApp = angular.module("mainApp", []);
+    // 传递给控制器函数的$scope参数是模型。
+    mainApp.controller('studentController', function ($scope) {
+        $scope.reset = function () {
+            $scope.firstName = "Zhuo";
+            $scope.lastName = "Jar";
+            $scope.email = "yiibai.com@gmail.com";
+        };
+        // 函数-重置值
+        $scope.reset();
+    });
+</script>
+</body>
+</html>

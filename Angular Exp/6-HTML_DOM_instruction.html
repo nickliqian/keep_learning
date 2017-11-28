@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AngularJS HTML DOM 示例</title>
+    <meta charset="UTF-8">
+    <script src="./angular.min.js"></script>
+</head>
+<body>
+<h2>AngularJS HTML DOM 应用示例</h2>
+<div ng-app="">
+    <table border="0">
+        <!--ng-disabled	禁用给定的控制-->
+        <tr>
+            <td><input type="checkbox" ng-model="enableDisableButton">Disable Button</td>
+            <td>
+                <button ng-disabled="enableDisableButton">点击我!</button>
+            </td>
+        </tr>
+        <!--ng-show	显示了一个给定的控制-->
+        <tr>
+            <td><input type="checkbox" ng-model="showHide1">显示按钮</td>
+            <td>
+                <button ng-show="showHide1">Click Me!</button>
+            </td>
+        </tr>
+        <!--ng-hide	隐藏一个给定的控制-->
+        <tr>
+            <td><input type="checkbox" ng-model="showHide2">隐藏按钮</td>
+            <td>
+                <button ng-hide="showHide2">Click Me!</button>
+            </td>
+        </tr>
+        <!--ng-click	表示一个AngularJS click事件-->
+        <tr>
+            <td><p>Total click: {{ clickCounter }}</p></td>
+            <td>
+                <button ng-click="clickCounter = clickCounter + 1">点击我!</button>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

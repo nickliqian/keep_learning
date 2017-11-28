@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Angular JS Includes示例</title>
+    <script src="../angular.min.js"></script>
+    <style>
+        table, th, td {
+            border: 1px solid grey;
+            border-collapse: collapse;
+            padding: 5px;
+        }
+
+        table tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<h2>AngularJS 应用示例</h2>
+<div ng-app="mainApp" ng-controller="studentController">
+    <table>
+        <tr>
+            <th>名字</th>
+            <th>号码</th>
+            <th>百分比</th>
+        </tr>
+        <tr ng-repeat="student in students">
+            <td>{{ student.Name }}</td>
+            <td>{{ student.RollNo }}</td>
+            <td>{{ student.Percentage }}</td>
+        </tr>
+    </table>
+</div>
+<script>
+    var mainApp = angular.module("mainApp", []);
+
+    // 传入$http
+    mainApp.controller('studentController', function ($scope, $http) {
+        var url = "./data.txt";
+        // http.get(url) 发出请求,回调response数据给scope
+        $http.get(url).success(function (response) {
+            $scope.students = response;
+        });
+    });
+</script>
+</body>
+</html>

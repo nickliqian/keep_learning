@@ -1,0 +1,42 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Angular JS 服务示例</title>
+    <script src="./angular.min.js"></script>
+</head>
+<body>
+<h2>AngularJS 服务应用示例</h2>
+<div ng-app="mainApp" ng-controller="CalcController">
+    <p>输入一个数字: <input type="number" ng-model="number"/>
+        <!--点击调用 square 函数-->
+        <button ng-click="square()">X<sup>2</sup></button>
+    <!--使用 square 下传入作用域对象的参数-->
+    <p>结果: {{result}}</p>
+</div>
+<script>
+    var mainApp = angular.module("mainApp", []);
+    // 使用工厂方法：定义一个工厂方法 MathService
+    mainApp.factory('MathService', function () {
+        var factory = {};
+        factory.multiply = function (a, b) {
+            return a * b
+        };
+        return factory;
+    });
+
+    // 定义一个服务方法 CalcService
+    mainApp.service('CalcService', function (MathService) {
+        this.square = function (a) {
+            return MathService.multiply(a, a);
+        }
+    });
+
+    // 控制器 CalcController 传入 作用域参数和 CalcService
+    mainApp.controller('CalcController', function ($scope, CalcService) {
+        $scope.square = function () {
+            $scope.result = CalcService.square($scope.number);
+        }
+    });
+</script>
+</body>
+</html>

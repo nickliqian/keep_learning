@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+   <title>Angular JS 国际化</title>
+</head>
+<body>
+   <h2>AngularJS 国际化应用示例</h2>
+   <div ng-app="mainApp" ng-controller="StudentController">
+      {{fees | currency }}  <br/><br/>
+      {{admissiondate | date }}   <br/><br/>
+      {{rollno | number }}
+   </div>
+   <script src="./angular.min.js"></script>
+   <!--设置语言脚本-->
+   <script src="./angular-locale_zh-cn.js"></script>
+   <script>
+      var mainApp = angular.module("mainApp", []);
+
+      mainApp.controller('StudentController', function($scope) {
+            $scope.fees = 100;
+			$scope.admissiondate  = new Date();
+            $scope.rollno = 123.45;
+      });
+
+   </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Angular JS Filters</title>
+        <script src="./angular.min.js"></script>
+    </head>
+    <body>
+        <h2>AngularJS过滤器应用示例</h2>
+        <div ng-app="mainApp" ng-controller="studentController">
+            <table border="0">
+                <tr><td>Enter first name:</td><td><input type="text" ng-model="student.firstName"></td></tr>
+                <tr><td>Enter last name: </td><td><input type="text" ng-model="student.lastName"></td></tr>
+                <tr><td>Enter fees: </td><td><input type="text" ng-model="student.fees"></td></tr>
+                <tr><td>Enter subject: </td><td><input type="text" ng-model="subjectName"></td></tr>
+            </table>
+            <br/>
+            <table border="0">
+                <!--大写过滤器-->
+                <tr><td>Name in Upper Case: </td><td>{{student.fullName() | uppercase}}</td></tr>
+                <!--小写过滤器-->
+                <tr><td>Name in Lower Case: </td><td>{{student.fullName() | lowercase}}</td></tr>
+                <!--货币过滤器-->
+                <tr><td>fees: </td><td>{{student.fees | currency}}</td></tr>
+                <!--过滤过滤器/排序过滤器-->
+                <tr><td>Subject:</td><td>
+                <ul>
+                   <li ng-repeat="subject in student.subjects | filter: subjectName |orderBy:'marks'">
+                      {{ subject.name + ', marks:' + subject.marks }}
+                   </li>
+                </ul>
+                </td></tr>
+            </table>
+        </div>
+        <script>
+        var mainApp = angular.module("mainApp", []);
+
+        mainApp.controller('studentController', function($scope) {
+           $scope.student = {
+              firstName: "李",
+              lastName: "Gang",
+              fees:500,
+              subjects:[
+                 {name:'物理',marks:70},
+                 {name:'化学',marks:80},
+                 {name:'数学',marks:65},
+                 {name:'外语', marks:87}
+              ],
+              fullName: function() {
+                 var studentObject;
+                 studentObject = $scope.student;
+                 return studentObject.firstName + " " + studentObject.lastName;
+              }
+           };
+        });
+        </script>
+    </body>
+</html>

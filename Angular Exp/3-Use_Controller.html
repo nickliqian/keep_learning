@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Angular JS Controller</title>
+        <meta charset="UTF-8">
+        <script src="./angular.min.js"></script>
+    </head>
+    <body>
+        <h2>AngularJS应用示例</h2>
+        <div ng-app="mainApp" ng-controller="studentController">
+        Enter first name: <input type="text" ng-model="student.firstName"><br><br>
+        Enter last name: <input type="text" ng-model="student.lastName"><br>
+        <br>
+        您输入的名字是: {{student.fullName()}}
+        </div>
+        <script>
+        var mainApp = angular.module("mainApp", []);
+
+        mainApp.controller('studentController', function($scope) {
+           $scope.student = {
+              firstName: "李",
+              lastName: "刚",
+              fullName: function() {
+                 var studentObject;
+                 studentObject = $scope.student;
+                 return studentObject.firstName + " " + studentObject.lastName;
+              }
+           };
+        });
+        </script>
+    </body>
+</html>

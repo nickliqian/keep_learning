@@ -1,0 +1,59 @@
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+   <title>AngularJS 依赖注入</title>
+</head>
+<body>
+   <h2>AngularJS 依赖注入应用示例</h2>
+   <div ng-app="mainApp" ng-controller="CalcController">
+      <p>输入一个整数: <input type="number" ng-model="number" />
+      <button ng-click="square()">X<sup>2</sup></button>
+      <p>结果值: {{result}}</p>
+   </div>
+   <script src="./angular.min.js"></script>
+   <script>
+      var mainApp = angular.module("mainApp", []);
+
+      // 提供者是一个特殊的工厂方法使用get()方法来返回值/服务/工厂。
+      mainApp.config(function($provide) {
+         $provide.provider('MathService', function() {
+            this.$get = function() {
+               var factory = {};
+               factory.multiply = function(a, b) {
+                  return a * b;
+               };
+               return factory;
+            };
+         });
+      });
+
+      // value是简单的JavaScript对象，并用它在配置阶段传递值到控制器。
+      mainApp.value("defaultInput", 5);
+
+      // 工厂是一个函数用于返回结果值。
+      mainApp.factory('MathService', function() {
+         var factory = {};
+         factory.multiply = function(a, b) {
+            return a * b;
+         };
+         return factory;
+      });
+
+      // 服务是一个单独的JavaScript包含了一组函数对象来执行某些任务。
+      mainApp.service('CalcService', function(MathService){
+            this.square = function(a) {
+            return MathService.multiply(a,a);
+         }
+      });
+
+      mainApp.controller('CalcController', function($scope, CalcService, defaultInput) {
+            $scope.number = defaultInput;
+            $scope.result = CalcService.square($scope.number);
+
+            $scope.square = function() {
+            $scope.result = CalcService.square($scope.number);
+         }
+      });
+   </script>
+</body>
+</html>

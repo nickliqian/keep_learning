@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Angular JS 模块实例</title>
+    <!--angular.js 需要放在被引用的app和controller的下面-->
+    <script src="./angular.min.js"></script>
+    <script src="./mainApp.js"></script>
+    <script src="./studentControllers.js"></script>
+    <style>
+        table, th, td {
+            border: 1px solid grey;
+            border-collapse: collapse;
+            padding: 5px;
+        }
+
+        table tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<h2>AngularJS 模块应用实例</h2>
+<div ng-app="mainApp" ng-controller="studentController">
+    <table border="0">
+        <tr>
+            <td>姓:</td>
+            <td><input type="text" ng-model="student.firstName"></td>
+        </tr>
+        <tr>
+            <td>名:</td>
+            <td><input type="text" ng-model="student.lastName"></td>
+        </tr>
+        <tr>
+            <td>姓名:</td>
+            <td>{{student.fullName()}}</td>
+        </tr>
+        <tr>
+            <td>科目:</td>
+            <td>
+                <table>
+                    <tr>
+                        <th>名字</th>
+                        <th>标记</th>
+                    </tr>
+                    <tr ng-repeat="subject in student.subjects">
+                        <td>{{ subject.name }}</td>
+                        <td>{{ subject.marks }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

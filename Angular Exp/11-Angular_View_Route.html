@@ -1,0 +1,60 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Angular JS 视图</title>
+    <script src="./angular.min.js"></script>
+    <script src="./angular-route.js"></script>
+</head>
+<body>
+<h2>AngularJS 视图应用示例</h2>
+<div ng-app="mainApp">
+    <p><a href="#addStudent">添加学生</a></p>
+    <p><a href="#viewStudents">查看学生</a></p>
+    <!--路由模板作用的位置 NG-view标记简单地创建一个占位符，其中一个相应的视图(HTML或ng-template视图)，可以根据配置来放置-->
+    <div ng-view></div>
+    <!--message是路由控制器带来的参数 ng-template指令用于创建使用脚本标记的HTML视图 id指向视图对应的控制器-->
+    <!--如果HTML模板没有起作用，那么就会调用被ng-template标记的脚本-->
+    <script type="text/ng-template" id="addStudent.html">
+        <h2> 添加学生 </h2>
+        {{message}}
+    </script>
+    <script type="text/ng-template" id="viewStudents.html">
+        <h2> 查看学生 </h2>
+        {{message}}
+    </script>
+    <!--也可以直接调用控制器-->
+    <div ng-controller="AddStudentController">
+        {{ message }}
+    </div>
+</div>
+
+<script>
+    // 依赖的模块 ngRoute
+    var mainApp = angular.module("mainApp", ['ngRoute']);
+
+    //  mainApp.config 配置：$routeProvider
+    mainApp.config(['$routeProvider',
+        function ($routeProvider) {
+            // 给routeProvider 配置路由地址：包括对应的模板和控制器，也定义 未出现的路由定向地址：otherwise
+            $routeProvider.when('/addStudent', {
+                templateUrl: 'addStudent.html',
+                controller: 'AddStudentController'
+            }).when('/viewStudents', {
+                templateUrl: 'viewStudents.html',
+                controller: 'ViewStudentsController'
+            }).otherwise({
+                redirectTo: '/addStudent'
+            });
+        }]);
+
+    // 定义控制器和对应的范围参数
+    mainApp.controller('AddStudentController', function ($scope) {
+        $scope.message = "这个页面是用于显示学生信息的输入表单";
+    });
+
+    mainApp.controller('ViewStudentsController', function ($scope) {
+        $scope.message = "这个页面是用于显示所有学生信息";
+    });
+</script>
+</body>
+</html>
