@@ -1,0 +1,11 @@
+// url中的参数，可以使用冒号':'或者'{}'指定
+$stateProvider
+.state('contacts.detail',{
+    url: '/sr/:con',
+    templateUrl: '/static/partials/server_room/sr.html',
+    ncyBreadcrumb: {label: 'DC Visualization'}
+})
+
+’‘’
+当我们访问index.html/contacts时， 'contacts'状态将被激活，同时index.html中的ui-view将被'contacts.html'填充。
+或者，通过transitionTo('contacts')方法将状态转变到'contacts'状态，同时 url 将更新为index.html/contacts。

@@ -1,0 +1,27 @@
+angularJS 模块可以在被加载和执行之前对其自身进行配置
+作用就是：在应用的加载阶段应用不同的逻辑
+在整个angularJS的工作流中，也只有这个阶段可以是唯一可以对应用进行修改的地方
+初始配置操作
+
+myApp.config(function(){
+// content
+})
+
+在angularjs的编译流程中，同样用到了config，放入config按顺序执行：
+var app = angular.module('myApp',[]);
+app.config(function($provide,$compileProvider){
+    $provide.factory('myFactory',function(){
+        var service = {};
+        return service;
+    });
+    $compileProvider.directive('myDiretive',function(){
+        return {
+        template:'<div><button>click me</button></div>'
+        }
+    });
+});
+
+如何写config （可写入提供者和常量）
+app.config(function(gameProvider){
+    gameProvider.setType("War");
+});

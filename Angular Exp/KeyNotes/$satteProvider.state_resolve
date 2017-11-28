@@ -1,0 +1,17 @@
+使用 resolve 为 控制器 预加载数据，避免程序流不同步。
+实例：
+resolve: {
+    server_room: ['$stateParams', 'ServerRoomModel', function($stateParams, ServerRoomModel) {
+        return ServerRoomModel.get({srId: $stateParams.srId});
+    }]
+},
+
+原始集：
+origin_obj = {$promise: c, $resolved: true, __proto__: Object}
+格式：
+resolve: {resolveName: function(){}}
+    一个对象元素，直接把function(){} return的结果扩展到origin_obj中，构造出新的origin_obj。
+resolve: {resolveName: ['a', 'b', function(){}]}
+    数组前面的元素理解为声明依赖注入。
+    数组最后一个元素，把function(){} return的结果扩展到origin_obj中，构造出新的origin_obj。
+

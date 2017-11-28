@@ -1,0 +1,8 @@
+之前看到的$stateParams服务是一个对象，包含 url 中每个参数的键/值。
+$stateParams可以为控制器或者服务提供 url 的各个部分。
+注意：$stateParams服务必须与一个控制器相关，并且$stateParams中的“键/值”也必须事先在那个控制器的url属性中有定义。
+
+// 如果状态中 url 属性是：url: '/users/:id/details/{type}/{repeat:[0-9]+}?from&amp;to'
+// 当浏览'/users/123/details//0'// $stateParams 对象将是{ id:'123', type:'', repeat:'0' }
+// 当浏览'/users/123/details/default/0?from=there&amp;to=here'
+// $stateParams 对象将是{ id:'123', type:'default', repeat:'0', from:'there', to:'here' }

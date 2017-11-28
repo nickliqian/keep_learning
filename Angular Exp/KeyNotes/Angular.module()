@@ -1,0 +1,7 @@
+声明模块 定义模块
+angular.module('appName', ['requiresA', 'requiresB'])
+appName：应用名称
+requiresA/B：导入依赖名称
+
+获取应用 获取对模块的引用
+angular.module('appName')

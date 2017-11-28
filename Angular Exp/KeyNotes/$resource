@@ -1,0 +1,17 @@
+$resource就是为这一功能而设计的。AngularJS中的resource(资源)允许我们用描述性的方式来定义对象模型，它可以描述以下内容：
+1. 资源在服务端的URL。
+2. 常用的请求参数类型。
+3. 一些附加的方法（你可以自动获得get、save、query、remove和delete方法），这些方法为对象模型包装了特定的功能和业务逻辑（例如信用卡对象的charge()方法）。
+4. 期望获得的响应类型（一个数组或者一个对象）。
+5. 协议头。
+
+实例：
+$resource('/api/server_room/:srId/', {srId: '@id'}, ’{addRack: {method: 'POST', params: {}}}‘);
+
+1、在加载的脚本文件中包含angular-resource.js.
+例如： <script src="http://cdn.bootcss.com/angular-resource/1.5.8/angular-resource.min.js"></script>
+2、在模块依赖声明中包含ngResource
+例如: angular.module(‘myapp', [‘ngResource'])
+3、在需要的地方使用注入的$resource服务。
+格式： var obj=$resource(url,[,paramsDefaults],[,actions])
+

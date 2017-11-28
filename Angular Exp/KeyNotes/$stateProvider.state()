@@ -1,0 +1,22 @@
+.state('name', {url: 'xxx', view: 'xxx', resolve: {server_room: 'xxx'}, ncyBreadcrumb: 'xxx'})
+可以理解为对象中其他的部分是依赖注册
+这部分会在config初始化的时候存入config对象中
+在controller中可以进行依赖注入：对应于出发控制器的路由
+
+.state('server_room.detail.rack', {
+    url: '/rack/{rackId:[0-9]{1,4}}',
+    views: {
+        '@': {
+            templateUrl: '/static/partials/server_room/server_room.detail.rack.html',
+            controller: 'RackController'
+        }
+    },
+    resolve: {
+        rack: ['$stateParams', 'RackModel', function($stateParams, RackModel) {
+            return RackModel.get({rackId: $stateParams.rackId});
+        }]
+    },
+    ncyBreadcrumb: {
+        label: '{{ rack.info.name }}'
+    }
+})

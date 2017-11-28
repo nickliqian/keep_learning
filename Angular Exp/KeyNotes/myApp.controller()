@@ -1,0 +1,8 @@
+var app = angular.module('myApp', []);
+app.controller('MyController', function($scope, $interpolate) {
+})
+
+controller第一个参数是名称，后面是一个数组，数组的前面是声明注入的内容，可以是n个。
+最后是个function，function的参数个数也必须是n个，必须跟前面声明注入的内容一一对应。
+就这样实现了依赖注入。
+之所以需要对应是因为在代码混淆之后 function的参数名会变 所以需要在数组前面声明参数的名字来注入。
