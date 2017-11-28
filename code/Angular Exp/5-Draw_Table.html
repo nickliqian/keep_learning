@@ -1,12 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Angular JS 模块实例</title>
-    <!--angular.js 需要放在被引用的app和controller的下面-->
-    <script src="./angular.min.js"></script>
-    <script src="./mainApp.js"></script>
-    <script src="./studentControllers.js"></script>
+    <title>AngularJS表格示例</title>
+    <script src="angular.min.js"></script>
     <style>
         table, th, td {
             border: 1px solid grey;
@@ -24,7 +21,7 @@
     </style>
 </head>
 <body>
-<h2>AngularJS 模块应用实例</h2>
+<h2>AngularJS 表格应用示例</h2>
 <div ng-app="mainApp" ng-controller="studentController">
     <table border="0">
         <tr>
@@ -36,7 +33,7 @@
             <td><input type="text" ng-model="student.lastName"></td>
         </tr>
         <tr>
-            <td>姓名:</td>
+            <td>名字:</td>
             <td>{{student.fullName()}}</td>
         </tr>
         <tr>
@@ -47,6 +44,7 @@
                         <th>名字</th>
                         <th>标记</th>
                     </tr>
+                    <!--使用ng-repeat达到循环显示所有科目的效果-->
                     <tr ng-repeat="subject in student.subjects">
                         <td>{{ subject.name }}</td>
                         <td>{{ subject.marks }}</td>
@@ -56,5 +54,28 @@
         </tr>
     </table>
 </div>
+<script>
+    var mainApp = angular.module("mainApp", []);
+
+    mainApp.controller('studentController', function ($scope) {
+        $scope.student = {
+            firstName: "周",
+            lastName: "杰伦",
+            fees: 500,
+            subjects: [
+                {name: '物理', marks: 73},
+                {name: '化学', marks: 90},
+                {name: '数学', marks: 68},
+                {name: '英文', marks: 85},
+                {name: '生物', marks: 77}
+            ],
+            fullName: function () {
+                var studentObject;
+                studentObject = $scope.student;
+                return studentObject.firstName + " " + studentObject.lastName;
+            }
+        };
+    });
+</script>
 </body>
 </html>

@@ -102,3 +102,7 @@ ENV/
 
 # pycharm
 .idea
+.xml
+
+# jupiter_notebook
+.ipynb_checkpoints
