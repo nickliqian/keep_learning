@@ -27,7 +27,7 @@
 `git remote rm origin`
 删除远程库链接
 6. `git stash`
-撤销add的记录
+修改记录暂存本地
 7. `git status`
 获得本地仓库的状态，是否有文件被修改过，是否有文件需要提交。
 8. `git diff`

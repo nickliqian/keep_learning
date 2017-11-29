@@ -1,0 +1,42 @@
+'''
+    https://oa.shijinshi.cn/sjsinfo/main/oa/timeSheet/insertTimeSheet
+    post
+    Host
+
+    oa.shijinshi.cn
+    User-Agent
+    Mozilla/5.0 (X11; Ubuntu; Linu…) Gecko/20100101 Firefox/56.0
+    Accept
+    text/html,application/xhtml+xm…plication/xml;q=0.9,*/*;q=0.8
+    Accept-Language
+    zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
+    Accept-Encoding
+    gzip, deflate, br
+    Referer
+    https://oa.shijinshi.cn/sjsinf…eSheet?longTime=1509552000000
+    Content-Type
+    application/x-www-form-urlencoded
+    Content-Length
+    170
+    Cookie
+    sjsinfo.session.id=e26812ba8bf54e1cba57f3f07b4c4fb1
+    Connection
+    keep-alive
+    Upgrade-Insecure-Requests
+    1
+
+    cookie: sjsinfo.session.id	e26812ba8bf54e1cba57f3f07b4c4fb1
+
+    raw
+    Host: oa.shijinshi.cn
+    User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0
+    Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+    Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
+    Accept-Encoding: gzip, deflate, br
+    Referer: https://oa.shijinshi.cn/sjsinfo/main/oa/timeSheet/addTimeSheet?longTime=1509552000000
+    Content-Type: application/x-www-form-urlencoded
+    Content-Length: 170
+    Cookie: sjsinfo.session.id=e26812ba8bf54e1cba57f3f07b4c4fb1
+    Connection: keep-alive
+    Upgrade-Insecure-Requests: 1
+'''
