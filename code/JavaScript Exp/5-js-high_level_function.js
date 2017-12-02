@@ -20,12 +20,12 @@ function normalize(arr) {
     })
 }
 
-function normalize(arr) {
-    return arr.map(function (x) {
-        return x[0].toUpperCase() + x.substring(1,).toLowerCase();
-    })
-    }
+// function normalize(arr) {
+//     return arr.map(function (x) {
+//         return x[0].toUpperCase() + x.substring(1,).toLowerCase();
+//     })
+//     }
 
 var arr = ['1', '2', '3'];
 var r;
-r = arr.map(x => parseInt(x));
+// r = arr.map(x => parseInt(x));
