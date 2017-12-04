@@ -1,5 +1,8 @@
 import hashlib
 import string
+import requests
+import re
+import time
 
 
 # 按base64规则解码
@@ -27,7 +30,7 @@ def decode_b64str(base64_str):
         tmp_unit = [int(remain_part[i * 8:(i + 1) * 8], 2) for i in range(remain - 1)]
         for i in tmp_unit:
             resp.append(i)
-
+    # 返回以ASCII码表示的列表
     return resp
 
 
@@ -36,8 +39,9 @@ def md5(string):
     return hashlib.md5(string.encode('utf-8')).hexdigest()
 
 
-def decode_hash(url_hash):
-    pswd = "jtbEijfprLaGbJ5lVW5AcR5nVAOjKZ44"
+#
+def decode_hash(url_hash, password):
+    pswd = password
     pswd = md5(pswd)
     q = 4
     o = md5(pswd[0:16])
@@ -78,11 +82,66 @@ def decode_hash(url_hash):
         ord2 = (h[(h[p] + h[f]) % 256])
         ord3 = ord1 ^ ord2
         t += chr(ord3)
-    print(t)
+    return t
 
+
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                  'Chrome/61.0.3163.91 Safari/537.36',
+    'Upgrade-Insecure-Requests': '1',
+}
+
+
+# 请求html
+def get_html(url):
+    r = requests.get(url, headers=headers)
+    return r.text
+
+
+# 请求js密码字符串
+def get_js_password():
+    url = "http://cdn.jandan.net/static/min/1db6c1a9c900052d56757120ca96add6.04100501.js"
+    r = requests.get(url, headers=headers)
+    pattern = r'\(e,"(.*?)"\);var\sa=\$'
+    r_list = re.findall(pattern, r.text)
+    password = r_list[0]
+    return password
+
+
+def save_url_list(url):
+    password = get_js_password()
+    html = get_html(url)
+    # 解析目标字符串
+    pattern = r'<span\sclass="img-hash">(.*?)</span>'
+    url_hash_list = re.findall(pattern, html)
+
+    for url_hash in url_hash_list:
+        url_string = decode_hash(url_hash, password)
+        url_img = r"http://" + url_string.split(r"//")[1]
+        # print("--------------------")
+        # print("原始字符串：", url_hash)
+        # print("解码字符串：", url_string)
+        print("构造url：", url_img)
+        down_img(url_img)
+
+
+def down_img(url):
+    r = requests.get(url, headers=headers)
+    img_path = 'D://A2//jiandan//' + url[-20:]
+    with open(img_path, 'wb') as f:
+        f.write(r.content)
+    time.sleep(1)
 
 if __name__ == "__main__":
-    url_hash = '41bbtgMOXof0N/aT0C29NWd3vBi6UBqPVapbhT5O34nnFKcdvXAN6r7ILrw66T2zuuH6QHHmBT' \
-               '6a0Rc+FcDwXIigVODe4vOYYeyL2vsBC28OZ00sZJ7W7g'
-    url = decode_hash(url_hash)
+    # 25 start
+    for i in range(356):
+        try:
+            url = 'http://jandan.net/ooxx/page-' + str(i+1)
+            print(">>>", url)
+            save_url_list(url)
+            time.sleep(10)
+        except Exception as e:
+            print("第%d页发生问题" % i)
+            print("报错:%s" % e)
+
 
