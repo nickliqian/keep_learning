@@ -1,0 +1,2 @@
+model_checkpoint_path: "/home/nick/Desktop/gitProject/ralph_doc_to_chinese/code/TensorFlowExp/modelsave/"
+all_model_checkpoint_paths: "/home/nick/Desktop/gitProject/ralph_doc_to_chinese/code/TensorFlowExp/modelsave/"

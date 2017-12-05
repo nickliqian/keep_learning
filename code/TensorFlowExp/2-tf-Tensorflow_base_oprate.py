@@ -34,17 +34,15 @@ sess = tf.Session()
 
 # 变量 储存 持久化
 con = tf.constant([1, 2, 3, 4])
-var = tf.Variable([1, 1], [2, 2])
+var = tf.Variable([1, 1], [2, 2], name='var')
 print(con)
 print(var)
 
 # 定义初始化变量的OP
 init_op = tf.global_variables_initializer()
 
-
 with sess:
     sess.run(init_op)
-    # print(var.eval())
-    print(sess.run([con, var]))
-
+    tf.summary.FileWriter('/home/nick/Desktop/gitProject/ralph_doc_to_chinese/code/TensorFlowExp/board/', graph=sess.graph)
+    sess.run([con, var])
 
