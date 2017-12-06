@@ -3,39 +3,39 @@
 
 
 # Ralph NG
-Ralph NG是一个简单而强大的资产管理系统，DCIM和CMDB数据中心和后台系统。
+Ralph NG是一个易用而强大的资产管理系统，集DCIM和CMDB于一体的数据中心后台系统。
 
 |缩写| 英文全称| 中文名称|
 |-|-|-|
 |DCIM|Data Center Infrastructure Management|数据中心基础设施管理|
 |CMDB|Configuration Management Database|配置管理数据库|
 
-特征：
-- 跟踪资产购买及其生命周期
-- 自动发现现有的硬件
-- 生成灵活而准确的成本报告
+具有如下特性：
+- 跟踪资产采购及其生命周期
+- 自动探测硬件信息
+- 灵活生成成本报告
 
-免责声明：Ralph NG是Ralph 2.x的精简和简化版本。 本文档不包括可在此处访问的旧版本。
+免责声明：Ralph NG是Ralph 2.x的精简和简化版本。本文档不包括对旧版本的介绍(旧版本链接:)。
 
 ## 安装指南
 
-对于生产，我们提供deb程序和docker（组合）镜像。我们只支持AMD64平台上的Ubuntu 14.04 Trusty发行版。
+对生产环境，我们提供deb程序和docker(组合)镜像。Ralph NG目前只支持Ubuntu 14.04 Trusty AMD64发行版。
 
-另一方面，如果您是开发人员，我们强烈建议使用我们的`Vagrant`，`vagrant`目录包含了许多我们开发的附属项目。
+另一方面，如果您是开发人员，我们强烈建议使用`Vagrant`虚拟机，项目的`vagrant`目录中包含了许多我们开发的附属项目。
 
-### Debian / Ubuntu包 - 推荐
-确保您的安装是纯净版的Ubuntu 14.04，没有安装任何其他软件包，并`apt-transport-https`安装。
+### Debian/Ubuntu包 - 推荐使用
+确保您的安装是纯净版的Ubuntu 14.04，没有安装任何其他软件包，然后使用`apt-transport-https`安装。
 
-    sudo apt-get update && sudo apt-get install apt-transport-https
-现在，添加我们的官方ralph存储库：
+    sudo apt-get update && sudo apt-get install apt-transport-https
+接下来，安装ralph官方存储库：
 
     sudo apt-key adv --keyserver  hkp://keyserver.ubuntu.com:80 --recv-keys 379CE192D401AB61
     sudo sh -c "echo 'deb https://dl.bintray.com/vi4m/ralph wheezy main' >  /etc/apt/sources.list.d/vi4m_ralph.list"
-然后，只需安装ralph的传统方式：
+然后，使用传统方式安装Ralph即可：
 
     sudo apt-get update
     sudo apt-get install ralph-core redis-server mysql-server
-注意：主要的Ralph实例需要安装redis和mysql服务器。如果您只想在某个地方安装ralph代理，只需安装`ralph-core`并将其指向网络上某处的特定mysql和redis实例即可。
+注意：Ralph服务实例需要安装redis和mysql服务。如果您只想在某个地方安装ralph代理，只需安装`ralph-core`并将其指向网络上某处的特定mysql和redis实例即可。
 
 #### 配置
 创建数据库。
@@ -44,7 +44,7 @@ Ralph NG是一个简单而强大的资产管理系统，DCIM和CMDB数据中心�
     > CREATE database ralph default character set 'utf8';
 
 #### 设置
-我们正在制定一些全面的配置管理文件。目前，我们只是读取一些环境变量，所以只需要粘贴到`〜/ .profile`中的某个地方，就可以根据需要自定义它们。
+我们试图制定较为全面的配置管理文件。你可以将如下环境变量粘贴到`~/.profile`中的某个地方，并根据需要自定义它们。
 
     cat〜/ .profile
 
@@ -55,16 +55,16 @@ Ralph NG是一个简单而强大的资产管理系统，DCIM和CMDB数据中心�
     export PATH=/opt/ralph/ralph-core/bin/:$PATH
     export RALPH_DEBUG=1
 #### 初始化
-1. 键入`ralph migrate`以在数据库中创建表。
-2. 键入`ralph sitetree_resync_apps`重新加载菜单。
+1. 键入`ralph migrate`创建数据表。
+2. 键入`ralph sitetree_resync_apps`重新加载菜单(根据需要自定义文件`/ralph/src/ralph/admin/sitetrees.py`)。
 3. 键入`ralph createsuperuser`以添加新用户。
 
-运行你的ralph实例 `ralph runserver 0.0.0.0:8000`
+运行你的Ralph实例 `ralph runserver 0.0.0.0:8000`
 
-现在，将您的浏览器指向`http:// localhost:8000`并登录。Happy Ralphing!
+现在，使用浏览器访问`http://localhost:8000`并登录。Happy Ralphing!
 
-### Docker安装（试验版）
-您可以在[https://github.com/allegro/ralph/tree/ng/contrib](https://github.com/allegro/ralph/tree/ng/contrib)目录中找到试验版的docker-compose配置。请注意，它仍然是测试版。
+### Docker安装（测试版本）
+您可以在[https://github.com/allegro/ralph/tree/ng/contrib](https://github.com/allegro/ralph/tree/ng/contrib) 目录中找到试验版的docker-compose配置。请注意，它仍然是测试版本。
 
 #### 安装
 首先安装`docker`和`docker-compose`。
@@ -73,35 +73,35 @@ Ralph NG是一个简单而强大的资产管理系统，DCIM和CMDB数据中心�
 将`docker-compose.yml.tmpl`外部ralph源复制到docker-compose.yml并进行调整。
 
 #### 构建
-然后构建ralph：
+构建ralph：
 
     docker-compose build
-初始化数据库运行：
+初始化数据库：
 
     docker-compose run --rm web /root/init.sh
-请注意，这个命令最初只能执行一次。
+请注意，这个命令只能执行一次。
 
-如果您需要使用一些演示数据来填充Ralph：
+如果您需要使用一些演示数据来填充Ralph可运行：
 
     docker-compose run --rm web ralph demodata
 #### 运行
-最后运行拉尔夫：
+最后运行Ralph：
 
     docker-compose up -d
-Ralph应该可以通过`http://127.0.0.1`进行访问（或者如果您正在使用`boot2docker`的`$(boot2docker ip)`）。可用的文档在`http://127.0.0.1/docs`。
+Ralph可以通过`http://127.0.0.1`进行访问（或者如果您正在使用`boot2docker`的`$(boot2docker ip)`）。可用的文档在`http://127.0.0.1/docs`。
 
-如果你升级ralph镜像（源代码）运行：
+如果你升级ralph镜像（源代码）请运行：
 
     docker-compose run --rm web /root/upgrade.sh
 ### 从Ralph 2迁移
-如果您以前使用过Ralph 2，并希望保存所有数据，请参阅Ralph 2指南的迁移
+如果您以前使用过Ralph 2，并希望保存所有数据，请参阅Ralph 2指南的迁移。
 
 
 ### LDAP认证
 
-可以通过各种LDAP / AD系统启用认证。
+可以通过LDAP/AD系统启用认证功能。
 
-您将需要安装`pip install -r requirements/prod_ldap.txt`。然后在本地设置中添加LDAP作为身份验证后端：
+启用认证功能您需要安装一些库`pip install -r requirements/prod_ldap.txt`。然后在本地设置(setting/base.py)中添加LDAP作为身份验证后端：
 
       AUTHENTICATION_BACKENDS = (
       'django_auth_ldap.backend.LDAPBackend',
@@ -112,7 +112,7 @@ Ralph应该可以通过`http://127.0.0.1`进行访问（或者如果您正在使
       'propagate': True,
       'level': 'DEBUG',
       }
-您将需要配置LDAP连接以及将远程用户和组映射到本地连接。有关详细信息，请参阅官方django-auth-ldap文档[http://packages.python.org/django-auth-ldap](http://packages.python.org/django-auth-ldap)。例如，连接到Active Directory服务可能如下所示：
+您需要配置LDAP连接以及将远程用户和远程用户组映射到本地连接。有关详细信息，请参阅官方django-auth-ldap文档[http://packages.python.org/django-auth-ldap](http://packages.python.org/django-auth-ldap) 。例如，连接到Active Directory服务示例代码如下所示：
 
     import ldap
     from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
@@ -135,23 +135,23 @@ Ralph应该可以通过`http://127.0.0.1`进行访问（或者如果您正在使
       "location": "officeName",
       "country": "ISO-country-code",
     }
-但是，当使用OpenDJ作为LDAP服务器时，`AUTH_LDAP_USER_USERNAME_ATTR`应等于`uid`：
+但是，当使用OpenDJ作为LDAP服务器时，`AUTH_LDAP_USER_USERNAME_ATTR`项的值修改为`uid`：
 
     AUTH_LDAP_USER_USERNAME_ATTR = "uid"
-对于其他实现，`objectClass`可能具有以下值：
+对于其他实现方式，`objectClass`项可能具有以下值：
 
 - Active Directory：objectClass = user，
 - Novell eDirectory：objectClass = inetOrgPerson，
-- 打开LDAP：objectClass = posixAccount
+- Open LDAP：objectClass = posixAccount
 
 
-`Manager`是特殊字段，被视为另一个用户的参考，例如“CN = John Smith，OU = TOR，OU = Corp-Users，DC = mydomain，DC = internal”映射到“John Smith”文本。
+`Manager`是特殊字段，被视为另一个用户的引用，例如`CN = John Smith，OU = TOR，OU = Corp-Users，DC = mydomain，DC = internal`映射到`John Smith`文本。
 
-`Country`是特殊字段，该字段的值必须是ISO 3166-1 alfa-2格式的地区代码 。
+`Country`是特殊字段，该字段的值必须是'ISO 3166-1 alfa-2'格式的地区代码 。
 
-Ralph提供ldap组到django组映射。所有你需要做的是：
+Ralph提供ldap groups到django groups映射。你所需要做的是：
 
-- import custom 导入自定义的 `MappedGroupOfNamesType`
+- 导入自定义的 `MappedGroupOfNamesType`
 - 设置组镜像
 - 声明映射
 
@@ -170,14 +170,14 @@ Ralph提供ldap组到django组映射。所有你需要做的是：
     ldap.SCOPE_SUBTREE, '(objectClass=group)')
 
 
-如果您将一个LDAP组嵌套在另一个LDAP组中，并希望在Ralph中使用这样的（父组）组，则必须在以下位置定义此映射`AUTH_LDAP_NESTED_GROUPS`：
+如果您将一个LDAP group嵌套在另一个LDAP group中，并希望在Ralph中使用这样的（父级）组，则必须在`AUTH_LDAP_NESTED_GROUPS`中定义此映射：
 
     AUTH_LDAP_NESTED_GROUPS = {
       'CN=_gr_ralph_users,OU=Other,DC=mygroups,DC=domain': "staff",  # _gr_ralph_users contains other LDAP groups inside
     }
 
 
-注意：对于OpenDJ实现`AUTH_LDAP_GROUP_MAPPING`不是强制性的。`AUTH_LDAP_GROUP_TYPE`并`AUTH_LDAP_GROUP_SEARCH`应设置如下：
+注意：OpenDJ实现`AUTH_LDAP_GROUP_MAPPING`不是必选的。因此`AUTH_LDAP_GROUP_TYPE`和`AUTH_LDAP_GROUP_SEARCH`应设置如下：
 
     from django_auth_ldap.config import GroupOfUniqueNamesType
     AUTH_LDAP_GROUP_TYPE = GroupOfUniqueNamesType()
@@ -185,7 +185,7 @@ Ralph提供ldap组到django组映射。所有你需要做的是：
       ldap.SCOPE_SUBTREE, '(structuralObjectClass=groupOfUniqueNames)')
 
 
-如果您想要定义具有与ralph角色相同的名称的ldap组，则不应声明映射`AUTH_LDAP_GROUP_MAPPING`。如果有任何一个映射定义，另一个组将被过滤。一些群体有特殊的含义。例如，用户需要在`active`状态登录， ` superuser`给予超级用户权限。你可以参考`groups` 阅读更多的信息。
+如果您想要定义具有与ralph role相同的名称的ldap group，则不应声明映射`AUTH_LDAP_GROUP_MAPPING`。如果有任何一个组的映射定义，另一个组将被过滤。不在使用状态。一些groups有特殊的含义。例如，用户需要在`active`状态登录，`superuser`给予超级用户权限。你可以参考`groups`阅读更多的信息。
 
 如果您不想将所有用户导入到ralph，您可以定义用户筛选：
 
@@ -194,23 +194,23 @@ Ralph提供ldap组到django组映射。所有你需要做的是：
     'DC=mygroups,DC=domain))'
 
 
-如果OpenDJ用的是`isMemberOf`而不是`memberOf`。
+如果使用的是OpenDJ，那么这里用的是`isMemberOf`而不是`memberOf`。
 
-要同步用户列表，您必须运行命令：
+要同步用户列表，您应该运行以下命令：
 
     $ ralph ldap_sync
 
-在此过程中，脚本将报告每加载的第100个项目的进度。
+在此过程中，程序每加载的100个项目会进行一次提示。
 
 ### 与OpenStack同步
-Ralph 3支持与OpenStack的单向同步。可以从OpenStack下载数据，包括项目和实例。所有同步数据将以只读模式在Ralph中可用。只能更改服务环境，标签和备注字段。
+Ralph 3支持与OpenStack的单向同步。可以从OpenStack下载数据，包括项目和实例。所有同步数据将以只读模式在Ralph中可用。只能更改服务环境(Service Environment)，标签(Tags)和备注字段(Remarks fields)。
 
-注意：一个CloudHost 的服务环境是从一个Cloud Project继承而来的 。
+注意：CloudHost的服务环境是从Cloud Project继承而来的 。
 
 #### 安装
-要启用openstack_sync插件，您必须通过执行以下来命令安装python依赖：  `pip install -r requirements/openstack.txt`
+要启用openstack_sync插件，您首先需要通过执行以下来命令安装python依赖：  `pip install -r requirements/openstack.txt`
 
-还有必要将OpenStack实例配置添加到本地设置中。示例配置应如下所示：
+还要将OpenStack实例配置添加到本地设置中。配置如下所示：
 
     OPENSTACK_INSTANCES = [
     {
@@ -225,23 +225,22 @@ Ralph 3支持与OpenStack的单向同步。可以从OpenStack下载数据，包�
     ... another instance ...
     }
     ]
-`someuser`: 是一个具有列出所有项目/租户和实例的权限的OpenStack用户
+`someuser`: 具有查看所有项目/tenants和实例权限的OpenStack用户
 
-`tenant_name`: 用户将会认证的项目/租户
+`tenant_name`: 用户即将认证的项目/tenants
 
 `version`:OpenStack API的版本，目前只支持API 2.x
 
 `auth_url`: OpenStack API可用的地址
 
-`tag`:这是一个标签，将添加到从OpenStack迁移的每个云项目和云主机
+`tag`:这个标签将添加到从OpenStack迁移来的每个Cloud Projects和Cloud Hosts
 
-您可以通过在OPENSTACK_INSTANCES列表中添加另一个python dict来 添加多个OpenStack实例。
+您可以通过在OPENSTACK_INSTANCES列表中添加另一个python dict以添加多个OpenStack实例。
 
 #### 如何执行
-您可以通过执行：手动运行脚本，`ralph openstack_sync` 也可以将其添加到`corntab`中。
+您可以通过手动运行脚本`ralph openstack_sync`来执行，也可以将其添加到`corntab`中。
 
-首先执行将所有的Cloud Project，Cloud Hosts和Cloud Flavors从OpenStack添加到Ralph。执行后，将添加和修改数据以及删除配置的OpenStack实例中不再存在的所有对象。
-
+首先将所有的Cloud Project，Cloud Hosts和Cloud Flavors从OpenStack添加到Ralph，然后将添加和修改数据甚至在配置的OpenStack实例中删除所有不在存在的对象。
 
 ### 数据导入
 
@@ -261,7 +260,7 @@ Ralph 3支持与OpenStack的单向同步。可以从OpenStack下载数据，包�
 (TODO)
 
 ### 从Ralph 2迁移
-我们的通用导入器/导出器允许您轻松地从Ralph 2导出和导入所有数据。
+我们的通用导入工具/导出工具允许您轻松地从Ralph 2导出和导入所有数据。
 
 首先从Ralph 2导出所有的数据：
 
@@ -271,9 +270,9 @@ Ralph 3支持与OpenStack的单向同步。可以从OpenStack下载数据，包�
 然后将此zip文件导入Ralph NG：
 
     $ (ralph-ng) ralph importer --skipid --type zip ralph2.zip
-请注意，该`--skipid`选项非常重要 - 它将跳过现有的Ralph 2 ID并在Ralph NG中分配新的ID。
+请注意，`--skipid`选项非常重要 - 它将会过现有的Ralph 2 ID并为数据在Ralph NG中分配新的ID。
 
-如果导入错误，请修复Ralph端的数据问题（例如，Ralph NG中需要的缺少字段值），清除NG数据库并重新导入。要清除数据库，可以运行以下命令：
+如果导入错误，请修复Ralph端的数据问题（例如，缺少Ralph NG中必须字段值），请清除Ralph NG数据库并重新导入。要清除数据库，可以运行以下命令：
 
     $ (ralph-ng) ralph flush && ralph migrate
 
@@ -281,78 +280,78 @@ Ralph 3支持与OpenStack的单向同步。可以从OpenStack下载数据，包�
 ## 快速开始
 ### Ralph快速启动
 
-Ralph帮助您存储有关的信息：
+Ralph帮助您存储以下信息：
 
 数据中心资产：
 - 仓库
 - 数据中心机房
 - 服务器
-- 机架，包括图形布局
+- 机柜，包括可视化布局
 - 配线架
 
-后勤资产：
+办公资产：
 - 打印机，笔记本电脑，台式机
 - 手机
 - 配件
 
 非物质资产：
-- 软件和硬件许可证
-- 供应商合同和支持
+- 软件和硬件许可证(licenses)
+- 供应商合同和售后服务(vendor support)
 - 包括成本和合同在内的域名
 
 
 #### 介绍
 在本教程中，我们将介绍：
 
-- 向Ralph系统添加 new blade server
-- taking a dc visualization tour （进行直流可视化巡视？）
+- 向Ralph系统添加 new blade server(刀片式服务器)
+- 查看数据中心可视化页面 （进行直流可视化巡视？）
 - 为Microsoft Office 2015添加购买的许可证，并为其分配硬件。
 
 
 ##### 添加数据中心资产
-我们添加一个新的Blade System，它将作为“负载平衡器”系统。我们希望在垂直视图下可视化，并为其分配一些支持和许可证。要做到这一点，去`Data Center -> Hardware -> Add data center asset`菜单。
+我们添加一个新的Blade System(刀片式系统)，它将作为“(Load balancer)负载均衡”系统。我们希望在数据中心视图下可视化，并为其分配一些vendor support和licenses。要做到这一点，选中`Data Center -> Hardware -> Add data center asset`菜单。
 
 ![添加资产](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-add-asset.png)
 
 添加新服务器只需要3个字段：
 
 - `model`
-- `barcode`（或`serial number` - 如果设备上没有barcode）
+- `barcode`（如果设备上没有barcode就填 `serial number`）
 - `service environment`
-但是首先我们需要设置它们。
+我们填写这些字段，然后保存。
 
 
 ##### 添加模型
-`Model`字段可帮助您组织许多相同型号的设备。您可以输入`Model`字段，并从现有数据库模型开始输入以搜索模型。如果列表为空也无需担心。在没有表单的情况下添加模型也很容易。只需点击模型字段中的‘+按钮’即可。在新窗口中，只需命名此modle，例如：“PowerEdge R620”。从“three-like”菜单中选择category。不要忘记将type设置为“数据中心” -并 在数据中心模块中使用。您也可以添加office模型 - 只需切换`type`字段。
+`Model`字段可帮助您组织许多相同型号的设备。您可以输入`Model`字段的值，此时会从现有数据库模型搜索模型。如果列表为空也无需担心。在没有表单的情况下添加模型也很容易。只需点击模型字段中的`+按钮`即可。在新窗口中，填写modle名称，例如：“PowerEdge R620”。从`three-like`菜单中选择category。不要忘记将type设置为“data center”，并在数据中心模块中使用这个model。您也可以添加office模型，只需切换`type`字段为`back office`即可。
 
 ![Model视图](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-model.png)
 
 ##### 添加服务
-`Service`字段组织了许多相同用途的设备在一起。可以举这样一个例子 - “内部负载平衡系统”，“客户端Joe的硬件”等。此字段是向系统添加新资产所必需的。
+`Service`字段组织了许多相同用途的设备在一起。可以举这样一个例子：“内部负载平衡系统”，“客户端Joe的硬件”等。此字段是向系统添加新资产所必需的。
 
-`Service Environment`是关于服务的下一级细节 - 我们称之为“environments”。示例：生产，测试，开发或简单的“prod，test，dev”。这是决定如何修补系统，部署系统，处理系统升级的非常重要的信息，因此我们在Ralph系统周围使用这些信息。
+`Service Environment`是服务的详细信息，我们称之为“environments”。示例：生产，测试，开发或简单的“prod，test，dev”(生产，测试，开发)。这对决定如何修补系统，部署系统，处理系统升级的非常重要的信息，因此我们在Ralph系统中使用这些信息。
 
-让我们添加“Load balancing - production（负载均衡 - 生产）”服务。为此，请单击`Service`字段旁边的小loop按钮，然后在下一个窗口中单击“Add Service Env”按钮。
+让我们添加`Load balancing-production`(负载均衡-生产)Service。请单击`Service`字段旁边的小loop按钮，然后在下一个窗口中单击“Add Service Env”按钮。
 
-- Remarks 是您对此服务的评论的generic placeholder（通用占位符）
-- Service 添加到系统的服务列表
-- Environment 给定服务的环境清单
-- Tags(optional) 如果要更好地组织数据，您可以分配“标签”。有关更多信息，请参见“标签”一章。
+- Remarks 是您对此Service的备注，可作为generic placeholder(通用占位符)
+- Service 系统服务/用途
+- Environment 服务的进一步信息(生产，测试，开发)
+- Tags(可选的) 如果要更好地组织数据，您可以分配“标签”。有关更多信息，请参见“标签”一章。
 
-跟你看到的一样，没有任何一个信息。我们必须添加一些信息。首先点击`+`按钮，添加Service（服务）。
+跟你看到的一样，没有任何初始值。我们必须添加一些信息。首先点击`+`按钮，添加Service（服务）。
 
 输入数据如下：
 
 
-- Name：“负载平衡”
-- Active：当服务在整个系统中可见时检查
+- Name：“负载均衡”
+- Active：当Service在整个系统中可见时，勾选
 
 可选字段：
 
-- UID：您可以为服务（例如公司的项目）分配外部ID或标签
-- Profit Center -  如果所有服务均由一个组织（公司）提供，则可以为该项目从会计系统中添加profit center
-- Business and Technical Owners  -  这是意味着负责特定服务，业务（功能，开发）和技术（sla，uptime）人员列表。例如，对于我们的 Load Balancing负载平衡项目来说，业务人员负赞助，技术人员负责服务的稳定性，往往是技术 team leader。
-- Support team - 负责维护和运行的管理员团队
+- UID：您可以为Service（例如公司的项目）分配外部ID或标签
+- Profit Center：如果所有服务均由一个组织（公司）提供，则可以为该项目从财务系统中添加profit center(利润中心)
+- Business Owners和Technical Owners：负责特定服务，业务（功能，开发）和技术（sla，uptime）人员列表。例如，对于我们的 Load Balancing负载平衡项目来说，业务人员负责运营，技术人员负责服务的稳定性（往往填技术部门的team leader）。
+- Support team：负责维护和运行的管理员团队
 
 
 添加新服务后，请添加以下一些环境： `prod, test, dev`
@@ -360,76 +359,75 @@ Ralph帮助您存储有关的信息：
 
 ![快速启动，附加服务](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-add-service.png)
 
-就是这样。这是一次性的设置，所以你可以在整个系统中使用用户服务。
+这样设置后，你就可以在整个系统中使用user service-env了。
 
 ##### 特定位置
-若要查看DC视图资产，我们需要指定位置，并添加一些物件如`Racks`和`Server Rooms`。然后，您可以在整个应用程序中自由使用它。
+若要查看数据中心视图资产，我们需要为一些实例指定位置，并添加一些对象如`Racks`和`Server Rooms`。然后就可以在整个程序中自由使用它。
 
 
-- rack - 点击`+`添加一个。命名为“Rack1”，然后在下一个窗口中添加名为“Room1”的服务器机房 - 这不是必需的，但很方便。
-- orientation，`column number`，`row number` 用于垂直可视化，所以请保留它，我们稍后再回过来看。
-- rack accesories - 您可以在给定的Rack上指定例如brushes, patch panels的位置，但现在不需要关注这个。
+- rack：在菜单中选择`Racks`,然后点击`+`添加一个机柜，命名为“Rack1”，并在下一行添加名为“Room1”的服务器机房。
+- orientation：`column number`，`row number`两个字段用于数据中心可视化，我们稍后再回过来看。
+- rack accesories：您可以在给定的机柜上指定例如brushes(画板), patch panels(插线板)等配件位置，现在也不需要关注这个。
 
-现在，让我们把注意力放在`Asset view`的`Position`字段。它是rack内的U-level position。
+现在，让我们把注意力放在`Hardware`的`Position`字段上，Position代表机柜内的U形槽的对应位置。
 
-- `position`是rack内的U-level position。如果要安装电源，例如安装在背面的rack上，请选择0作为position。然后您可以选择“Orientation”作为详细信息。
-- `slot` - DC中的某些类型的设备可以占据单个位置（U）。一个可能的例子是blade systems，可以将blade servers存储在同一个U位置。在这种情况下，我们使用`solts`字段在DC可视化中正确查看它们。您可以使用以前的“Model”添加表单设置slots数，使用“前/后的布局尺寸”字段的布局。
+- `position`：机柜内的U形槽的对应位置。假设要安装电源在机柜背面(意思是没有占用U形槽的位置)，可以将position填为0。然后可以选择“Orientation”其他项作为进一步信息。
+- `slot`：数据中心中的某些类型的设备可以占据机柜单个槽位置（one U）。例如每个刀片服务器都可以占用一个U的位置。在这样的定义下，通过`solts`字段就可以在数据中心可视化页面中查看这些服务器。您可以在之前使用过的`Model`数据模型的表单中设置model的slots数量，并选择不同的方位/尺寸的布局。
 
 
-我们的情况是，leave slot未设置 ，而且 - 因为我们想把我们的blade systems放在`6-position-type 6`的`position`领域。
+另外一种情况是不设置slot ，因为我们把blade systems放在机柜中的`6-position-type 6`位置。
 
-##### 把它包起来
-最后一件事是填写条形码（例如：123456）并保存。
+##### 保存
+最后一件事是填写barcode条形码（例如：123456）并保存。
 
 这样就好了。恭喜！
 
-你的动作： 添加新的服务，使用它在任何位置设置新的DataCenter，并添加了Rack *安装的新的资产。
+你的完成了：添加新的服务，使用它在任何位置设置新的DataCenter，并添加了Rack以组装新的资产。
 
-简单吧！现在去DataCenter - > Hardware to assets listing。然后到DC Vizualization看map上的Rack。
+是不是很简单？现在去选中`DataCenter -> Hardware`访问资产列表，然后到访问DC Vizualization页面看机柜的可视化效果。
 
 #### 数据中心可视化 Data Center visualization
-##### 找到你的rack
-在本教程中，您将学习如何管理DataCenter的graphical representation图形表示。
+##### 找到你的机柜
+本节中，您将学习如何管理DataCenter的graphical representation(图形表示)。
 
-我们来到“Data Center visualization”菜单项，找到你的数据中心。你应该可以在map上看到一个新的rack。
+我们访问“DC visualization”菜单项，找到你的数据中心。你应该可以在map上看到一个新的机柜。
 
 ![快速入门，dcview](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-dcview.png)
 
 单击“Edit”功能并尝试
 
 - 将rack拖到新位置
-- 通过点击“rotate”按钮旋转
-- 通过点击 pencil按钮重命名
+- 通过点击`rotate`按钮旋转
+- 通过点击`pencil`按钮重命名
 
 
 提示：
 
-您可以通过更改“Data center”网格列和行数来扩展数据中心布局。
+您可以通过更改“Data center”网格列和行数来扩展数据中心布局。(也就是server room的grid columns和grid rows)
 
 ##### 直接从dc视图添加新的rack
 您可以从 dc visualization快速添加多个新rack。
 
-要做到这一点，输入“Edit mode”，并使用“plus cursor加号光标”点击视图添加多个rack。您可以分别编辑它们，但要记住完成后点击“Save”按钮。
+只需切为“Edit mode”，并使用“加号光标”点击视图添加多个rack即可。您也可以分别编辑它们，但要记住完成后点击“Save”按钮。
 
 ![快速启动-多机架](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-multiple-racks.png)
 
 ##### Accesing the DC inspector 访问DC Inspector
-我们在教程开始时先搜索“Rack1”。单击直流机架视图进入机架详细信息视图。
+首先搜索“Rack1”，然后单击数据中心机柜视图进入机柜详细信息视图。此处可以显示Rack的后侧和前侧。
 
 （此处无法加载ytb视频）
 
-显示Rack的后侧和前侧。
 
 ##### 访问编辑资产表单
-如果您在Rack搭建了一些资产，请点击“Rack Inspector”中的“Edit asset”，返回资产视图。
+如果您在机柜上搭建了一些资产，请点击“Rack Inspector”中的“Edit asset”，以返回资产视图。
 
-在这里我们可以解释Asset'的其他不清晰的字段。
+在这里我们可以解释Asset模型中的其他不台明确的字段。
 
-- `inventory number` - 在许多情况下，可能是您自己的内部ID，例如：从旧系统导入一些数据时。
-- `task url` - 可以在您现有的工作流系统（例如jira）中使用，如果需要。
-- `force deprecation` - 在某些例外情况下，您希望强制给某些资产作为弃用状态，即使它仍处于弃用期。
-- `required support` - 检查您是否知道此资产将来需要供应商的支持。
-- `parent` - 层次结构中的父对象，通常不需要。几个例子：
+- `inventory number`：大部分情况下，可能是您的内部ID，例如：从旧系统导入一些数据时的id
+- `task url`：可以在您现有的工作流系统（例如jira）中使用
+- `force deprecation`：在某些例外情况下，您希望强制给某些资产作为弃用状态，可以选中此项
+- `required support`：检查您是否知道此资产将来需要供应商的支持
+- `parent`：层次结构中的父对象，通常不需要了解。有如下几个例子：
 
 > - blade server的父代是blade system
 - virtual machine的父代是hypervisor
@@ -438,79 +436,79 @@ Ralph帮助您存储有关的信息：
 
 ###### 技巧和窍门
 
-如果不使用其中的某些功能，您可以在settings->permissions中设置并减少可见的字段数。 有关权限的信息，请参阅我们的高级指南。
+如果不使用其中的某些功能，您可以在菜单`settings->user->permissions`中设置并减少可见的字段数。有关permissions的相关信息，请参阅我们的高级指南。
 
 #### 分配许可证 Assigning licenses
 有两种使用许可证模块的方法。
 
-- 转到许可证模块（Licenses - >Licenses）添加您购买的新许可证。
-- 转到特定资产视图 - >Licenses。在这里，您可以访问分配给给定资产的许可证。
+- 访问licenses模块（Licenses->Licenses）添加您购买的新licenses。
+- 访问特定资产视图->Licenses。在这里，您可以给指定资产分配的licenses。
 
 
 我们走第一条路线。假设我们已经购买了10位微软Office 2015用户许可证。
 
-##### 创建新的许可证
+##### 创建新的许可证 Creating new license
 点击添加许可证添加一个。你必须选择：
 
 
 ![快速启动，附加许可证](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-add-license.png)
 
-- 许可证类型`license type`（每个用户，每个核心core等）
-- 软件`software`（例如“Microsoft Office 2015”） - 点击`+`添加新的。在下一个窗口中，当你想使用这个许可证（`dc + back office`）时，所以选择`All`
-- 库存编号`inventory number` - 是您的内部公司编号
-- 区域`region`（例如：pl，en，de）允许您在不同的位置使用不同的数据。将其视为不同的国家/地区使用的单一软件。当您在不同位置使用Ralph时，只需创建一些“默认default”作为解决方法。
-- `S / N`是您存储软件许可证密钥/序列号的字段。
-- 购买的商品数量`Number of purchased items` - 设置许可证license数量很重要。当您有单个许可证密钥时，您不应该为批量购买的每个许可证添加另一个记录。你只需要在这里设置项目数量。
+- `license type`（适用于多少用户，多少个core等等）
+- `software`（例如“Microsoft Office 2015”）：点击`+按钮`添加新的软件信息。然后在`Asset type`选择使用于此软件的类型，例如你想在数据中心和办公区域使用，可以选择`All`
+- 库存编号`inventory number`：是您的内部公司编号
+- 区域`region`（例如：pl，en，de）：允许您在不同的地区使用不同的license，在不同的国家/地区使用的软件时，可以选择不同的license区域
+- `S/N`：软件许可证密钥/序列号的字段
+- `Number of purchased items`(购买的商品数量)：设置许可证license数量很重要。当您购买单个许可证密钥时，你只需要在这里更改许可证数量，而不是新建一条记录。
 
 
-**如您所见，免费许可证的数量将自动显示在整个应用程序中。**
+**如您所见，未使用的许可证的数量将自动显示在整个应用程序中。**
 
-##### 分配许可证
-您可以在硬件许可证`hardware license`的情况下使用“分配`Assignments`”选项卡进行分配，或在每个用户许可证案例中分配“分配给用户`Assigned to users`”。
+##### 分配许可证 Assigning the licence
+您可以在`hardware->license`中使用`LicenseAssignments`选项卡对license进行分配，或在使用`Licenses->Licences->Assigned to users`分配给用户。
 
-如果您将软件标记为启用了后台`back office`和数据中心`data center`，则可以在此快速入门教程开始时添加资产 - 只需输入`123456`条形码 `barcode`，或使用“循环`Loop`”图标进行搜索。
+如果您标记software为启用`back office`和`data center`，则可以在此快速选择添加资产，只需输入`barcode`(例如123456)，或使用`Loop`图标进行搜索。
 
-如果您输入“10”许可证 `licenses`，您将使用所有可用的许可证（“0 free”）。
+如果您在分配许可证页面输入，您将看到可用的许可证状态为（“0 free”）。
 
 ![快速入门指派许可](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-assign-license.png)
 
 ##### 许可证报告 Licenses reports
-您可以通过使用我们的一个报告来分析许可证的详细信息使用情况。
-
+您可以通过使用`Reports -> ReportsLicence-relations`来分析Licenses的详细使用情况。
+这将会导出一个csv表格，详细的记录的Licenses在数据中心和办公区域的使用情况。
 
 ![快速入门的许可证的报告](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-licences-reports.png)
 
 #### 供应商支持 Vendor supports
-支持模块`Supports module`类似于许可证（它由资产的标签“Supports”和主菜单（“Supports”）)中的单独模块组成，但该模块存储不同类型的数据。支持Supports是从供应商处购买的产品的一种服务，用作SLA，维护或升级服务。
+支持模块`Supports module`也类似于Licenses模块，它由Asset的子项“Supports”和主菜单“Supports”模块组成，但该模块存储不同类型的数据。Supports是从供应商处购买的产品的一种服务(可以理解为售后服务)，用作SLA，维护或升级服务。
 
-许可证模块的显着差异：
+其与Licenses模块的显着差异：
 
-- `Supports`只能添加到资产，而不是用户（很明显，对吗？;-)）
-- `Supports`有额外的`Status`字段来区分过期的supports 与active。
+- `Supports`只能添加到资产，而不是用户（很明显，对吗？）
+- `Supports`有额外的`Status`字段来区分supports是否已经过期
 
 ![快速启动，支持](http://ralph-ng.readthedocs.io/en/latest/img/quickstart-supports.png)
 
-像往常一样，您可以随意添加附件（例如支持合同的pdf扫描）。
+与其他模块一样，您可以随意添加附件（例如支持合同的pdf扫描）
 
 #### 盘点 Stock-taking
-在业务领域，必须对公司拥有的资产的数量和条件进行验证。Ralph简化了这个繁琐的过程，为员工提供了工具，允许员工毫不费力地几乎没有时间地报告分配的项目的状态。
+在业务方面，必须对公司所拥有资产的数量和状态进行验证。Ralph简化了这个繁琐的过程，为员工提供了便捷的工具，员工可以毫不费力地提交被分配项目的状态。
 
-开始 stock-taking过程：
+stock-taking流程：
 
-- 仓库管理面板 warehouse admin panel中的复选框（启用与给定仓库相关的所有资产的库存）
-- 区域管理面板region admin panel 中的复选框（启用归属于分配给给定区域的用户的所有资产）
+- 仓库管理面板(warehouse admin panel)中的复选框（启用与给定仓库相关的所有资产的库存）
+- 区域管理面板(region admin panel)中的复选框（启用属于分配给给定区域的用户的所有资产）
 
 现在用户可以在`My equipment`中选择查看分配的项目信息： 
 
 ![快速入门 - 盘点](http://ralph-ng.readthedocs.io/en/latest/img/stock-taking.png)
 
-一旦用户确认他们有特定的资产清单标签被添加到数据库中的资产记录，并记录在硬件历史记录中。标签可以使用设置文件和仓库管理员配置。Self-stock-taking过程与regular stock-taking没有冲突。完成后，您可以简单地取消勾选管理面板中的框。
+一旦用户确认他们有指定的资产清单标签被添加到数据库中的资产记录，这将会被记录在硬件历史记录中。标签可以设置给文件和仓库管理员配置。Self-stock-taking过程与Regular-stock-taking没有冲突。完成后，您可以简单地取消勾选管理面板中的框。
 
 ----
 
 就是这些了！恭喜，您已经完成了我们的快速入门！
 
-您可能想要学习工作流（转换）教程和自己定制，PDF模板，权限定制等等 - 只需参考高级用户指南。
+您如果想要学习Workflow和自己定制功能、PDF模板、权限等等，可以参考高级用户指南。
 
 ## 高级指南 Advanced guide
 本指南处理更高级的主题，如定制和工作流系统。
@@ -535,21 +533,21 @@ Data Center Infrastructure Management
 数据中心基础设施管理
 
 ### 配置路径 Configuration path
-您可以选择指定配置路径`configuration path`为您的数据中心对象` Data Center objects`，如  `Data Center Asset`，`Virtual Server`或`Cloud Host`。此路径可以稍后用作配置管理工具的输入，如Puppet或Ansible。
+您可以为`Data Center objects`选择指定`configuration path`，例如`Data Center Asset`，`Virtual Server`或`Cloud Host`。此path可以稍后用作配置管理工具的输入，如Puppet或Ansible。
 
-首先，您应该定义（层次结构）配置模块（`http://<YOU_RALPH_URL>/assets/configurationmodule/`）。您可以将配置模块存储在树形（使用`parent`关系）中以对多个配置进行分组。树结构可用于反映存储配置文件的目录结构。
+首先，您需要定义配置模块的层次结构（访问`http://<YOU_RALPH_URL>/assets/configurationmodule/`）。您可以将配置模块存储在树形结构（使用`parent`关系）中以对多个配置进行分组，树结构可用于反映存储配置文件的目录结构。
 
 - 如果您使用Puppet，配置模块可以直接映射到[Puppet模块](https://docs.puppet.com/puppet/latest/reference/modules_fundamentals.html)。
 
 - 如果您使用Ansible，请使用配置模块对多个配置进行分组。
 
-然后可以添加配置类（`http://<YOUR_RALPH_URL>/assets/configurationclass/`）。此类将被用于标记host所持有的此配置。
+然后可以添加configurationclass（`http://<YOUR_RALPH_URL>/assets/configurationclass/`），configurationclass将被用于标记host所持有的配置。
 
-- 在Puppet的情况下，它直接映射到Puppet class.。
+- 在Puppet的情况下，直接映射到Puppet class.。
 
-- 对于Ansible，这可以映射到Playbook。
+- 对于Ansible，则会映射到Playbook。
 
-最后，您可以附加配置到你的主机 your host（`Data Center Asset`，`Virtual Server` 等）`configuration path`字段。这可以仅用于管理员信息，但您也可以使用它自动化您的配置管理工具！只需简单根据Ralph的API 从主机获取`configuration_path`，并将其应用于您的工具。
+最后，您可以在你的主机（`Data Center Asset`，`Virtual Server` 等）中配置使用`configuration path`字段，这仅适用于管理员，但您也可以使用它自动化您的配置管理工具！只需根据Ralph API从主机获取`configuration_path`数据，并将其应用于您的配置管理工具。
 
 您可以使用自定义字段来设置传递给配置管理工具的一些变量。要在`REST API`中显示`configuration_variables`字段下的自定义字段，请选择`use as configuration variable`设置。有关更多信息，请参阅自定义字段部分。
 
@@ -559,11 +557,16 @@ Data Center Infrastructure Management
 TODO
 
 ### 预启动配置 Preboot configuration
-`Preboot configuration`允许您在定义正在`Deployment`中执行的自定义文件 。如`kickstart`，`iPXE`或`preseed`。
+`Preboot configuration`允许您在部署中执行的自定义文件 。如`kickstart`，`iPXE`或`preseed`。
+```
+kickstart是Red Hat公司针对自动安装Red Hat、Fedora与CentOS这3种同一体系的操作系统而制定的问答规范。操作系统完装完成后自动执行一些脚本.
+preseed则是Debian/Ubuntu操作系统自动安装的问答规范。操作系统完装完成后自动执行一些脚本.
+PXE是一种远程启动技术，结合CentOS的kickstart和Ubuntu的preseed机制，我们就可以完成自动安装操作系统的目标。
+```
 
 要定义`preboot configuration` ，您需要：
-- 访问`Preboot configuration`（`/ deployment / prebootconfiguration /`）页面
-- 单击“添加预启动配置`Add preboot configuration`”
+- 访问`Preboot configuration`（`/deployment/prebootconfiguration/`）页面
+- 单击`Add preboot configuration`
 - 在新页面上有一个表单与几个字段，如：
 
 ```
@@ -574,7 +577,7 @@ TODO
 - Description
 ```
 
-`Configuration`字段：此字段允许你写`kickstart`，`preseed`，`iPXE`或一些常规`script`配置。可以包含来自Ralph的变量。这些是：
+`Configuration`字段：此字段允许你写`kickstart`，`preseed`，`iPXE`或一些常规`script`脚本配置。可以包含来自Ralph的变量。这些是：
 
 ```
 - configuration_class_name (eg. 'www')
@@ -602,10 +605,10 @@ TODO
 
     RALPH_INSTANCE = 'http://127.0.0.1:8000'
 
-您应该自定义`RALPH_INSTANCE`变量以适应您的设置。
+您可以自定义`RALPH_INSTANCE`变量以适用于您的情况。
 
 #### 例：
-这是`kickstart`使用上述变量（`hostname`）之一的文件示例
+以下是`kickstart`文件示例，使用了上述变量（`hostname`）
 
 ```
 lang en_US
@@ -616,33 +619,33 @@ echo {{ hostname }}
 ```
 
 
-## 域名联系 Domain Contracts
+## 域名关联 Domain Contracts
 ### 介绍
 TLDR;   
-这是一个域名`domain `所有权模块，而不是DNS管理工具。对于DNS记录集成查看[django-powerdns-dnssec](https://github.com/allegro/django-powerdns-dnssec)模块和PowerDNS服务器
+这是`domain`所有权模块，并非DNS管理工具。对于DNS记录集成功能可以查看[django-powerdns-dnssec](https://github.com/allegro/django-powerdns-dnssec)模块和PowerDNS服务器
 
-`Domain Contracts `模块处理与域相关的优惠，目的和付款信息。它也可以用于Domain交易公司。这个模块与前面提到的`django-powerdns-dnssec`很相似。
+`Domain Contracts`模块处理与域名相关的优惠，需求和付款信息。它也可以用于Domain供应企业。这个模块与前面提到的`django-powerdns-dnssec`很相似。
 
 
-### 快速开始 - 添加域 Quickstart - adding the domain
-1. 单击  Domain -> Domains -> Add domain
-2. 输入域名“allegrogroup.com”。
-3. 不设置上级域名，因为它是顶级域名。
-4. Service/env 描述了为此域创建的特定原因。创建名为“`Auction service`”的新服务，例如，环境称为“生产production”。对于内部域，我们可以使用“测试testing”环境。
-5. 从列表中选择所需的域状态 domain Status - 例如，如果域被主动使用，则为“"Active”。
-6. 当您想要将domains组合在一起时，业务部门 Business segment 就会帮助您，创建一个示例“Marketplaces市场”。
-7. 选择负责域名和子域名管理的业主人员。
-8. 选择负责域名技术维护的技术负责人。
-9. Domain Holder是一家接收域名的公司，例如“Allegro Group”。
-10. 现在您必须在给定期间填写域名价格。输入域名到期日，注册人姓名（例如：“CNC”，“售后”），最后是域名价格。
-11. 您可以重复此过程以添加 适当的子域appropriate subdomains，例如添加名称为“test.allegrogroup.com”的新域new domain， parent设置为“allegrogroup.com”。
+### 添加域名 Quickstart - adding the domain
+1. 单击Domain -> Domains -> Add domain
+2. 输入域名“allegrogroup.com”
+3. 如果是顶级域名就不用设置上级域名
+4. Service/env 代表创建此域名的特定原因。创建名为“`Auction service`”的新服务，例如，环境称为“production”。对于内部域，我们可以使用“testing”环境。
+5. 从列表中选择所需的域名状态`domain Status`，例如，如果域名正在使用，就选择“"Active”
+6. 当您想要将domains组合在一起时，使用Business segment(业务部门)字段，创建一个Business segment示例名为“Marketplaces”
+7. 选择负责域名和子域名管理的业务人员
+8. 选择负责域名技术维护的技术负责人
+9. Domain Holder指的是接收域名的公司，例如“Allegro Group”
+10. 现在最好填写域名价格、域名到期时间、注册人姓名（例如：“CNC”，“售后”）
+11. 您可以重复此过程以添加，适当的appropriate subdomains(子域名)，例如添加名称为“test.allegrogroup.com”的新域名， parent设置为“allegrogroup.com”
 
 
 ## 自定义字段 Custom fields
 Ralph的定制字段有这些特征：
 
 - 它可以附加到任何模型model
-- 字段可能对值类型有限制（例如，必须是int，string，url，bool）
+- 字段可能对值的类型有限制（例如，必须是int，string，url，bool）
 - 字段可能会限制可能的选择（如html的选择字段）
 
 
@@ -651,17 +654,17 @@ Ralph的定制字段有这些特征：
 
 可选项：
 
-- `name` - 您的自定义字段的名称
-- `attribute name` - 这是自定义字段的名称。它是使用API时其中的关键。
-- `type` - 自定义字段类型。可能的选择是：
+- `name`：您的自定义字段的名称
+- `attribute name`：这是自定义字段的名称。它是使用API时的关键信息。
+- `type`：自定义字段类型。有以下类型可选：
 > - `string`
 > - `integer`
 > - `date`
 > - `url`
 > - `choice list`
-- `choices` - 如果您选择了`choices`类型，请填写它。这是自定义字段的可能选择的列表。使用 `|`分开选项，例如 `abc|def|ghi`。
-- `default value` - 如果您填写它，该值将被用作您的自定义字段的默认值，
-- `use as configuration variable` - 设置时，此变量将在“`configuration_variables`”字段中的API中公开。您稍后可以在配置管理工具（如Puppet或Ansible）中使用。
+- `choices`：如果您选择了`choices`类型，就需要填写它，这是自定义字段的可能选择的列表。使用 `|`分开选项，例如 `abc|def|ghi`。
+- `default value`：如果您填写它，该值将被用作您的自定义字段的默认值，
+- `use as configuration variable`：勾选时，此变量将在`configuration_variables`字段中的API中公开。您稍后可以在配置管理工具（如Puppet或Ansible）中使用。
 
 
 **例：**
@@ -669,16 +672,16 @@ Ralph的定制字段有这些特征：
 ![自定义字段定义](http://ralph-ng.readthedocs.io/en/latest/img/custom-field-add.png)
 
 ### 将自定义字段附加到对象 Attaching custom fields to objects
-您可以将自定义字段附加到任何对象类型（如果由开发人员为特定类型启用）。
+您可以将自定义字段附加到任何对象类型（是否为特定类型启用由开发人员决定）。
 
-Ralph的自定义字段与这里的任何其他字段几乎相同。第一个类型（部分）自定义字段的名称到该`Key`字段中。
+Ralph的自定义字段与这里的任何其他字段地位几乎相同，先在`Key`字段中填写自定义字段的名称。
 
 ![自定义字段，自动完成](http://ralph-ng.readthedocs.io/en/latest/img/custom-field-autocomplete.png)
 
 然后在自动填充列表中选择您选择的自定义字段。请注意（对于某些类型）字段的值可能会更改其类型，例如选择列表。键入或选择所需的值并保存更改！
 
 
-![自定义字段，选择价值](http://ralph-ng.readthedocs.io/en/latest/img/custom-field-select-value.png)
+![自定义字段，选择值](http://ralph-ng.readthedocs.io/en/latest/img/custom-field-select-value.png)
 
 对于任何对象，每个自定义字段最多可以包含一个值（换句话说，您不能将相同的自定义字段多次附加到单个对象）。
 
@@ -686,9 +689,9 @@ Ralph的自定义字段与这里的任何其他字段几乎相同。第一个类
 您可以通过Ralph API更改自定义字段，就像使用它的GUI一样简单！
 
 ### 阅读自定义字段
-自定义字段以只读形式附加到任何API（适用）资源作为键值字典。
+自定义字段以只读形式附加到任何API资源作为键值字典。
 
-此字典中的关键字`attribute_name`定义在自定义字段中。如上所述，它是自定义字段的名称。
+自定义字段的`attribute_name`字段，在API字典中属于`custom_fields`。
 
 例：
 ```
@@ -705,10 +708,10 @@ Ralph的自定义字段与这里的任何其他字段几乎相同。第一个类
 }
 ```
 ### 过滤 Filtering
-您可以通过您选择的自定义字段的值轻松地过滤对象。预先计划`attribute_name`通过`customfield__`在对象名单，URL只选择匹配您所选择的自定义字段，例如：`http://<YOUR-RALPH-URL>/api/data-center-assets/?customfield__docker_version=1.10`。
+您可以通过您选择的自定义字段的值轻松地过滤对象。预先把`attribute_name`加在`customfield__`后面，在URL中选择所选择的自定义字段值，例如：`http://<YOUR-RALPH-URL>/api/data-center-assets/?customfield__docker_version=1.10`。
 
 ### 更改自定义字段
-要预览 REST-friendly way 中的 自定义字段，访问 `http://<YOUR-RALPH-URL>/api/<YOUR-RESOURCE-URL>/customfields/`，例如` http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/`。在这里，您有自定义字段附加到此特定对象（在本例中为model id 1234）。
+要预览REST-friendly Way中的自定义字段，查看指定模型对象的自定义字段，访问 `http://<YOUR-RALPH-URL>/api/<YOUR-RESOURCE-URL>/customfields/`，例如` http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/`。自定义字段附加到此特定对象中（在本例中为model id 1234）。
 
 例：
 ```
@@ -742,7 +745,7 @@ Ralph的自定义字段与这里的任何其他字段几乎相同。第一个类
     ]
 }
 ```
-您可以在此添加此对象的新自定义字段值（在自定义字段列表中设置POST请求）或更新任何现有自定义字段值（对所选自定义字段值进行PUT或PATCH请求，例如`http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/29/）`。例如，您可以使POST以`http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/`请求以下数据将新的自定义字段附加到 Asset Model with ID `1234`：
+您可以在这里添加此对象的新自定义字段值（在自定义字段列表中设置POST请求）或更新任何现有自定义字段值（对所选自定义字段值进行PUT或PATCH请求，例如`http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/29/）`。例如，您可以使用POST请求`http://<YOUR-RALPH-URL>/api/assetmodels/1234/customfields/`，发送以下数据，这会将新的自定义字段附加到 Asset Model with ID `1234`：
 
 ```
 {
@@ -753,7 +756,7 @@ Ralph的自定义字段与这里的任何其他字段几乎相同。第一个类
 您可以使用自定义字段ID或属性名称将其指向API。
 
 请注意，这里的每个动作都将发生在特定对象的上下文中 - 每个自定义字段都将附加到当前url（ex ` /assetmodels/1234`）指向的资源中。
-
+here--××--
 
 ## 仪表板 Dashboards
 Dashboard 提供了通过条形图或饼图显示数据的基本机制。
