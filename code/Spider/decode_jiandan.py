@@ -3,6 +3,7 @@ import string
 import requests
 import re
 import time
+import os
 
 
 # 按base64规则解码
@@ -100,7 +101,7 @@ def get_html(url):
 
 # 请求js密码字符串
 def get_js_password():
-    url = "http://cdn.jandan.net/static/min/1db6c1a9c900052d56757120ca96add6.04100501.js"
+    url = "http://cdn.jandan.net/static/min/1db6c1a9c900052d56757120ca96add6.06100501.js"
     r = requests.get(url, headers=headers)
     pattern = r'\(e,"(.*?)"\);var\sa=\$'
     r_list = re.findall(pattern, r.text)
@@ -133,15 +134,27 @@ def down_img(url):
     time.sleep(1)
 
 if __name__ == "__main__":
-    # 25 start
-    for i in range(356):
+    if not os.path.exists('./jiandanLocation.loc'):
+        with open('./jiandanLocation.loc', 'w') as f:
+            f.write('0')
+            page = 0
+    else:
+        with open('./jiandanLocation.loc', 'r') as f:
+            page = int(f.read())
+
+    for i in range(page, 356):
         try:
-            url = 'http://jandan.net/ooxx/page-' + str(i+1)
+            url = 'http://jandan.net/ooxx/page-' + str(i)
             print(">>>", url)
             save_url_list(url)
             time.sleep(10)
         except Exception as e:
             print("第%d页发生问题" % i)
             print("报错:%s" % e)
+        finally:
+            with open('./jiandanLocation.loc', 'w') as f:
+                f.write(str(i))
+            break
+
 
 

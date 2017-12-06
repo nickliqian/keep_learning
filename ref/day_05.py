@@ -88,10 +88,10 @@ import os
 #     # 解码内容，指定每一行的默认值或者缺省值，[["None"],["None"]]
 #     records = [["None"], ["None"]]
 #
-#     examle, label = tf.decode_csv(value, record_defaults=records)
+#     example, label = tf.decode_csv(value, record_defaults=records)
 #
 #     # 批处理
-#     examle_batch, label_batch = tf.train.batch([examle, label], batch_size=12, num_threads=1, capacity=20)
+#     example_batch, label_batch = tf.train.batch([example, label], batch_size=12, num_threads=1, capacity=20)
 #
 #     return examle_batch, label_batch
 #

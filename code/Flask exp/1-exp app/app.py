@@ -22,5 +22,10 @@ def signin():
     return render_template('form.html', message='Bad username or password', username=username)
 
 
+@app.route('/img', methods=['GET', 'POST'])
+def img():
+    return render_template('img.html')
+
+
 if __name__ == '__main__':
     app.run()
