@@ -3,7 +3,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 # 预处理-特征处理
 # 归一化 公式 精确小数据场景
-# API：sklearn.preprocessing import MinMaxScaler
+# API：scikit-learnExp.preprocessing import MinMaxScaler
 # 距离公式
 def mmscaler():
     # feature_range 映射到指定范围
