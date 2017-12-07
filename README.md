@@ -756,41 +756,44 @@ Ralph的自定义字段与这里的任何其他字段地位几乎相同，先在
 您可以使用自定义字段ID或属性名称将其指向API。
 
 请注意，这里的每个动作都将发生在特定对象的上下文中 - 每个自定义字段都将附加到当前url（ex ` /assetmodels/1234`）指向的资源中。
-here--××--
+
 
 ## 仪表板 Dashboards
-Dashboard 提供了通过条形图或饼图显示数据的基本机制。
+Dashboard提供了通过条形图或饼图用以显示数据的基本机制。
 
 ## 与statsd集成 Integration with statsd
-statsd - 单机搭建
 每个图形都可以将数据推送到statsd。您必须添加`STATSD_GRAPHS_PREFIX`到您的 settings，并设置`ALLOW_PUSH_GRAPHS_DATA_TO_STATSD`和`COLLECT_METRICS`为True。接下来，检查`Push to statsd`具体图表，并使用Ralph的管理命令`push_graphs_to_statsd`将您的数据推送到statsd。
+```
+StatsD 是一个使用 Node.js 开发的简单的网络守护进程，通过 UDP 或者 TCP 方式侦听各种统计信息，包括计数器和定时器，并发送聚合信息到后端服务，例如 Graphite 、 ElasticSearch 、 InfluxDB 等等，这里 列出了支持的 backend 。
+这里ralph也支持。
+```
 
 ### 入门
-本教程中的所有示例数据均由Ralph的命令生成`ralph make_demo_data`。
+本教程中的所有示例数据均由Ralph的命令`ralph make_demo_data`生成。
 
 ## 目标
-在每个数据中心显示带有数量资产的图表。
+让在每个数据中心显示带有数量的资产图表。
 
-## 第一个仪表板
-首先，我们必须在Ralph中创建新的dasboard对象，方法是在菜单中`Dashboards > Dashboards`单击`Add new dashboard`以添加新的对象。
+## 第一个Dashboards
+首先，我们在Ralph中创建新的dasboard对象，方法是在菜单中`Dashboards > Dashboards`单击`Add new dashboard`以添加新的对象。
 
 ![添加仪表板](http://ralph-ng.readthedocs.io/en/latest/img/dashboard-create-dasboard.png)
 
-下一步是创建图形并对其进行配置。 
+下一步创建Graph图形并对其进行配置。 
 
 
 ![添加图表](http://ralph-ng.readthedocs.io/en/latest/img/dashboard-create-dasboard.png)
 
 以上形式的重要字段是`Params`- 此字段接受JSON格式的图形配置。键`labels`，`series`，`filters`是必需的。以下这些字段的简短描述：
 
-- `labels` - 模型中的哪个字段是字符串表示，
-- `series` - 这个字段的聚合，合计
-- `filters`- 根据条件过滤查询，类似于Django ORM的查询（有关更多信息，请访问Django文档），
-- `excludes`- 排除结果中的项目 - 与`filters`相反，
+- `labels` - 模型中的指定字段的字符串表示，
+- `series` - 对指定series字段进行聚合、统计
+- `filters`- 根据条件进行过滤，类似于Django ORM的查询（有关更多信息，请访问Django文档），
+- `excludes`- 排除查询结果中的项目，与`filters`作用刚好相反，
 - `aggregate_expression`- 默认情况下与`series`一致，您可以通过正确的聚合表达式（例如*或 path to field）覆盖此值，
 - `target`-包含键：`model`，`filter`，`value`，此选项可更改可点击图的默认视图。
 
-OK，保存我们的新的 dashboard object。现在我们可以在`Graphs`字段中看到`item`- `DC Capacity` 并选择它们。保存后，选择`Dashboards > Dashboards`在列表视图中单击`Link`。 
+OK，保存我们的新的dashboard object。现在我们可以在`Graphs`字段中看到`DC Capacity`并选择它，保存。接着选择`Dashboards > Dashboards`在列表视图中单击`Link`，现在就可以看到我们的图形了！ 
 
 ![链接到仪表板](http://ralph-ng.readthedocs.io/en/latest/img/dashboard-link.png)
 
@@ -799,8 +802,8 @@ OK，保存我们的新的 dashboard object。现在我们可以在`Graphs`字�
 ![链接仪表板结果](http://ralph-ng.readthedocs.io/en/latest/img/dashboard-final-dc.png)
 
 ### 聚合选项 Aggregating options
-#### 不同的值 distinct
-`series`允许通过不同的值聚合。要使用它， 可以使用管道`|distinct`修饰器 扩展`series`查询
+#### distinct
+`series`允许对非重复值聚合，试着使用管道`|distinct`修饰器来执行`series`的查询结果。
 ```
 {
     "labels": "name",
@@ -811,7 +814,7 @@ OK，保存我们的新的 dashboard object。现在我们可以在`Graphs`字�
 }
 ```
 #### 比例 Ratio
-`series`允许计算两个聚合字段的比例。设置图表的`Aggregate type`图为`Ratio`，并为`series`使用两个值的列表：
+`series`可以计算两个聚合字段的比例。设置图表的`Aggregate type`为`Ratio`，并为`series`使用含有两个值的列表：
 ```
 {
     "labels": "service_env__service__name",
@@ -822,7 +825,7 @@ OK，保存我们的新的 dashboard object。现在我们可以在`Graphs`字�
 }
 ```
 #### 按日期分组 Grouping by date
-`series`允许基于部分日期的聚合，如year或  month：
+`series`可以基于部分日期进行聚合，如year或month：
 ```
 {
     "labels": "service_env__service__name",
@@ -831,10 +834,10 @@ OK，保存我们的新的 dashboard object。现在我们可以在`Graphs`字�
 ```
 
 ### 特殊的过滤器和字段 Special filters and fields
-特殊过滤器是有时候会有帮助。
+特殊过滤器有时候特别有用。
 
 #### series
-`series` 是包含所有注释值的特殊字段，可以像其他文件一样进行过滤：
+`series` 是包含所有注释值的特殊字段，可以像其他字段一样进行过滤：
 ```
 {
     "labels": "name",
@@ -845,7 +848,7 @@ OK，保存我们的新的 dashboard object。现在我们可以在`Graphs`字�
 }
 ```
 #### or, and
-`or`，`and`扩展查询有关的额外条件，如：
+`or`，`and`扩展查询的额外条件，如：
 ```
 {
     "labels": "name",
@@ -855,10 +858,10 @@ OK，保存我们的新的 dashboard object。现在我们可以在`Graphs`字�
     },
 }
 ```
-过滤器接受元素的参数列表。
+过滤器接受一个参数列表。
 
 #### from_now
-对于`filters`，`from_now`仅在日期和日期时间字段中使用，例如：
+对于`filters`-`from_now`仅在日期和日期时间字段中使用，例如：
 ```
 {
     "labels": "name",
@@ -868,30 +871,30 @@ OK，保存我们的新的 dashboard object。现在我们可以在`Graphs`字�
     },
 }
 ```
-上面的过滤器将限制查询一年内创建的对象。周期可能变化：
+上面的过滤器将查询一年内创建的对象，其中：
 
 - `y` - 年，
 - `m` - 月，
 - `d` - 天，
 
 
-## Ralph API consumption（消耗）
-Ralph通过REST-wide WEB API公开了许多资源和操作，可用于查询数据库和使用数据填充数据。Ralph API使用 Django Rest框架，所以每个与之相关的主题都应该在Ralph API中工作。
+## Ralph API consumption
+Ralph通过REST-wide WEB API开放许多数据和操作，可用于查询和添加数据。Ralph API使用Django Rest Framework。
 
 ### 认证 Authentication
-每个用户都有自动生成的用于API认证的个人令牌。您可以通过访问您的个人资料页面或发送请求来获取您的令牌api-token-auth：
+每个用户都有自动生成的用于API认证的个人令牌(token value)。您可以通过访问您的个人资料页面或发送请求来获取您的令牌api-token-auth：
 
     curl -H "Content-Type: application/json" -X POST https://<YOUR-RALPH-URL>/api-token-auth/ -d '{"username": "<YOUR-USERNAME>", "password": "<YOUR-PASSWORD>"}'
     {"token":"79ee13720dbf474399dde532daad558aaeb131c3"}
 
-如果您没有分配API令牌，请发送上面的请求 - 它会自动生成API令牌。
+如果您没有被分配API token，可以发送上面的请求，它会根据用户名和密码自动生成一个API token。
 
-在API的每个请求中，您必须在请求标头中使用您的API令牌密钥：
+在API的每个请求中，您必须在请求头中加上您的API token密钥：
 
     curl -X GET https://<YOUR-RALPH-URL>/api/ -H 'Authorization: Token <YOUR-TOKEN>'
 
 ### API版本控制 API Versioning
-Api要求客户端在Accept标头中指定版本。
+API要求客户端在请求头的Accept字段指定`version`。
 
     Example:
     GET /bookings/ HTTP/1.1
@@ -899,20 +902,14 @@ Api要求客户端在Accept标头中指定版本。
     Accept: application/json; version=v1
 
 ### 输出格式 Output format
-Ralph API支持JSON输出格式（默认情况下）和浏览器中的HTML预览（转到 `https：/// api /` 预览）。
+Ralph API支持JSON输出格式（这是默认情况）和浏览器中的HTML预览（访问`https://<YOUR-RALPH-URL>/api/`预览）。
 
 ### 可用资源 Available resources
 `work in progress`
 
 ### HTTP methods
-可以在API中使用以下方法。请参考具体模块的API参考，以获得更准确的解释。
+可以在API中使用以下方法。请参考具体模块的API，以获得更准确的解释。
 
-方法	在集合	在单一资源上
-得到	获取完整的资源列表	获取资源详情
-POST	添加新资源	-
-放	-	编辑资源（您需要提供所有数据）
-补丁	-	编辑资源（您只需要提供更改的数据）
-删除	-	删除资源
 
 | Method        | On a collection           | On a single resource  |
 | ------------- |:-------------:| -----:|
@@ -995,16 +992,16 @@ POST	添加新资源	-
     ...
 }
 ```
-为了可读性，响应的一部分被跳过。
+为了可读性，这里只显示了响应的一部分。
 
 ### 您可以通过标签搜索记录：
     curl https://<YOUR-RALPH-URL>/api/data-center-assets/?tag=tag1&tag=tag2 | python -m json.tool
 
-您将找到包含所有指定标签的所有记录。
+您将找到包含所有你指定标签的记录。
 
 ### 保存样本资源
 PATCH data center asset with data:
-PATCH数据中心的资产与数据：
+修补数据中心的资产与数据：
 ```
 {
     "hostname": "aws-proxy-2.my-dc",
@@ -1013,27 +1010,26 @@ PATCH数据中心的资产与数据：
     "licences": [1, 2, 3]
 }
 ```
-请注意：在此示例中： 设置相关对象（not-simple，如字符串或数字）只传递其ID（请参阅service_env） 设置许多相关对象，将其传递到列表中（请参阅licences）*可以传递文本选择字段的值（状态），即使它存储为数字。
+请注意：在这个例子中，service_env的值设置为id，licences设置值为多个id的列表，你可以为choice类型的字段传递文本数据甚至所代表的数字。
 
 ### 过滤 Filtering
-Ralph API支持多个查询文件管理器：
+Ralph API支持多种查询机制：
 
-您可以通过向发送`OPTIONS`请求特定资源（查看`filtering`项目）来检查可能的字段用以过滤。
+您可以发送`OPTIONS`请求特定资源（查看`filtering`小节）实现过滤仅查看指定字段的目的。
 
 - 过滤（精确）字段值（例如`<URL>?hostname=s1234.local`）
-- 使用Django `__`用法查询过滤器（有关详细信息，请参阅Django Field文档），例如。`<URL>?hostname__startswith=s123`或者`<URL>?invoice_date__lte=2015-01-01`
-- 扩展过滤器 - 允许使用单个查询参数对多个字段进行过滤 - 它对于多态模型（如`BaseObject`）来说是有用的- 例如通过`name`参数过滤，您将按`DataCenterAsset`主机名过滤`BackOfficeAssetHostname`等。示例：`<URL>/base-objects/?name=s1234.local`
+- 使用Django`__`用法查询过滤器（有关详细信息，请参阅Django Field文档），例如`<URL>?hostname__startswith=s123`或者`<URL>?invoice_date__lte=2015-01-01`
+- extended filters：可以使用单个查询参数对多个字段进行过滤，它对于多态模型（如`BaseObject`）来说是有用的。例如通过`name`参数过滤，您将以`DataCenterAsset`主机名、`BackOfficeAssetHostname`等字段进行过滤。示例：`<URL>/base-objects/?name=s1234.local`
 - 使用`tag`查询参数过滤标签。可以在url查询中指定多个标签。例：`<URL>?tag=abc&tag=def&tag=123`
 
+`BaseObject`字段查找也使用extended filters，例如。<URL>/base-objects/?name__startswith=s123
 
-字段查找也使用扩展过滤器`BaseObject`，例如。<URL>/base-objects/?name__startswith=s123
-
-### 转换API
-所选模型的可用转换列表
+### Transitions API
+List of available transition for the selected model
 
     GET /api/data_center/datacenterasset/46/transitions/
 
-结果是：
+结果：
 ```
 {
     "count": 2,
@@ -1062,7 +1058,6 @@ Ralph API支持多个查询文件管理器：
         },
 ...
 ```
-运行转换的POST参数列表：
 List of POST parameters to run transition for transition:
 
     OPTIONS <URL>/api/virtual/virtualserver/767/transitions/Initialization/
@@ -1106,74 +1101,75 @@ List of POST parameters to run transition for transition:
 
 ## ralph-cli
 
-`ralph-cli`是一个开源工具（参见它的GitHub repo），意味着Ralph可以作为一种命令行接口。其目标是为所有Ralph的功能提供“Swiss Army knife瑞士军刀”，这种功能足以将其从网页GUI引入终端。
+`ralph-cli`是一个开源工具（参见它的GitHub），意味着Ralph可以作为一种命令行接口。其目标是为所有Ralph系统提供“Swiss Army knife”功能，这种功能足以将其从web端引入终端。
 
-此时，您可以使用它来发现硬件的组件（使用  `scan` 命令），但我们将来会扩展功能（请参阅  Ideas for Future Development）。值得一提的是，  `ralph-cli`也有能力发现MAC地址，这是必要的，如果你想从Ralph部署你的主机（当然，你可以手动输入所有这些数据到Ralph，但ralph-cli大大方便这个过程）。
+您可以使用`ralph-cli`来发现硬件及其相关组件（使用`scan`命令），而且我们未来会扩展功能（请参阅Ideas for Future Development）。值得一提的是，  `ralph-cli`也具有发现MAC地址的能力，如果你想从Ralph部署你的主机（当然，你也可以手动输入所有这些数据到Ralph，但ralph-cli大大方便这个过程）。
 
-如果您想开始使用它，请参阅其文档 - 特别是快速入门部分，也可能是关键概念部分。
+如果您想开始使用它，请参阅其文档，特别是快速入门部分和Key Concepts部分。
+[ralph-cli](http://ralph-cli.readthedocs.io/en/latest/)
 
-如果您发现任何问题`ralph-cli`（或者您有任何建议/想法），请在此处创建一个问题。如果你想贡献一些代码（在我们鼓励你做的事情中），你可能也想阅读 开发部分（BTW，`ralph-cli`写在Go中，但是使用Python作为scan scripts）。
+如果您在使用`ralph-cli`的过程中发现任何问题，或者您有任何建议/想法，请在[ralph-cli issue](https://github.com/allegro/ralph-cli/issues)创建一个问题。如果你想贡献一些代码（这是我们所鼓励的），你可能也想阅读开发部分（BTW，使用golang语言开发`ralph-cli`，但是使用Python作为scan的脚本）。
 
 
 ## We are open :-)
 
-Ralph是一个开源系统，它允许以简单直接的方式管理数据中心。我们不只是提供来源，我们所有的开发过程，包括规划，蓝图，甚至项目迭代都在公开环境完成！该项目背后的灵活和适应性强的架构鼓励开发人员尝试其需求和期望。如何成为开发过程的一部分？
+Ralph是一个开源系统，它允许以简单直接的方式管理数据中心及其相关资源。我们不只是提供源码，我们所有的开发过程，包括规划，蓝图，甚至项目迭代都在公开环境完成！该项目的灵活性和强适应性的架构鼓励开发人员对他们的需求进行尝试。如何成为开发过程的一部分？
 
 ### 简而言之
-这是您如何修复错误或添加功能在几个快速步骤：
+这是您如何修复bug或添加功能在几个快速步骤：
 
 1. fork us on GitHub,
 2. checkout your fork,
-3. write a code (with PEP8 rules), test, commit,
+3. write a code (with PEP8 rules),test,commit,
 4. push changes to your fork,
 5. open a pull request.
 
 
-## 成为贡献者
+## 成为贡献者 Becoming contributor
 ### Hello!
 在我们的Gitter聊天https://gitter.im/allegro/ralph上介绍自己，当前与Ralph相关的问题和疑虑被提出，分享和解决。
 
 ### 开发环境
-使您的软件兼容Ralph开发要求。
+使您的操作系统兼容Ralph开发要求。
 
-1. 装git和Vagrant应用。
-2. `git clone https://github.com/allegro/ralph`.  "ng" 的github 分支是用的 Ralph 3.0, 这是目前正在开发最新版本. 对于2.x版本我们不会做更多的开发了。
+1. 安装git和Vagrant。
+2. `git clone https://github.com/allegro/ralph`.  "ng"的github分支是Ralph 3.0版本, 这是目前正在开发最新版本. 对于2.x版本我们不会做更多的开发。
 3. 在“vagrant”目录中，您将找到设置开发环境的Vagrantfile。只需键入`vagrant up`即可启动完整的开发环境。
-4. 现在登录虚拟框环境`vagrant ssh`。
-5. 虚拟环境自动激活 - shell脚本位于`〜/ bin / activate`中。
+4. 现在登录虚拟环境`vagrant ssh`。
+5. 虚拟环境自动激活，shell脚本位于`〜/bin/activate`中。
 6. 运行`make menu`。
-7. 运行ralph实例`make run`，使用账号`ralph：ralph` 登录到`localhost：8000`。
+7. 运行ralph实例`make run`，使用账号`ralph:ralph`登录到`localhost:8000`。
 
-然后，你们都设置好了。对于设置中有可能出现的所有问题，请参考`https://github.com/allegro/ralph/tree/ng/vagrant`
+这样就设置完成。
+对于设置中有可能出现的所有问题，请参考`https://github.com/allegro/ralph/tree/ng/vagrant`。
 
-如果您想通过自己的Django应用程序扩展Ralph，请将您的配置放在  `vagrant/Vagrantfile.local`（例如同步的文件夹）中。您还可以在其中附加自定义供应脚本`vagrant/provision.local.s`h。
+如果您想通过自己的Django应用程序扩展Ralph，请将您的配置放在`vagrant/Vagrantfile.local`（例如同步的文件夹）中。您还可以在其中附加自定义脚本`vagrant/provision.local.sh`。
 
-### 错误跟踪器和冲刺 Bug tracker & sprints
-Github issues tracker 把握我们的开发。我们使用`milestones`用于我们的迭代（每一周或者两周），并有一些预计的发布日期。使用浏览器访问：用于 Scrum board的`https://waffle.io/allegro/ralph?label=ng`（使用milestone 字段进行过滤）以获取更多详细信息。
+### Bug tracker & sprints
+Github issues tracker 掌握我们的开发情况。我们使用`milestones`用于我们的迭代（每一周或者两周），并有一些预计的发布日期。使用浏览器访问：用于 Scrum board的`https://waffle.io/allegro/ralph?label=ng`（使用milestone字段进行过滤）以获取更多详细信息。
 
 ### Blueprints 蓝图
-我们使用所谓的“蓝图”来讨论Github上的每个设计决策。这只是一些Github问题，有一些设计草案，图表和一般性讨论。您可以通过在问题列表上使用“蓝图”标签来识别蓝图。
+我们使用所谓的“Blueprints”来讨论Github上的每个设计决定。这只是一些Github问题，有一些设计草案，图表和一般性讨论。您可以通过在问题列表上使用“蓝图”标签来识别蓝图。
 
 ### 技术文档
-准备编码？请参考 我们的技术/架构文档
+如果准备开始写代码，请参考我们的技术/架构文档
 
 ## Do's and don't's
 ### Do's
-如果您想得到快速回复，请通知@ vi4m Gitter在“issue”部分中，在Github上开始您的item。我们的主页是讨论性质。随意探索Python编程的魅力。贡献/分享代码很重要。
+如果您想得到快速回复，请通知@vi4m Gitter在“issue”部分中，在Github上开始您的item。我们的主页是讨论性质，随意探索Python编程的魅力，贡献/分享代码很重要。
 
 ### Don't's
 "When is it ready?"的答案应该是"When it is ready"。
-“什么时候准备好？”这个问题的答案应该是已经准备好了！
 
 ### Django's template standard
 有几个简单的规则：
 
-1. 在`load`和模板的其他部分之间 有一个空行。
-2. 每一块/段代码之间应该 有一个空行。
+1. 在`load`和模板的其他部分之间有一个空行。
+2. 每一块/段代码之间应该有一个空行。
 3. 如果您打开一些HTML tag 或 Django template tag，那么您必须缩进行，不包括简单代码，自我关闭标签（查找 `inline block`和`{% url ... %}`示例）。
-4. 而最后一个（最重要的）：当你写模板，有一些常用知识。
+4. 而最后一个（最重要的）：当你写template，使用这些常用知识。
 
-所有的这些规定都是为了可读性而不是为了浏览器的解析。
+所有的这些规则都是为了代码的可读性，而不是为了浏览器的解析。
 
 例：
 ```
@@ -1197,10 +1193,10 @@ Github issues tracker 把握我们的开发。我们使用`milestones`用于我�
 
 ## Finding your way around the sources ？
 ### 概念 Concept
-整个应用程序是基于高度可操作的django模型。Django框架自己生成用户界面表单。由于简单性是我们的主要关注点，我们更倾向于保持models更加丰富和用户接口更加细致。这就是为什么我们依靠Django管理面板来管理用户界面。
+整个应用程序是基于高度可操作的Django models和Django框架生成admin表单。由于易用性是我们的主要关注点，我们更倾向于保持更加丰富models和更加细致用户接口。这就是为什么我们依靠Django管理面板来管理用户界面。
 
 ### 主要模块
-Ralph分为不同的模型，如：
+Ralph分为不同的models，例如：
 - 资产 存储有关固定资产的大量信息
 - 扫描 发现数据中心的设备
 - 许可证 管理软件和硬件的许可证
@@ -1210,10 +1206,10 @@ Ralph分为不同的模型，如：
 
 
 ## Ralph Admin
-Ralph Admin class（`ralph.admin.mixins.RalphAdmin`）建立在常规Django Admin之上，并具有一系列扩展功能。其中一些列在下面。
+Ralph Admin class（`ralph.admin.mixins.RalphAdmin`）建立在常规Django Admin之上，并具有一系列扩展功能，列举一些。
 
 ### 导入和导出 Import-Export
-Ralph Admin内置了支持导入和导出对象的模块（使用django-import-export）。可能的配置如下：
+Ralph Admin内置了支持导入和导出对象的模块（基于django-import-export）。可能的配置如下：
 
 #### 资源类 Resource class
 在您的Admin中定义`resouce_class`，以指定`django-import-export`的资源类，用于处理该模型的导入和导出。
@@ -1225,37 +1221,72 @@ Ralph Admin内置了支持导入和导出对象的模块（使用django-import-e
    	 resource_class = resources.SupportResource
     ...
 #### 导出查询 Export queryset
-在您的Admin中定义`_export_queryset_manager`属性，以指定将用于处理导出查询的管理器。这应该是字符串与模型的属性名称的适当管理器。
+在您的Admin中定义`_export_queryset_manager`属性，以指定将用于处理导出查询的管理器。这是适用于字符串与模型的属性名称查询的管理器。
 
 例：
 
     class SupportAdmin(RalphAdmin):
     ...
     	_export_queryset_manager = 'objects_with_related'
-    ...
-从Admin导出默认情况下，使用`get_queryset`从Django's admin正确处理所有过滤等。从Admin导出时，您的资源中定义的`get_queryset`不被使用，但将它们指向相同的对象管理器是一个很好的做法。
+    ...
+默认情况的Admin Export，使用`get_queryset`从Django's admin正确处理所有过滤等。从Admin导出时，您的资源中定义的`get_queryset`不被使用，但将它们指向相同的对象管理器是一个很好的做法。
 
 ### 获取相关对象 Fetching related objects
-默认情况下，Ralph Admin 选择并预取Resource's Meta中定义的所有相关对象。
-
+默认情况下，Ralph Admin会选择并获取你在Resource's Meta元选项中定义的所有相关对象。
+```
+class NetworkResource(RalphModelResource):
+    ...
+    class Meta:
+        model = networks.Network
+        exclude = ('gateway_as_int', 'min_ip', 'max_ip')
+    ...
+```
 
 ## 自定义字段 Custom fields
 ### 如何将自定义字段附加到模型？
-将`WithCustomFieldsMixin`类混合到你的model definition（从`ralph.lib.custom_fields.models`导入）
+将`ralph.lib.custom_fields.models`->`WithCustomFieldsMixin`类继承到你定义的模型类中。
+```
+class AssetModel(
+    PermByFieldMixin,
+    NamedMixin.NonUnique,
+    TimeStampMixin,
+    AdminAbsoluteUrlMixin,
+    WithCustomFieldsMixin,
+    models.Model,
+    metaclass=AssetModelMeta
+):
+    ...
+```
 
 ### 管理员集成 Admin integration
-要在Django Admin中为您的模型使用自定义字段，请将`CustomFieldValueAdminMaxin`类混合到您的model admin（从ralph.lib.custom_fields.admin导入）
+要在Django Admin中使用自定义字段，请将`ralph.lib.custom_fields.admin`->`CustomFieldValueAdminMaxin`类继承到您的model admin
+类中。
+```
+@register(Network)
+class NetworkAdmin(RalphMPTTAdmin,CustomFieldValueAdminMaxin):
+    ...
+```
 
 ### Django Rest框架集成 
-要在`Django Rest Framework`中使用自定义字段，`WithCustomFieldsSerializerMixin`请将类混合到您的API序列化程序（从`ralph.lib.custom_fields.api`导入）
-
+要在`Django Rest Framework`中使用自定义字段，请将`ralph.lib.custom_fields.api`->`WithCustomFieldsSerializerMixin`类继承到您的API序列化程序。
+```
+class ServiceEnvironmentSerializer(
+    TypeFromContentTypeSerializerMixin,
+    WithCustomFieldsSerializerMixin,
+    RalphAPISerializer
+):
+    ...
+```
 
 
 ## 转换 Transitions
-对象从一个到另一个的转换（例如状态） - 这有助于产品生命周期管理。对于每个对象（asset, support, licence），您可以定义一些工作流（set of transitions），并为每个转换提供特殊的操作。
+**TODO:不懂这部分的含义，理解后重新翻译
+
+对象的Transitions（例如状态的转换)，这有助于管理产品生命周期。对于每个对象（如asset,support,licence），您可以定义一些工作流（set of transitions），并为每个Transitions行为提供指定的操作。
+
 
 ### 定义动作
-您可以通过添加方法将新的操作添加到您的类中并进行装饰`@transition_action`。例如：
+您可以通过`@transition_action`装饰新添加方法将新的操作添加到类中。例如：
 ```
 class Order(models.Model, metaclass=TransitionWorkflowBase):
     status = TransitionField(
@@ -1273,11 +1304,10 @@ class Order(models.Model, metaclass=TransitionWorkflowBase):
     def go_to_post_office(cls, instances, request, **kwargs):
         notify_buyer('We send your order to you.')
 ```
-当您可以指定工作流程时，现在可以在管理面板中执行操作。
-添加转换
+当您指定工作流程时，可以在管理面板中执行操作。
 
-#### 额外的参数 Extra parameters
-如果您的操作需要额外的参数来执行，您可以添加字段：
+#### 额外参数 Extra parameters
+如果您的操作需要额外的参数来执行Transitions，您可以添加字段：
 ```
 from django import forms
 
@@ -1302,14 +1332,14 @@ ALLOW_COMMENT = True
 ```
 额外的参数
 
-允许参数字段:: `field`-标准表单字段，例如从`django.forms`，  `condition`-功能至极接受一个参数，并返回boolean值，当条件都满足的字段将被显示。
+允许参数字段: 标准表单字段`field`，例如从`django.forms`，`condition`中接受一个参数，并返回boolean值，当条件都满足时字段将被显示。
 
-如果转换只是一个动作要求，设置`only_one_action`为`True`。
+如果Transitions只有行为需求，设置`only_one_action`为`True`。
 
 如果操作返回附件（例如：PDF文档），设置`return_attachment`为`True`。
 
-#### 在转换历史记录中存储其他数据
-如果您想向转换历史记录添加其他信息，则需要在操作中添加到字典`history_kwargs`：
+#### 在Transitions历史记录中存储其他数据
+如果您想向Transitions历史记录添加其他信息，则需要在操作中添加到字典`history_kwargs`：
 ```
     def unassign_user(cls, instances, request, **kwargs):
         for instance in instances:
@@ -1324,9 +1354,7 @@ ALLOW_COMMENT = True
 #### 重新操作 Rescheduling actions
 异步转换（操作）能够稍后重新安排（例如，当等待某些条件满足时，而不是主动等待）。为此，只需在你的操作中抛出`ralph.lib.transitions.exceptions.RescheduleAsyncTransitionActionLater`异常。
 
-当操作过会重置时， `history_kwargs`和`shared_params`都可以妥善进行处理（和恢复）。
-
-
+当操作过会重置时，`history_kwargs`和`shared_params`都可以妥善进行处理（和恢复）。
 
 
 
@@ -1336,7 +1364,7 @@ Ralph NG很容易扩展，例如在Asset Review上下文中提供自定义选项
 注意：我们鼓励开发人员提供新功能和集成功能！请阅读本文档了解更多信息。
 
 ### 扩展细节视图 Extending the Detail View
-为asset detail view提供自定义子页面是将另一个Django应用程序的内容集成到Ralph admin页面中的最方便的方法。所有注册视图将由ralph 网站上的标签表示。请注意，单视图类不能在多个管理站点中重复使用。
+为Asset detail view提供自定义子页面是将另一个Django应用程序的内容集成到Ralph admin页面中的最方便的方法。所有注册视图将由ralph 网站上的标签表示。请注意，单视图类不能在多个管理站点中重复使用。
 
 您必须编写自己的类视图和模板。添加额外的视图有两种可能：装饰器和类'属性。
 
