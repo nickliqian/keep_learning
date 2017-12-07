@@ -102,6 +102,7 @@ ENV/
 
 # pycharm
 .idea
+.idea/
 .xml
 
 # jupiter_notebook
