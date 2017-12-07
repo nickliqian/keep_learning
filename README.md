@@ -1364,25 +1364,61 @@ Ralph NG很容易扩展，例如在Asset Review上下文中提供自定义选项
 注意：我们鼓励开发人员提供新功能和集成功能！请阅读本文档了解更多信息。
 
 ### 扩展细节视图 Extending the Detail View
-为Asset detail view提供自定义子页面是将另一个Django应用程序的内容集成到Ralph admin页面中的最方便的方法。所有注册视图将由ralph 网站上的标签表示。请注意，单视图类不能在多个管理站点中重复使用。
+要为资产的Detail view提供自定义子页面，是将额外Django App的内容集成到Ralph Admin Page中的最方便的方法，所有注册的视图将由ralph网站上的标签表示。请注意，单个视图类不能在多个admin sites中重复使用。
 
-您必须编写自己的类视图和模板。添加额外的视图有两种可能：装饰器和类'属性。
+您需要编写自己的类视图和模板。添加额外的视图可能有两种方式：装饰器和类属性。
 
 ### Your view
-它必须是从`RalphListView`或`RalphDetailView`继承的正常视图（CBV ）（与视图的意图有关）。
+它必须是从`RalphDetailViewAdmin`、`RalphListView`或`RalphDetailView`继承的正常视图（CBV）（it depends on view purpose）。
+```
+NetworkView 和 ComponentsAdminView 继承至 RalphDetailView，下面会举例说明。
+class VirtualServerNetworkView(NetworkView):
+    pass
+
+class VirtualServerComponentsView(ComponentsAdminView):
+    pass
+    
+class VirtualServerAdmin(...):
+   ...
+   change_views = [
+        VirtualServerComponentsView,
+        VirtualServerNetworkView,
+        ...
+    ]
+   ...
+```
 
 #### RalphListView
-这个类专门用于列表视图。
+这个类专门用于列表类的视图。
 
 #### RalphDetailView
-这个类专门用于细节视图。类的实例提供了其他属性：
+这个类专门用于细节信息类的视图，类实例也提供了其他属性：
+- `model`：实际模型类，
+- `object`：由`model`和`id`确定的具体对象。
+您可以从template访问object。
 
-- `model` - 实际模型类，
-- `object`- 具体对象，来自`model`和`id`。
-您可以从template 访问object。
+```
+class SecurityInfo(RalphDetailView):
+
+    icon = 'lock'
+    label = 'Security Info'
+    name = 'security_info'
+    url_name = None
+    template_name = 'security/securityinfo/security_info.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            scan = self.object.securityscan
+        except ObjectDoesNotExist:
+            scan = None
+        context['security_scan'] = scan
+        return context
+```
+
 
 #### RalphDetailViewAdmin
-如果要显示标准 admin model 为标签，请使用此类。类接受来自`django.contrib.admin.ModelAdmin`的两个基本属性：
+如果要展示标准Admin Model，请使用此类，类接受来自`django.contrib.admin.ModelAdmin`的两个基本属性：
 
 - `inlines`，
 - `fieldsets`。
@@ -1418,12 +1454,21 @@ class NetworkView(RalphDetailViewAdmin):
 
 - `model/name.html`
 - `app_label/model/name.html`
+(以上源文档)
+实际上html模板的位置在 `model/templates/`
+例如：
+```
+有如下文件
+.../ralph/src/ralph/security/templates/security/securityinfo/security_info.html
+代码中的引用为
+template_name = 'security/securityinfo/security_info.html'
+```
 
 Where：
 
-`app_label`- `app_label`提取自`model`，
-`model`- 小写名称`model`，
-`name` - 视图的名称来自视图的实例。
+`app_label`：`app_label`提取自`model`，
+`model`：模型类的小写名称，
+`name`：视图的名称来自视图的实例。
 
 
 #### 通过类属性注册视图
@@ -1504,33 +1549,32 @@ class ServerRoom(models.Model):
 
 
 
-## Deb packaging HOWTO 怎样安装Deb包
+## Deb packaging HOWTO 怎样安装deb包
 我们使用`dh_virtualenv`可以方便的从虚拟环境安装所有的依赖包。然后，我们将deb二进制文件上传到bintray.com，以方便管理。
 
 #### 发布新的deb快照 Issuing the new deb snapshot
 Vagrant内：
 
-1. 确保您有`export BINTRAY_APIKEY=APIKEYHERE` - 二进制上传的 bintray api key set （密钥集）。
+1. 确保您有`export BINTRAY_APIKEY=APIKEYHERE` -> 二进制上传的 bintray api key set（密钥集）。
 2. `make package`构建包`./packaging/build` ，然后将其`./packaging/upload`上传到bintray。
 3. 内部名称将会是“ralph-3.0.0-＃BUILDNUMBER”
 
 
-注1：在内部我们运行dch debian工具来帮助我们生成代码，并生成`debian/changelog. file`。发布新的“major”版本后，需要在`debian/changelog`文件中使用dch实用程序来手动预设新版本。记得在发布新的文件后提交这个文件！
+注1：我们内部运行dch debian工具来帮助我们生成代码，并生成`debian/changelog.file`。发布新的版本后，需要在`debian/changelog`文件中使用dch程序来手动预设新版本。记得在发布新的文件后提交这个文件！
 
 注2：未来我们可能会以某种方式将其完全自动化;-)
 
 #### 来源
-- `/packaging` 包含构建和上传到bintray.com服务器的构建脚本
-- `/debian` 需要为一些源代码指定位置。
-- `debian/rules`和`debian/control`具有一些构建配置
-- `debian/changelog` - 跟踪构建代号
-
+- `/packaging`：包含构建和上传到bintray.com服务器的构建脚本
+- `/debian`：是为一些源代码指定的存放位置
+- `debian/rules`和`debian/control`是一些构建配置
+- `debian/changelog`：跟踪构建代号
 
 
 
 ## 常问问题 FAQ
-### 附加额外的视图到admin class后， 报错`ImproperlyConfigured`
-单个额外的视图类不能重复使用在多个管理站点。要在多个管理站点中使用它，请创建分开的类别的额外视图：
+### 添加额外的视图到admin class后， 报错`ImproperlyConfigured`
+单个额外的视图类不能重复使用在多个管理站点。要在多个admin中使用它，请分别创建视图：
 ```
 class MyView(RalphDetailViewAdmin):
     icon = 'chain'
@@ -1549,4 +1593,4 @@ class MyAdmin(RalphAdmin):
 class MyAdmin2(RalphAdmin):
     change_views = [MyView2]
 ```
-Attachments app是此机制的示例用法 - 对于每个使用`AttachmentsMixin`的admin site，都创建了不同的AttachmentsView类。
+Attachments app是此机制的示例用法，对于每个使用`AttachmentsMixin`的admin site，都创建了不同的AttachmentsView类。
