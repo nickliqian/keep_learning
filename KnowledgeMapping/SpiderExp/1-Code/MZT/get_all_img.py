@@ -113,7 +113,7 @@ def get_item_img():
     except Exception as e:
         conn_redis.sadd("MZT:ErrorKeyImgList", key_url)
         print("!!!!!!Had Error:", e)
-        log_error(key_url + " -> " + e)
+        log_error(key_url + " -> " + str(e))
     return 1
 
 
