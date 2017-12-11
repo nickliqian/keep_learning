@@ -1,0 +1,46 @@
+如果您将某个Django应用程序作为第三方软件包发布，则使用原始SQL将会降低工作的可移植性。
+
+如果以原始SQL表达查询将大大简化您的Python代码或由ORM生成的SQL，请继续执行此操作。
+例如，如果您链​​接的是大量数据集上运行的大量QuerySet操作，则可能会有更高效的方式将其作为原始SQL编写。
+
+
+“If it’s easier to write a query using SQL than Django, then do it. extra() is
+nasty and should be avoided; raw() is great and should be used where appro-
+priate.”
+
+何时考虑添加索引：
+该索引经常使用，如在所有查询中的10-25％。
+有真实的数据，或者是近似真实数据的东西，所以我们可以分析索引的结果。
+我们可以运行测试来确定索引是否会改善结果。
+
+
+多个操作使用事务，避免损坏数据库数据 （原子要求）
+settings：
+DATABASES = {
+    'default': {
+        # ...
+        'ATOMIC_REQUESTS': True,
+        }
+        }
+缺点是性能可以受到影响，因为它取决于个人数据库设计和各种数据库引擎
+
+在Web应用中，常用的事务处理方式是将每个请求都包裹在一个事务中。这个功能使用起来非常简单，你只需要将它的配置项ATOMIC_REQUESTS设置为True。
+每一个请求--具有原子性。
+
+当编写创建/更新/删除记录但是交互与非数据库项目，您可以选择transaction.non_atomic_requests()装饰视图。
+@transaction.non_atomic_requests
+使用装饰器让他不受事务控制
+with transaction.atomic():
+    # This code executes inside a transaction.
+    ...这一段也具有原子性
+    return HttpResponse("Hooray")
+
+明确的交易声明
+显式事务声明是增加站点性能的一种方法。 换句话说，指定哪些视图和业务逻辑被封装在事务中，哪些不是。 这种方法的缺点是增加了开发时间。
+
+谈到交易，以下是一些很好的指导方针：
+不修改数据库的数据库操作不应该包含在事务中。
+修改数据库的数据库操作应该被包装在一个事务中。
+包括需要数据库读取和性能考虑的数据库修改的特殊情况可能会影响前两个准则。
+
+
