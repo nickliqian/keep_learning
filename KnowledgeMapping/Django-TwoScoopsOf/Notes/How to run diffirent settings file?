@@ -1,0 +1,69 @@
+base.py
+    项目通用设置项
+local.py / dev.py
+    用于开发的设置项
+staging.py
+    用于生产服务器的半私有脚手架版本 continuous integration server
+test.py
+    用于测试的设置项
+production.py
+    生成环境下的设置项
+
+运行
+python manage.py shell --settings=twoscoops.settings.local
+python manage.py runserver --settings=twoscoops.settings.local
+
+常在环境变量中设置
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.local')
+
+对于那些对virtualenv有更全面理解的人，另一种方法是在virtualenv的activate脚本中设置DJANGO SETTINGS MODULE和PYTHONPATH。
+activate >> export SOME_SECRET_KEY=1c3-cr3am-15-yummy
+
+ 一旦virtualenv被激活，你可以从任何地方输入python，并将这些值导入到你的项目中。
+ 也意味着在命令行键入django-admin.py时不需要使用--settings选项。
+
+
+Your local development          server twoscoops.settings.local
+Your staging server             twoscoops.settings.staging
+Your test server                twoscoops.settings.test
+Your production server          twoscoops.settings.production
+
+对多个开发者有不同的设置可以使用如下：
+dev_audreyr.py
+dev_pydanny.py
+
+对于私人秘钥，建议放在环境变量里面，这样不管是开发，部署还是进行版本控制，都能很好的保证安全性。
+
+自动化部署多台服务器的环境变量 Heroku
+
+
+排查环境变量
+# settings/base.py
+import os
+# Normally you should not import ANYTHING from Django directly
+# into your settings, but ImproperlyConfigured is an exception.
+from django.core.exceptions import ImproperlyConfigured
+
+def get_env_variable(var_name):
+"""Get the environment variable or return exception."""
+    try:
+        return os.environ[var_name]
+    except KeyError:
+        error_msg = "Set the {} environment variable".format(var_name)
+        raise ImproperlyConfigured(error_msg)
+
+使用
+SOME_SECRET_KEY = get_env_variable("SOME_SECRET_KEY")
+
+Using django-admin.py Instead of manage.py
+官方推荐使用 django-admin.py代替manage.py
+
+
+针对环境变量不管用的情况
+要实现秘密文件模式，请按照以下三个步骤操作：
+1.使用选择的配置格式创建一个秘密文件，无论是JSON，Config，YAML甚至是XML。
+2.添加一个秘密加载器（下面使用JSON驱动的示例）以一种紧密，明确的方式管理秘密。
+3.将.gitignore或.hgignore的秘密添加到名称中。
+4.在settings中解析这个json文件，愉快的使用你的设置。
+×其他文件格式 Config, YAML, and XML
+
