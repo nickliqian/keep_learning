@@ -1,0 +1,10 @@
+View
+RedirectView
+TemplateView
+ListView
+DetailView
+FormView
+CreateView
+UpdateView
+DeleteView
+Generic date views

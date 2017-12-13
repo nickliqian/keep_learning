@@ -1,0 +1,94 @@
+
+# flavors/models.py
+from django.core.urlresolvers import reverse
+from django.db import models
+STATUS = (
+(0, "zero"),
+(1, "one"),
+)
+
+class Flavor(models.Model):
+	title = models.CharField(max_length=255)
+	slug = models.SlugField(unique=True)
+	scoops_remaining = models.IntegerField(default=0, choices=STATUS)
+	def get_absolute_url(self):
+		return reverse("flavors:detail", kwargs={"slug": self.slug})
+
+1. Views + ModelForm Example
+
+from django.contrib import messages
+from django.views.generic import CreateView, UpdateView, DetailView
+from braces.views import LoginRequiredMixin
+from .models import Flavor
+
+# 使用django message 消息框架，向用户发出消息提示
+class FlavorActionMixin(object):
+	fields = ('title', 'slug', 'scoops_remaining')
+	@property
+	def success_msg(self):
+		return NotImplemented
+
+	def form_valid(self, form):
+		messages.info(self.request, self.success_msg)
+		return super(FlavorActionMixin, self).form_valid(form)
+
+class FlavorCreateView(LoginRequiredMixin, FlavorActionMixin,
+CreateView):
+	model = Flavor
+	success_msg = "Flavor created!"
+
+class FlavorUpdateView(LoginRequiredMixin, FlavorActionMixin,
+UpdateView):
+	model = Flavor
+	success_msg = "Flavor updated!"
+
+
+
+------------------------------------------------------
+
+
+
+
+
+2 Views + Form Example
+
+修改ListView查询集
+复写了查询的方法
+class FlavorListView(ListView):
+	model = Flavor
+		def get_queryset(self):
+		# Fetch the queryset from the parent
+		get_queryset
+		.
+		queryset = super(FlavorListView, self).get_queryset()
+		# Get the q GET parameter
+		q = self.request.GET.get("q")
+		if q:
+		# Return a filtered queryset
+		return queryset.filter(title__icontains=q)
+		# Return the base queryset
+		return queryset
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
