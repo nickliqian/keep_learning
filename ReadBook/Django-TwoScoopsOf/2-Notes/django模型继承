@@ -1,0 +1,45 @@
+abstract base classes
+multi-table inheritance
+proxy models
+
+1. 如果模型有相同的字段，但是没有使用模型去继承
+优点：非常容易理解数据库的映射关系
+缺点：如果在模型中有很多相同的字段，那可能会很难维护
+
+2. 抽象基类：仅仅为派生模型而存在的类/表
+优点：在抽象的父类中拥有共同的字段，使我们不需要多次输入他们（包括定义字段类型等需要‘思考’的工作），
+    没有额外的表和连接引起的多表继承的开销。在修改抽象基类字段重新迁移时，十分方便
+缺点：我们不能单独使用父类
+
+3. 多表继承：表单从父类和子类创建，就像OneToOneField
+优点：每个模型都有自己的表，以便于我们可以查询父类模型或者子类模型，也可以从父类模型中查询子类模型：parent.child
+缺点：因为每次查询子类表都需要连接所有的父类表，所以需要大量的开销，我们强烈建议不要使用多表继承
+
+4. 代理模型：仅仅为原始模型创建的模型
+优点：允许我们给模型的取一个具有不同python行为的别名
+缺点：我们不能改变模型字段
+
+
+TimeStampedModel
+
+# core/models.py
+from django.db import models
+class TimeStampedModel(models.Model):
+    """
+    An abstract base class model that provides self-fields.
+    updating ``created`` and ``modified``
+    """
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    class Meta:
+        abstract = True
+
+
+不要从数据库提供文件储存服务（尽管django中有BinaryField字段）
+原因
+“读取/写入数据库始终比文件系统慢”
+“你的数据库备份变得越来越庞大，耗时更长”
+现在需要通过你的应用程序（Django）和DB层“
+
+
+反对泛型关系和使用models.field.GenericForeignKey

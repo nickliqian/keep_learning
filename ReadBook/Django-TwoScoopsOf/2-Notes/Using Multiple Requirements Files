@@ -1,0 +1,41 @@
+requirements/
+    base.txt
+
+    local.txt
+    staging.txt
+    production.txt
+
+local staging production 是三种不同模式下的需求文件
+在第一行加入：
+    -r base.txt 以安装通用模块
+例如 local.txt
+    -r base.txt # includes the base.txt requirements file
+    coverage==3.7.1
+    django-debug-toolbar==1.3.0
+
+安装
+    pip install -r requirements/local.txt
+    pip install -r requirements/production.txt
+
+Platforms as a Service (PaaS)
+
+
+请勿在django中设置文件的绝对路径
+当你部署到另外一台主机上时，会出现一些错误
+
+为了解决路径问题，我们在基础设置模块的顶部动态地设置了一个名为BASE DIR的项目根变量。
+由于BASE DIR是根据base.py的位置确定的，您的项目可以从任何开发计算机或服务器上的任何位置运行。
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+另外：
+使用Unipath包也可以解决这个问题
+BASE_DIR = Path(__file__).ancestor(3)
+
+
+标准库
+here = lambda *dirs: join(abspath(dirname(__file__)), *dirs)
+BASE_DIR = here("..", "..")
+root = lambda *dirs: join(abspath(BASE_DIR), *dirs)
+
+
+
