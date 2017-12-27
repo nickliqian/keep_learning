@@ -1,0 +1,323 @@
+1. index页面的url可以直接配指定的视图函数，这样可以将根域名跳转到首页
+2. 正则中，使用 /d{1,3} 可以将数字位数限制在两位数也就是99之内
+3.
+>>> from django import template
+>>> t = template.Template('My name is {{ name }}.')
+>>> c = template.Context({'name': 'Nige'})
+>>> print (t.render(c))
+My name is Nige.
+>>> c = template.Context({'name': 'Barry'})
+>>> print (t.render(c))
+My name is Barry.
+
+4. TemplateSyntaxError :
+• 无效标签
+• 有效标签的无效参数
+• 无效过滤器
+• 有效过滤器的无效参数
+• 无效模板句法
+• 未关闭的标签(对需要结束标签的模板标签而言)
+
+5. django模板中
+可以通过点号访问任意对象的属性
+也可以访问对象的方法 （但是只能调用不用传递参数的方法）
+也不能使用负数索引
+点号可以嵌套多层
+总结起来,模板系统遇到变量名中的点号时会按照下述顺序尝试查找:
+    • 字典查找(如 foo["bar"] )
+    • 属性查找(如 foo.bar )
+    • 方法调用(如 foo.bar() )
+    • 列表索引查找(如 foo[2] )
+遇到无效变量，自动填充 string_if_invalid 配置选项 默认为一个空字符串
+
+6. django模板 方法调用行为
+• 在方法查找的过程中,如果方法抛出异常,异常会向上冒泡,除非异常有 silent_variable_failure 属
+性,而且值为 True 。如果异常确实有 silent_variable_failure 属性,使用引擎的 string_if_invalid
+配置选项(默认为一个空字符串)渲染变量。
+• 方法不能有必须的参数。否则,模板系统向后移动到下一种查询类型(列表索引查询)。
+• 按照设计,Django 限制了在模板中可以处理的逻辑量,因此在模板中不能给方法传递参数。数据应该
+在视图中计算之后再传给模板显示。
+• 显然,有些方法有副作用,如果允许模板系统访问这样的方法,那就愚蠢之极,甚至还可能埋下安全
+漏洞。
+• 假如有个 BankAccount 对象,它有个 delete() 方法。如果模板中有 {{ account.delete }} 这样的内
+容,其中 account 是 BankAccount 对象,那么渲染模板时会把 account 删除。为了避免这种行为,在方
+法上设定函数属性 alters_data :
+def delete(self):
+    delete.alters_data = True
+这样标记之后,模板系统不会执行方法。继续使用前面的例子。如果模板中有 {{ account.delete
+}} ,而 delete() 方法设定了 alters_data=True ,那么渲染模板时不会执行 delete() 方法,引擎会使用
+string_if_invalid 的值替换那个变量。
+注意:为 Django 模型对象动态生成的 delete() 和 save() 方法自动设定了 alters_data = True 。
+
+
+7. 模板标签
+加入 reversed 标签，反向迭代列表
+{% for athlete in athlete_list reversed %}
+...
+{% endfor %}
+也可以解包
+元组
+{% for x, y in points %}
+<p>There is a point at {{ x }},{{ y }}</p>
+{% endfor %}
+字典
+{% for key, value in data.items %}
+{{ key }}: {{ value }}
+{% endfor %}
+对于一个列表，有可能为空，那么就先判断列表是否为空，为空就显示特定内容
+有两种方法实现
+第一种
+{% if athlete_list %}
+{% for athlete in athlete_list %}
+<p>{{ athlete.name }}</p>
+{% endfor %}
+{% else %}
+<p>There are no athletes. Only computer programmers.</p>
+{% endif %}
+第二种方法使用empty标签
+{% for athlete in athlete_list %}
+<p>{{ athlete.name }}</p>
+{% empty %}
+<p>There are no athletes. Only computer programmers.</p>
+{% endfor %}
+
+
+8. {% for %}标签内部 forloop
+
+在 {% for %} 循环内部,可以访问一个名为 forloop 的模板变量。这个变量有几个属性,通过它们可以获知
+循环进程的一些信息:
+• forloop.counter 的值是一个整数,表示循环的次数。这个属性的值从 1 开始,因此第一次循环时,
+forloop.counter 等于 1 。下面举个例子:
+{% for item in todo_list %}
+<p>{{ forloop.counter }}: {{ item }}</p>
+{% endfor %}
+• forloop.counter0 与 forloop.counter 类似,不过是从零开始的。第一次循环时,其值为 0 。
+• forloop.revcounter 的值是一个整数,表示循环中剩余的元素数量。第一次循环时, for-
+loop.revcounter 的值是序列中要遍历的元素总数。最后一次循环时, forloop.revcounter 的值为 1 。
+• forloop.revcounter0 与 forloop.revcounter 类似,不过索引是基于零的。第一次循环时, for-
+loop.revcounter0 的值是序列中元素数量减去一。最后一次循环时, forloop.revcounter0 的值为 0 。
+• forloop.first 是个布尔值,第一次循环时为 True 。需要特殊处理第一个元素时很方便:
+{% for object in objects %}
+{% if forloop.first %}
+<li class="first">
+{% else %}
+<li>
+{% endif %}
+{{ object }}
+</li>
+{% endfor %}
+• forloop.last 是个布尔值,最后一次循环时为 True 。经常用它在一组链接之间放置管道符号:
+{% for link in links %}
+{{ link }}{% if not forloop.last %} | {% endif %}
+{% endfor %}
+上述模板代码的输出可能是:
+Link1 | Link2 | Link3 | Link4
+此外,还经常用它在一组单词之间放置逗号:
+<p>Favorite places:</p>
+{% for p in places %}
+{{ p }}{% if not forloop.last %}, {% endif %}
+{% endfor %}
+• 在嵌套的循环中, forloop.parentloop 引用父级循环的 forloop 对象。下面举个例子:
+{% for country in countries %}
+<table>
+{% for city in country.city_list %}
+<tr>
+<td>Country #{{ forloop.parentloop.counter }}</td>
+<td>City #{{ forloop.counter }}</td>
+<td>{{ city }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endfor %}
+forloop 变量只在循环内部可用。模板解析器遇到 {% endfor %} 时, forloop 随之消失。
+上下文和 forloop 变量
+在 {% for %} 块中,现有变量会让位,防止覆盖 forloop 变量。Django 把移动的上下文放到
+forloop.parentloop 中。通常,你无须担心,但是如果有名为 forloop 的模板变量(不建议这
+么做),在 {% for %} 块中会重命名为 forloop.parentloop 。
+
+
+9. django 模板标签 比较两个值
+{% ifequal user currentuser %}
+<h1>Welcome!</h1>
+{% endifequal %}
+参数可以是硬编码的字符串,使用单引号或双引号都行,因此下述代码是有效的:
+{% ifequal section 'sitenews' %}
+<h1>Site News</h1>
+{% endifequal %}
+
+{% ifequal section 'sitenews' %}
+<h1>Site News</h1>
+{% else %}
+<h1>No News Here</h1>
+{% endifequal %}
+
+{% ifequal %} 的参数只能是模板变量、字符串、整数和小数。下面是有效的示例:
+{% ifequal variable 1 %}
+{% ifequal variable 1.23 %}
+{% ifequal variable 'foo' %}
+{% ifequal  variable "foo" %}
+{% ifequal  variable username %}
+
+python字典，布尔值，列表不能在ifequal中硬编码
+
+{% ifnotequal %} 的作用与 ifequal 类似！
+
+
+10. django模板语言的注释
+{# This is a comment #}
+多行注释
+{% comment %}
+This is a
+multi-line comment.
+{% endcomment %}
+注释标签不能嵌套
+
+
+
+11. 标签-管道-过滤器
+{{ name|lower }}
+{{ my_list|first|upper }}
+{{ bio|truncatewords:"30" }}
+下面是几个最重要的过滤器。其余的过滤器在附录 E 中说明。
+• addslashes :在反斜线、单引号和双引号前面添加一个反斜线。可用于转义字符串。
+{{ value|addslashes }}
+• date :根据参数中的格式字符串格式化 date 或 datetime 对象。
+{{ pub_date|date:"F j, Y"}}
+• length :返回值的长度。对列表来说,返回元素的数量。对字符串来说,返回字符的数量。如果变量未定义,返回 0 。
+
+
+12. 手动加载模板
+from django.template.loader import get_template
+from django.template import Context
+from django.http import HttpResponse
+import datetime
+def current_datetime(request):
+    now = datetime.datetime.now()
+    t = get_template('current_datetime.html')
+    html = t.render(Context({'current_date': now}))
+    return HttpResponse(html)
+
+模板查询顺序
+为了找到模板在文件系统中的位置, get_template() 按下列顺序查找:
+• 如果 APP_DIRS 的值是 True ,而且使用 DTL,在当前应用中查找“templates”目录。
+• 如果在当前应用中没找到模板, get_template() 把传给它的模板名称添加到 DIRS 中的各个目录后面,
+按顺序在各个目录中查找。假如 DIRS 的第一个元素是 '/home/django/mysite/templates' ,上述
+get_template() 调用查找的模板是 /home/django/mysite/templates/current_datetime.html 。
+• 如果 get_template() 找不到指定名称对应的模板,抛出 TemplateDoesNotExist 异常。
+
+from django.shortcuts import render
+import datetime
+def current_datetime(request):
+    now = datetime.datetime.now()
+    return render(request, 'current_datetime.html', {'current_date': now})
+
+
+
+12. {% include %}
+下述示例引入 includes/nav.html 模板的内容:
+{% include 'includes/nav.html' %}
+下述示例引入的模板名称由变量 template_name 指定:
+{% include template_name %}
+用于引入相同的内容
+
+例子：
+# mypage.html
+<html>
+<body>
+{% include "includes/nav.html" %}
+<h1>{{ title }}</h1>
+</body>
+</html>
+# includes/nav.html
+<div id="nav">
+You are in: {{ current_section }}  # 需要在mypage的上下文中有current_section
+</div>
+
+
+
+13. 模板继承
+{% extents "base.html" %}
+{% block content %}
+    {{ block.super }}
+    {% include moreContent %}
+{% endblock content %}
+
+
+14. 数据库 模型
+
+只要觉得模型有问题,就可以运行 python manage.py check , 它能捕获全部常见的模型问题。
+
+确认模型有效之后,运行下述命令,告诉 Django 你对模型做了修改(这里是新建了模型):
+python manage.py makemigrations books  生成指定模型的迁移
+python manage.py sqlmigrate books 0001  查看指定迁移文件对应的sql
+python manage.py migrate  执行迁移
+
+
+
+15. 数据更新
+
+p = Publisher(name='Apress',address='2855 Telegraph Ave.',city='Berkeley',state_province='CA',country='U.S.A.',website='http://www.apress.com/')
+p.save()
+p.name = 'Apress Publishing'
+p.save()
+```
+    UPDATE books_publisher SET
+    name = 'Apress Publishing',
+    address = '2855 Telegraph Ave.',
+    city = 'Berkeley',
+    state_province = 'CA',
+    country = 'U.S.A.',
+    website = 'http://www.apress.com'
+    WHERE id = 52;
+```
+
+p = Publisher.objects.get(name='Apress')
+p.name = 'Apress Publishing'
+p.save()
+```
+    SELECT id, name, address, city, state_province, country, website
+    FROM books_publisher
+    WHERE name = 'Apress';
+    UPDATE books_publisher SET
+    name = 'Apress Publishing',
+    address = '2855 Telegraph Ave.',
+    city = 'Berkeley',
+    state_province = 'CA',
+    country = 'U.S.A.',
+    website = 'http://www.apress.com'
+    WHERE id = 52;
+```
+
+这样得到的 SQL 语句更高效,而且不会导致条件竞争: 只更新一个字段
+Publisher.objects.filter(id=52).update(name='Apress Publishing')
+```
+UPDATE books_publisher
+SET name = 'Apress Publishing'
+WHERE id = 52;
+```
+切片数据
+Publisher.objects.order_by('name')[0]
+Publisher.objects.order_by('name')[0:2]
+Publisher.objects.order_by('name')[-1] 错误
+Publisher.objects.order_by('-name')[0] 正确
+
+删除数据
+Publisher.objects.filter(country='USA').delete()
+Publisher.objects.all().delete()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
