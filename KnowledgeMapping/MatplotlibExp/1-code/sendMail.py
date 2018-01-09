@@ -1,11 +1,11 @@
-import smtplib
-import time
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from email import encoders
+import smtplib
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
+import time
 
 
 def send_email(con="你好！"):
@@ -14,27 +14,29 @@ def send_email(con="你好！"):
     _to = "419845955@qq.com"
 
     # 使用MIMEText构造符合smtp协议的header及body
-    msg = MIMEText(con)
+    msg = MIMEMultipart('related')
     subject = "以下是今天的报表，请查收！--" + str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+    # # msgRoot['From'] = Header("菜鸟教程", 'utf-8')
     msg["Subject"] = subject
     msg["From"] = _user
     msg["To"] = _to
 
-    with open("result.png", 'rb') as f:
-        # 设置附件的MIME和文件名，这里是png类型:
-        mime = MIMEBase('image', 'jpg', filename="result.png")
-        # 加上必要的头信息:
-        mime.add_header('Content-Disposition', 'attachment', filename="result.png")
-        mime.add_header('Content-ID', '<0>')
-        mime.add_header('X-Attachment-Id', '0')
-        # 把附件的内容读进来:
-        mime.set_payload(f.read())
-        # 用Base64编码:
-        encoders.encode_base64(mime)
-        # 添加到MIMEMultipart:
-        msg.attach(mime)
-        # msg.attach(MIMEText('<html><body><h1>Hello</h1><p><img src="cid:' + str(i) + '"></p></body></html>', 'html', 'utf-8'))
-
+    # 可供选择的内容
+    msgAlternative = MIMEMultipart('alternative')
+    msg.attach(msgAlternative)
+    mail_msg = """
+    <p>Python 邮件发送测试...</p>
+    <p>一小时采集趋势</p>
+    <p><img src="cid:image1"></p>
+    """ + con
+    msgAlternative.attach(MIMEText(mail_msg, 'html', 'utf-8'))
+    # 指定图片为当前目录
+    fp = open('result.png', 'rb')
+    msgImage = MIMEImage(fp.read())
+    fp.close()
+    # 定义图片 ID，在 HTML 文本中引用
+    msgImage.add_header('Content-ID', '<image1>')
+    msg.attach(msgImage)
 
     s = smtplib.SMTP("smtp.163.com", timeout=30)  # 连接smtp邮件服务器,端口默认是25
     s.login(_user, _pwd)  # 登陆服务器
@@ -53,8 +55,12 @@ def deal_data():
     # 将当前figure的图保存到文件result.png
     plt.savefig('result.png')
     # 一定要加上这句才能让画好的图显示在屏幕上
-    plt.show()
-    return str(df)
+    # plt.show()
+    s = ""
+    for i in df.split("\n"):
+        a = "<li>" + i + "</li>"
+        s += a
+    return s
 
 
 def check():
@@ -74,8 +80,7 @@ def check():
 
 
 def main():
-    deal_data()
-    send_email(con="你好！")
+    s = deal_data()
 
 
 if __name__ == '__main__':
