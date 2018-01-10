@@ -57,7 +57,7 @@ def deal_data():
     # 一定要加上这句才能让画好的图显示在屏幕上
     # plt.show()
     s = ""
-    for i in df.split("\n"):
+    for i in str(df).split("\n"):
         a = "<li>" + i + "</li>"
         s += a
     return s
@@ -81,6 +81,7 @@ def check():
 
 def main():
     s = deal_data()
+    send_email(s)
 
 
 if __name__ == '__main__':
