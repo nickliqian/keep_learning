@@ -9,7 +9,7 @@ df = pd.read_csv("./count.csv", index_col=None, parse_dates=True, names=["total"
 increment = df['total'].diff()
 df["increment"] = increment
 fig, ax = plt.subplots()
-fig.set_size_inches(10, 7)
+fig.set_size_inches(12, 6)
 
 
 # ax.plot_date(df.index.to_pydatetime(), df["total"], 'v-')
@@ -36,12 +36,12 @@ ax.yaxis.grid()
 ax.xaxis.set_major_locator(dates.DayLocator())
 ax.xaxis.set_major_formatter(dates.DateFormatter('%m-%d'))
 # axvline 竖直  axhline 横向
-ax.axhline(35, ls="--", color="blue")
-ax.axhline(increment_mean, ls="--", color="red")
+ax.axhline(35, ls="--", color="red")
+ax.axhline(increment_mean, ls="--", color="blue")
 
 ax.annotate('local max', xy=(20, 20), xytext=(5, 5),
             arrowprops=dict(facecolor='black', shrink=1),
             )
-
+plt.savefig("result.png")
 plt.tight_layout()
-plt.show()
+# plt.show()
