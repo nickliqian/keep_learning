@@ -19,7 +19,7 @@ def send_email(con="你好！"):
     msg["From"] = _user
     msg["To"] = _to
 
-    s = smtplib.SMTP("smtp.163.com", timeout=30)  # 连接smtp邮件服务器,端口默认是25
+    s = smtplib.SMTP("smtpExp.163.com", timeout=30)  # 连接smtp邮件服务器,端口默认是25
     s.login(_user, _pwd)  # 登陆服务器
     s.sendmail(_user, _to, msg.as_string())  # 发送邮件
     s.close()

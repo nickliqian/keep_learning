@@ -5,7 +5,7 @@ import matplotlib.dates as dates
 
 
 # time作为索引
-df = pd.read_csv("./count.csv", index_col=None, parse_dates=True, names=["total"], dtype={"total": np.int64}, encoding="utf-8")
+df = pd.read_csv("/home/nick/Desktop/DA/speedFile/count.csv", index_col=None, parse_dates=True, names=["total"], dtype={"total": np.int64}, encoding="utf-8")
 increment = df['total'].diff()
 df["increment"] = increment
 fig, ax = plt.subplots()
@@ -44,4 +44,4 @@ ax.annotate('local max', xy=(20, 20), xytext=(5, 5),
             )
 plt.savefig("result.png")
 plt.tight_layout()
-# plt.show()
+plt.show()
