@@ -9,7 +9,7 @@ import time
 
 
 def send_email(con="你好！"):
-    _user = "15999543812@163.com"
+    _user = "nickliqianvt@sina.com"
     _pwd = "nickliqian2017"
     _to = "419845955@qq.com"
 
@@ -38,7 +38,7 @@ def send_email(con="你好！"):
     msgImage.add_header('Content-ID', '<image1>')
     msg.attach(msgImage)
 
-    s = smtplib.SMTP("smtpExp.163.com", timeout=30)  # 连接smtp邮件服务器,端口默认是25
+    s = smtplib.SMTP("smtp.sina.com", 25, timeout=30)  # 连接smtp邮件服务器,端口默认是25
     s.login(_user, _pwd)  # 登陆服务器
     s.sendmail(_user, _to, msg.as_string())  # 发送邮件
     s.close()
