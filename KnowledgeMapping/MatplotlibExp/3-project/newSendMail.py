@@ -24,13 +24,13 @@ def send_email(con="你好！"):
     # 可供选择的内容
     msgAlternative = MIMEMultipart('alternative')
     msg.attach(msgAlternative)
-    mail_msg = con + """
-    <p>一小时采集趋势</p>
-    <p><img src="cid:image1"></p>
-    <p><img src="cid:image2"></p>
-    <p><img src="cid:image3"></p>
-    <p><img src="cid:image4"></p>
-    """
+
+    mail_msg1 = '<p><img src="cid:image1"></p>'
+    mail_msg2 = '<p><img src="cid:image2"></p>'
+    mail_msg3 = '<p><img src="cid:image3"></p>'
+    mail_msg4 = '<p><img src="cid:image4"></p>'
+
+    mail_msg = mail_msg1 + mail_msg2 + mail_msg3 + mail_msg4
     msgAlternative.attach(MIMEText(mail_msg, 'html', 'utf-8'))
     # 指定图片为当前目录
 
