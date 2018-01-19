@@ -133,3 +133,11 @@ for i in range(im.size[1]):
             col = 1
         temp.append(col)
     print(temp)
+
+
+# 打印数字化图像 矩阵
+for y in range(im2.size[1]):
+    for x in range(im2.size[0]):
+        pix = im2.getpixel((x, y))
+        print("%d" % pix, end='')
+    print("")
