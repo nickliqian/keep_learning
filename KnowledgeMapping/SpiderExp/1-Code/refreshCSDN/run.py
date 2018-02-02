@@ -1,7 +1,7 @@
 import requests
 from lxml import etree
 
-
+# list page = 1 2 3 --> 0
 # csdn_id = ""
 url = "http://blog.csdn.net/weixin_39198406/article/list/"  # + page
 
