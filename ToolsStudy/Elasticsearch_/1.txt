@@ -1,0 +1,240 @@
+
+参考：http://www.hubwiz.com/class/55473b0aebfde9b5591bb80a
+安装：https://jingyan.baidu.com/article/c45ad29c10b013051753e2be.html
+
+接近实时（NRT）:
+Elasticsearch是一个接近实时的搜索平台。
+这意味着，从索引一个文档直到这个文档能够被搜索到有一个轻微的延迟（通常是1秒）。
+
+集群（cluster）:
+一个集群就是由一个或多个节点组织在一起，它们共同持有你整个的数据，并一起提供索引和搜索功能。
+一个集群由一个唯一的名字标识，这个名字默认就是“elasticsearch”。
+这个名字是重要的，因为一个节点只能通过指定某个集群的名字，来加入这个集群。
+在产品环境中显式地设定这个名字是一个好习惯，但是使用默认值来进行测试/开发也是不错的。
+
+节点（node）:
+一个节点是你集群中的一个服务器，作为集群的一部分，它存储你的数据，参与集群的索引和搜索功能。
+一个节点可以通过配置集群名称的方式来加入一个指定的集群。默认情况下，每个节点都会被安排加入到一个叫做“elasticsearch”的集群中，
+这意味着，如果你在你的网络中启动了若干个节点，并假定它们能够相互发现彼此，它们将会自动地形成并加入到一个叫做“elasticsearch”的集群中。
+在一个集群里，只要你想，可以拥有任意多个节点。
+而且，如果当前你的网络中没有运行任何Elasticsearch节点，这时启动一个节点，会默认创建并加入一个叫做“elasticsearch”的集群。
+
+索引（index）:
+一个索引就是一个拥有几分相似特征的文档的集合。
+比如说，你可以有一个客户数据的索引，另一个产品目录的索引，还有一个订单数据的索引。
+一个索引由一个名字来标识（必须全部是小写字母的），并且当我们要对对应于这个索引中的文档进行索引、搜索、更新和删除的时候，都要使用到这个名字。
+在一个集群中，如果你想，可以定义任意多的索引。
+
+类型（type）:
+在一个索引中，你可以定义一种或多种类型。
+一个类型是你的索引的一个逻辑上的分类/分区，其语义完全由你来定。
+通常，会为具有一组共同字段的文档定义一个类型。
+比如说，我们假设你运营一个博客平台并且将你所有的数据存储到一个索引中。
+在这个索引中，你可以为用户数据定义一个类型，为博客数据定义另一个类型，当然，也可以为评论数据定义另一个类型。
+
+文档（document）:
+一个文档是一个可被索引的基础信息单元。
+比如，你可以拥有某一个客户的文档，某一个产品的一个文档，当然，也可以拥有某个订单的一个文档。
+文档以JSON（Javascript Object Notation）格式来表示，而JSON是一个到处存在的互联网数据交互格式。
+在一个index/type里面，只要你想，你可以存储任意多的文档。
+注意，尽管一个文档，物理上存在于一个索引之中，档必须被索引/赋予一个索引的type。
+
+分片和复制（shards & replicas）:
+一个索引可以存储超出单个结点硬件限制的大量数据。
+比如，一个具有10亿文档的索引占据1TB的磁盘空间，而任一节点都没有这样大的磁盘空间；或者单个节点处理搜索请求，响应太慢。
+为了解决这个问题，Elasticsearch提供了将索引划分成多份的能力，这些份就叫做分片。
+在一个网络/云的环境里，失败随时都可能发生，在某个分片/节点不知怎么的就处于离线状态，
+或者由于任何原因消失了，这种情况下，有一个故障转移机制是非常有用并且是强烈推荐的。
+为此目的，Elasticsearch允许你创建分片的一份或多份拷贝，这些拷贝叫做复制分片，或者直接叫复制。
+
+
+curl -XGET 'http://localhost:9200/_count?pretty' -d '{"query": {"match_all": {}}}'
+_count表示请求的路径；
+pretty任意可选的查询字符串参数，比如pretty将会漂亮的打印JSON格式的响应使它更容易阅读；
+-d表示 HTTP POST方式传输数据；
+{
+    "count" : 0,
+    "_shards" : {
+        "total" : 5,
+        "successful" : 5,
+        "failed" : 0
+    }
+}
+
+
+几种创建索引方式
+curl -XPUT 'http://localhost:9200/twitter/' -d '{
+  "settings":{
+      "index":{
+         "number_of_shards":3,
+         "number_of_replicas":2
+      }
+  }
+}’
+
+curl -XPUT 'http://localhost:9200/twitter' -d '{
+  "settings":{
+      "number_of_shards":3,
+      "number_of_replicas":2
+  }
+}'
+
+curl -XPUT 'http://localhost:9200/twitter/tweet/1/_create' -d '{
+  "user":"kimchy",
+  "post_date":"2009-11-11T14:12:12",
+  "message":"hello,world"
+}'
+
+建立一个索引为twitter,类型为tweet,id为1的索引，其属性包括 “user”:”kimchy”, “post_date”:”2009-11-11T14:12:12”, “message”:”hello,world”。
+
+
+查询索引为twitter,索引类型为tweet，id为1的数据。
+curl -XGET 'http://localhost:9200/twitter/tweet/1'
+
+查询为twitter,类型为tweet,user为kimch的文档信息。
+curl -XGET 'http://localhost:9200/twitter/tweet/_search?q=user:kimchy'
+_search 的URI参数还包括其它一些，如from、size、analyzer、sort、fields、df等
+
+POST JSON形式的数据查询
+查询为twitter,类型为tweet,user为kimchiy满足条件的10条文档信息。
+curl -XGET  'http://localhost:9200/twitter/tweet/_search' -d '{
+    "from" : 0, "size" : 10,
+   "query" : {
+        "term" : { "user" : "kimchy" }
+    }
+}
+'
+
+比如插入”twitter”的索引，并且索引类型为tweet，id为2的记录。如下代码：
+curl -XPUT  'http://localhost:9200/twitter/tweet/2' -d '{
+       "user":"kimchy",
+      "post_date":"2012-12-12",
+       “message”:”trying out ElasticSearch!”
+}’
+
+当然也可以不指定id对数据进行增加,系统会自动增加一个id，我们要用POST命令来实现。
+curl -XPOST  'http://localhost:9200/twitter/tweet' -d '{
+       "user":"jim",
+      "post_date":"2015-05-12",
+       “message”:”trying out ElasticSearch!”
+}’
+
+通过id删除文档 下面的例子是删除索引名为twitter，类型为tweet，id为1的文档：
+curl -XDELETE   'http://localhost:9200/twitter/tweet/1'
+
+通过查询条件删除文档
+curl -XDELETE   'http://localhost:9200/twitter/tweet/_query' -d '{
+    "query" : {
+        "term" : { "user" : "kimchy" }
+    }
+}
+'
+
+match会分词
+比如我们要查询索引为twitter,索引类型为tweet的user为kimchy的文档记录。
+curl -XGET  'http://localhost:9200/twitter/tweet/_search'  -d '
+{
+  "query" :
+  {
+      "match":{"user":"kimchy"}
+  }
+}'
+Match Query也还包括一些其它的参数：query、operator、zero_terms_query等
+
+term严格匹配
+term query在给定的字段里查询词或者词组。
+curl -XGET  'http://localhost:9200/twitter/tweet/_search' -d '
+{
+  "query" :
+  {
+  "term" : { "user" : "Kimchy" }
+  }
+}
+'
+
+正则匹配
+curl -XGET  'http://localhost:9200/my_index/address/_search -d '
+{
+    "query": {
+        "regexp": {
+            "postcode": "W[0-9].+"
+        }
+    }
+}
+'
+
+假设现在你想匹配年龄（age)在10到20岁之间的所有信息，我们这一节就来讲解如何匹配，将会用range来匹配。
+curl -XGET  'http://localhost:9200/class/students/_search' -d '
+{
+    "query":{
+    "range" : {
+        "age" : {
+            "gte" : 10,
+            "lt" : 20
+            }
+        }
+    }
+}
+'
+
+新建一个索引为twitter，索引类型为tweet的mapping,如下代码:
+curl -XPUT  'http://localhost:9200/twitter/_mapping/tweet' -d '
+{
+    "tweet" : {
+        "properties" : {
+            "message" : {"type" : "string", "store" : true }
+        }
+    }
+}
+'
+
+
+查看索引为twitter,索引类型为tweet的mapping。
+curl -XGET 'http://localhost:9200/twitter/_mapping/tweet'
+
+查看ES中所有的mapping。
+curl -XGET 'http://localhost:9200/_mapping'
+
+查看ES中索引为twitter,kimchy的mapping。
+curl -XGET 'http://localhost:9200/_mapping/twitter,kimchy'
+
+
+删除索引为twitter,索引类型为tweet的mapping。
+curl -XDELETE 'http://localhost:9200/twitter/tweet'
+或者
+curl -XDELETE 'http://localhost:9200/twitter/tweet/_mapping'
+或者
+curl -XDELETE　'http://localhost:9200/twitter/_mapping/tweet'
+
+我们在这里介绍一下Standard Analyzer。
+curl -XGET 'http://localhost:9200/_analyze?analyzer=standard' -d 'This is a demo'
+
+
+一般中文分词器一般使用第三方的ik分词器、mmsegf分词器和paoding分词器，他们最初可能构建于lucene，后来移植于elasticsearch。 在最新版的elasticsearch，我们主要使用了ik分词器。
+安装ik分词器到elasticsearch很简单，它有个插件目录analysis-ik，和一个配置目录ik, 分别拷贝到plugins和conf目录就可以了。然后在elasticsearch.yml文件中配置加入如下代码：
+index.analsis.analyzer.ik.type : ik
+
+第三方的分词器，你是没法使用,你必须创建一个指定该分词器的索引才行。
+
+curl -XPUT http://localhost:9200/index   //创建索引
+curl -XPOST http://localhost:9200/index/fulltext/_mapping -d'  //创建mapping,只有一个字段content，使用ik作为分词器
+{
+    "fulltext": {
+             "_all": {
+            "indexAnalyzer": "ik",
+            "searchAnalyzer": "ik",
+            "store": "false"
+        },
+        "properties": {
+            "content": {
+                "type": "string",
+                "store": "no",
+                "indexAnalyzer": "ik",
+                "searchAnalyzer": "ik"
+            }
+        }
+    }
+}'
+
+中文分词
+curl -XGET 'http://localhost:9200/index/_analyze?analyzer=ik' -d ‘你们有什么事情’
