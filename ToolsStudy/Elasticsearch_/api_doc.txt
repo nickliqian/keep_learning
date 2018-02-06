@@ -1,0 +1,21 @@
+create index
+
+get data
+
+update data
+
+delete data
+
+match query
+
+term query
+
+regexp query
+
+range query
+
+mapping
+
+Standard Analyzer
+
+
