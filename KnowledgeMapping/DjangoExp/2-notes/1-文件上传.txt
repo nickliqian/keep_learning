@@ -1,0 +1,57 @@
+当Django在处理文件上传的时候，文件数据被保存在request. FILES
+
+model -> FileField
+
+forms ->
+from django import forms
+class UploadFileForm(forms.Form):
+    title = forms.CharField(max_length=50)
+    file = forms.FileField()
+
+request.FILES 只有在请求方法为POST，并且发送请求的<form>拥有enctype="multipart/form-data" 属性时，才会包含数据。
+否则request.FILES 为空。
+
+
+
+这里是一个普遍的方法，可能你会采用它来处理上传文件：
+
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
+from .forms import UploadFileForm
+
+# Imaginary function to handle an uploaded file.
+from somewhere import handle_uploaded_file
+
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['file'])
+            return HttpResponseRedirect('/success/url/')
+    else:
+        form = UploadFileForm()
+    return render_to_response('upload.html', {'form': form})
+
+def handle_uploaded_file(f):
+    with open('some/file/name.txt', 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+
+http://python.usyiyi.cn/documents/django_182/ref/files/file.html#django.core.files.File.name
+
+request.FILES['file'] -> File
+File.name
+File.size
+File.file  原生file对象
+File.mode
+File.open(mode=None)
+File.read(mode=None)
+File.__iter__()
+File.chunks([chunk_size=None])
+File.multiple_chunks([chunk_size=None])
+File.write([content])
+File.close()
+
+ImageFile
+File.width
+File.height
