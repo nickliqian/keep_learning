@@ -24,6 +24,9 @@ for i in friends[1:]:
 total = len(friends[1:])
 
 # 好了，打印结果
+print("男性: %d" % male)
+print("女性: %d" % female)
+
 print(u"男性好友：%.2f%%" % (float(male) / total * 100))
 print(u"女性好友：%.2f%%" % (float(female) / total * 100))
 print(u"其他：%.2f%%" % (float(other) / total * 100))
