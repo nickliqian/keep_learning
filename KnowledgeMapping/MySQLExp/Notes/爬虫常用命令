@@ -1,0 +1,70 @@
+@@@MYSQL
+
+对mysql而言，如果字段数据不能重复，一定要提前设置好unique约束，否则后期会非常麻烦。
+
+SELECT data,COUNT(data) FROM hlj GROUP BY data HAVING COUNT(data)>1;
+mysql -uroot -pmysql
+select COUNT(*) from hlj;
+mysqldump -uroot -pmysql hlj hlj > ./sql_backup/hlj_backup0104.sql   备份
+mysqldump -uroot -pmysql hlj hlj > /home/nick/sql_backup/hlj_backup0105.sql
+
+ALTER TABLE hlj ADD COLUMN id INT NOT NULL auto_increment FIRST, ADD primary key(id);  增加主键
+查找包含
+SELECT * FROM hlj WHERE data LIKE '%（2017）辽1224执2162号%'
+查找重复
+SELECT data,COUNT(data) FROM hlj GROUP BY data HAVING COUNT(data)>1;
+查看总数
+SELECT COUNT(*) from hlj;
+去掉重复的并且只保留一条
+delete from bj where data_info in (select data_info from ( select data_info from bj group by data_info having count(data_info)>1) a) and id not in ( select min(id) from (select min(id) as id from bj group by data_info having count(data_info)>1 ) b);
+显示不同记录的条数
+SELECT COUNT(DISTINCT data_info) FROM bj;
+字段设置唯一约束unique后，使用如下语句插入新行不会报错且重复发行不会被插入
+INSERT IGNORE INTO person_tbl (last_name, first_name) VALUES( 'Jay', 'Thomas');
+大量插入操作时，存在索引会影响插入效率
+插入索引
+CREATE INDEX indexName ON mytable(username(length));
+ALTER table tableName ADD INDEX indexName(columnName)
+删除索引的语法
+DROP INDEX [indexName] ON mytable;
+char 最大长度 255
+varchar + unique 最大3072字节，约1000个汉字
+varchar(10) 表示可以储存10个汉字
+
+修改字段类型
+alter table bj modify column data_info varchar(5000);
+建立唯一索引unique
+ALTER TABLE bj ADD unique(data_info)
+alter table temp add unique(name, password);
+
+给超长长度varchar创建索引的方法：
+alter table bj modify column data_info varchar(2500) NOT NULL;
+ALTER TABLE bj ADD unique(data_info(1000));
+这样会对前一千个字符生成唯一索引hash
+如果数据中含有重复数据，则会报错
+ERROR 1062 (23000): Duplicate entry '{"name": "apple", ...
+如果data_info超过了3072字节（1024字符or汉字），会报错
+ERROR 1071 (42000): Specified key was too long; max key length is 3072 bytes
+如果字段是BLOB/TEXT类型也会报错
+ERROR 1170 (42000): BLOB/TEXT column 'data_info' used in key specification without a key length
+如果字段是text且指定了text(1000)小于1024，那么报错
+ERROR 1062 (23000): Duplicate entry '' for key 'data_info'
+也就是说在建立唯一索引之前必须使数据没有重复
+
+计算不重复的数据数量
+SELECT COUNT( DISTINCT data_info ) FROM task;
+
+alter table test rename test1; --修改表名
+alter table test add  column name varchar(10); --添加表列
+alter table test drop  column name; --删除表列
+alter table test modify address char(10) --修改表列类型
+alter table test change address address  char(40)   --修改表列类型
+alter table test change  column address address1 varchar(30)--修改表列名
+
+将一张表里的数据插入到另一张表
+1. 表结构完全一样
+  insert into 表1 select * from 表2
+2. 表结构不一样（这种情况下得指定列名）
+  insert into 表1 (列名1,列名2,列名3) select  列1,列2,列3 from 表2
+3、只从另外一个表取部分值
+	insert into 表1 (列名1,列名2,列名3) values(列1,列2,(select 列3 from 表2));
