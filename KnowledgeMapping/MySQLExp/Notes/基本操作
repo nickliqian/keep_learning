@@ -1,0 +1,4 @@
+create database python charset=utf8; # 创建数据库
+
+alter database python charset utf8; # 修改数据库编码
+
