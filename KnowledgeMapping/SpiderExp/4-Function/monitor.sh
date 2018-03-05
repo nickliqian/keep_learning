@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 service redis-server status
 echo $?
 ps -ef |grep redis

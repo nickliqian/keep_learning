@@ -1,4 +1,57 @@
-create database python charset=utf8; # 创建数据库
+create database <db_name> charset=<char:utf8>; # 创建数据库
 
-alter database python charset utf8; # 修改数据库编码
+alter database <db_name> charset <char:utf8>; # 修改数据库编码
 
+show databases;
+use <db_name>;
+show tables;
+
+
+select host, user from user where user='root'; # 查看 root ⽤户的 host，默认只能被本机IP(127.0.0.1)登录
+
+
+# % 表示任意IP，语句表示更新root⽤户信息，让root⽤户可以被任意主机IP登录
+update mysql.user set host = '%' where user = 'root';
+
+
+flush privileges; # 使用修改
+
+python@ubuntu:~$ mysql -uroot -pmysql -h 192.168.xx.xxx # 远程登陆mysql
+
+
+E-R模型
+E表示Entry（实体），设计实体就像定义⼀个类⼀样，指定从哪些⽅⾯
+描述对象，⼀个实体转换为数据库中的⼀个表
+R表示Relationship（关系），关系描述两个实体之间的对应规则，包括
+⼀对⼀、⼀对多、多对多，关系也是⼀种数据，需要以⼀个字段的形式
+存储在表中，根据对应⽅式的不同，存储也有不同的⽅案
+A对B为1对1：在表A或表B中创建⼀个字段，存储另⼀个表的主键值
+A对B为1对多：在表B中创建⼀个字段，存储表A的主键值
+A对B为多对多：新建⼀张表C，这个表只有两个字段，⼀个⽤于存
+储A的主键值，⼀个⽤于存储B的主键值
+
+
+三范式
+经过研究和对使⽤中问题的总结，对于设计数据库提出了⼀些规范，这
+些规范被称为范式
+数据库设计中⼀共有6个范式，⼀般需要遵守3范式即可
+第⼀范式（1NF)：数据库表的每⼀列都是不可分割的原⼦数据项，即列
+不可拆分。
+第⼆范式（2NF)：建⽴在第⼀范式的基础上，要求数据库表中的每个实
+例或记录必须可以被唯⼀地区分，即唯⼀标识(主键)。
+第三范式（3NF)：建⽴在第⼆范式的基础上，任何⾮主属性不依赖于其
+数据库设计模型与范式
+它⾮主属性，即引⽤主键。
+
+
+约束条件说明
+NOT NULL            标识该属性不能为空
+UNIQUE              标识该属性的值是唯⼀的
+AUTO_INCREMENT      标识该属性的值⾃动增加
+DEFAULT             为该属性设置默认值，当不填写此值时会使⽤默认值，如果填写则以填写为准
+PRIMARY KEY         标识该属性为该表的主键，能确定⼀条记录的唯⼀标识（满⾜第⼆范式）
+FOREIGN KEY         标识该属性为该表的外键，与某表的主键关联。如果⼀个表中的某⼀列是另外⼀个表的中的主键，那么设置这列为外键。
+
+
+查看版本：select version();
+显示当前时间：select now();
