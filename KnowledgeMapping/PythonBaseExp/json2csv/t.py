@@ -20,10 +20,12 @@ import re
 
 origin = '{"businessEntity": "", "duty": ""一、被告浙江三象新材料科技有限公司于本判决生效之日起7日内，归还原告上海浦东发展银行股份有限公司金华分行借款本金500万元、支付利息5 746 611.84元（已计至2015年5月10日，此后利息另行按约定计至判决确定履行日止）。二、被告浙江三象新材料科技有限公司于本判决生效之日起7日内，给付原告上海浦东发展银行股份有限公司金华分行信用证垫款26 776 493.21元和按日万分之五计付的利息（其中本金14 875 963.78元自2013年12月13日起算，余款利息自2014年1月28日起算）。三、原告上海浦东发展银行股份有限公司金华分行对被告浙江三象新材料科技有限公司抵押担保的坐落于兰溪市兰江街道上黄村房屋（房产证号为兰房权证兰字第010045896号和第010045897号）折价、变卖或拍卖款享有优先受偿权。四、被告浙江加兰节能科技股份有限公司在2000万元的额度内对第一项、第二项款项承担连带责任。五、被告金华市圣尔达医疗器械有限公司、徐云夫、董伟琴、董建国、蔡忠丽均对第一项、第二项款项承担连带责任。如果被告未按本判决指定的期限履行给付金钱义务，应当依照《中华人民共和国民事诉讼法》第二百五十三条之规定，加倍支付迟延履行期间的债务利息。本案受理费204 416元（原告已预交），由七被告负担（各被告在履行时加付此款给原告）。"", "cambrian_appid": "0", "StdStg": 6899, "loc": "http://shixin.court.gov.cn/detail?id=111332775", "cardNum": "33062119620****4234", "courtName": "婺城法院", "areaName": "浙江", "performance": "全部未履行", "_update_time": "1520302174", "_select_time": 1520301956, "gistId": "(2015)金婺商初字第01851号", "performedPart": "", "sexy": "男", "StdStl": 8, "lastmod": "2018-03-05T22:19:06", "iname": "徐云夫", "SiteId": 2004188, "gistUnit": "金华婺城法院", "priority": "1.0", "regDate": "20151030", "unperformPart": "", "type": "失信被执行人名单", "_version": 18328, "sitelink": "http://shixin.court.gov.cn/", "focusNumber": "0", "age": "54", "caseCode": "(2015)金婺执民字第04665号", "changefreq": "always", "disruptTypeName": "其他有履行能力而拒不履行生效法律文书确定义务", "publishDate": "2016年03月09日", "publishDateStamp": "1457452800", "partyTypeName": "0"}'
 
-pattern = r'"duty":\s("").+?("")'
-# a = re.findall(pattern, origin)
-# print(a)
-new_data = re.sub(pattern, '>>>>>>>', origin)
-print(new_data)
-# new = json.loads(new_data)
-# print(new)
+pattern = r'("duty":\s)("")(.+?)("")'
+result = re.findall(pattern, origin)
+if result:
+    lis = list(result[0])
+    lis[1], lis[3] = '"', '"'
+    new_data = "".join(lis)
+    pattern = r'"duty":\s"".+?""'
+    origin = re.sub(pattern, new_data, origin)
+new = json.loads(origin)

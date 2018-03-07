@@ -23,14 +23,26 @@ with open(filename, mode="r", newline="", encoding="utf-8") as csvfile:
         else:
             try:
                 data = row[4]
+                # id=7179957 多余的table
+                # id=3610052 反斜杠
                 new_data = data.replace("	", "").replace("\\", "")
 
                 # 清理 javascript:SLC(98761,229)
                 pattern = r'"javascript:SLC\(.*?\)"'
                 new_data = re.sub(pattern, "", new_data)
 
-                # pattern = r':\s("").+?(""),'
-                # new_data = re.sub(pattern, "<test>", new_data)
+                # id=3609616 duty内容两侧引号有两个
+                pattern = r'("duty":\s)("")(.+?)("")'
+                result = re.findall(pattern, new_data)
+                if result:
+                    lis = list(result[0])
+                    lis[1], lis[3] = '"', '"'
+                    str_lis = "".join(lis)
+                    pattern = r'"duty":\s"".+?""'
+                    new_data = re.sub(pattern, str_lis, new_data)
+
+                # id=3607778 duty内容左侧有两个引号
+                new_data = new_data.replace('"duty": ""', '"duty": "')
 
                 item = json.loads(new_data)
                 items.append(item)
