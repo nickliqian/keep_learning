@@ -47,11 +47,153 @@ A对B为多对多：新建⼀张表C，这个表只有两个字段，⼀个⽤�
 约束条件说明
 NOT NULL            标识该属性不能为空
 UNIQUE              标识该属性的值是唯⼀的
-AUTO_INCREMENT      标识该属性的值⾃动增加
-DEFAULT             为该属性设置默认值，当不填写此值时会使⽤默认值，如果填写则以填写为准
+AUTO_INCREMENT      标识该属性的值自动增加
+DEFAULT             为该属性设置默认值，当不填写此值时会使用默认值，如果填写则以填写为准
 PRIMARY KEY         标识该属性为该表的主键，能确定⼀条记录的唯⼀标识（满⾜第⼆范式）
 FOREIGN KEY         标识该属性为该表的外键，与某表的主键关联。如果⼀个表中的某⼀列是另外⼀个表的中的主键，那么设置这列为外键。
 
 
 查看版本：select version();
 显示当前时间：select now();
+
+
+是否有必要使用外键：
+互联网行业应用用户量大，并发高，数据库服务器很容易成为性能瓶颈，尤其受IO能力限制，且不能轻易地水平扩展。
+
+如果设置了外键，当做⼀些涉及外键字段的增，删，更新操作之后，需要触发相关操作去检查，会额外消耗计算机资源。
+
+说明：虽然外键约束可以保证数据的有效性，但是在进行数据的 crud「增加(Create)、读取查询(Retrieve)、更新(Update)和删除(Delete)」时，
+都会降低数据库的性能，所以不推荐使用，那么数据的有效性怎么保证呢？答：可以在逻辑层进行控制。
+
+sql语句主要分为：
+DQL：数据查询语言，⽤于对数据进⾏查询，如select
+DML：数据操作语言，对数据进⾏增加、修改、删除，如insert、udpate、delete
+TPL：事务处理语言，对事务进⾏处理，包括begin transaction、commit、rollback
+DCL：数据控制语言，进⾏授权与权限回收，如grant、revoke
+DDL：数据定义语言，进⾏数据库、表的管理等，如create、drop
+CCL：指针控制语言，通过控制指针完成表的操作，如declare、cursor
+
+对于Web程序员来讲，重点是数据的 CRUD「增加(Create)、读取查询
+(Retrieve)、更新(Update)和删除(Delete)」，必须熟练编写DQL、
+DML，能够编写DDL完成数据库、表的操作，其它语⾔如TPL、DCL、
+CCL了解即可。
+
+
+show databases;
+select database();
+show create database test;
+show create table test;
+desc 表名;
+show full columns from 表名; # 查看字段编码/权限/
+select version();
+select now();
+create database 数据库名 charset=utf8;
+create database python charset=utf8;
+alter database python charset utf8;
+alter table students convert to charset utf8; # 修改表的字符集，以及所有字符列(char, varchar, text等)的字符集为utf8
+drop database 数据库名;
+drop database python;
+
+# 拿tinyint字段来举例，unsigned后，字段的取值范围是0-255，而signed的范围是-128 - 127。
+create table classes(
+    id int unsigned auto_increment primary key not null,
+    name varchar(10),
+    isdelete bit default 0
+);
+
+# 外键 foreign key(clsid) references classes(id)
+create table students(
+    id int unsigned auto_increment primary key not null,
+    name varchar(10) not null,
+    gender bit default 1,
+    hometown varchar(20),
+    clsid int unsigned,
+    isdelete bit default 0,
+    foreign key(clsid) references classes(id)
+);
+
+alter table students add birthday datetime;
+alter table students add newkey int default 10 not null comment '新编号';
+
+alter table students change name name1 varchar(20) not null;  # 重命名
+alter table 表名 modify 列名 类型及约束;
+alter table students modify name1 varchar(10) not null comment '测试';  # 不重命名
+
+alter table 表名 drop 列名;
+alter table students drop birthday;
+drop table 表名;
+drop table students;
+
+select * from 表名;
+select * from students;
+select 列1,列2,... from 表名;
+select id,name from classes;
+
+
+说明：主键列是⾃动增⻓，但是在全列插⼊时需要占位，通常使⽤0，插⼊成功后以实际数据为准
+全列插⼊：值的顺序与表中字段的顺序对应
+insert into 表名 values(...)
+insert into students values(0,'郭靖',1,'蒙古','2015-1-2');
+
+
+部分列插⼊：值的顺序与给出的列顺序对应
+insert into 表名(列1,...) values(值1,...)
+insert into students(name,hometown,birthday) values('⻩蓉','桃花岛','2015-3-2');
+
+
+
+上⾯的语句⼀次可以向表中插⼊⼀⾏数据，还可以⼀次性插⼊多⾏数据，这样可以减少与数据库的通信
+全列多⾏插⼊：值的顺序与给出的列顺序对应
+insert into 表名 values(...),(...)...;
+insert into classes values(0,'python'),(0,'linux'),(0,'mysql'),(0,'js');
+
+
+insert into 表名(列1,...) values(值1,...),(值1,...)...;
+insert into students(name) values('杨康'),('杨过'),('⼩⻰⼥');
+
+
+如果插入或者更新的value为字符串需要加上引号。
+update 表名 set 列1=值1,列2=值2... where 条件
+update students set gender=0,hometown='古墓' where id=5;
+
+delete from 表名 where 条件
+delete from students where id=5;
+逻辑删除，本质就是修改操作
+update students set isdelete=1 where id=1;
+
+
+备份
+python@ubuntu:~$ mysqldump –uroot –pmysql 数据库名 > ~/Desktop/py.sql;
+恢复
+python@ubuntu:~$ mysql -uroot –pmysql 数据库名 < ~/Desktop/py.sql
+
+
+insert into t1(name) select ascii('a');
+select ascii('a');  # 查看字符ascii码
+select char(97);  # 查看ascii码对应的字符
+select concat(12,34,'ab');  # 拼接字符串
+select length('abc');  # 查看字符串长度
+select substring('abc123',2,3);  # 截取字符串
+select ltrim(str);  # 返回删除了左空格的字符串str
+select rtrim(str);  # 返回删除了右空格的字符串str
+select trim([方向 remstr from str);
+返回从某侧删除remstr后的字符串str
+方向词:both、leading、trailing，表示两侧、左、右
+select space(10);  # 返回指定个数的空格
+select replace('abc123','123','def');  # 替换字符串
+lower(str)
+upper(str)
+select lower('aBcD');  # 转小写
+
+
+select abs(-32);  # 求绝对值abs(n)
+select mod(10,3);  # 求m除以n的余数mod(m,n)，同运算符%
+select 10%3;
+select floor(2.3);  # 地板floor(n)，表示不⼤于n的最⼤整数
+select ceiling(2.3);  # 天花板ceiling(n)，表示不⼩于n的最⼤整数
+
+
+
+
+
+
