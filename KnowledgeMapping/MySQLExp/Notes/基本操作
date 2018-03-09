@@ -119,6 +119,9 @@ alter table students change name name1 varchar(20) not null;  # 重命名
 alter table 表名 modify 列名 类型及约束;
 alter table students modify name1 varchar(10) not null comment '测试';  # 不重命名
 
+
+alter table table add/change/modify/drop ...
+
 alter table 表名 drop 列名;
 alter table students drop birthday;
 drop table 表名;
@@ -197,3 +200,129 @@ select ceiling(2.3);  # 天花板ceiling(n)，表示不⼩于n的最⼤整数
 
 
 
+日期时间函数
+获取子值,语法如下
+year(date)返回date的年份(范围在1000到9999)
+month(date)返回date中的月份数值
+day(date)返回date中的日期数值
+hour(time)返回time的小时数(范围是0到23)
+minute(time)返回time的分钟数(范围是0到59)
+second(time)返回time的秒数(范围是0到59)
+select year('2016-12-21');
+
+日期计算,使用+-运算符,数字后面的关键字为year、month、day、hour、minute、second
+select '2016-12-21'+interval 1 day;
+
+日期格式化date_format(date,format),format参数可用的值如下
+* 获取年%Y,返回4位的整数
+* 获取年%y,返回2位的整数
+* 获取月%m,值为1-12的整数
+* 获取日%d,返回1-31整数
+* 获取时%H,值为0-23的整数
+* 获取时%h,值为1-12的整数
+* 获取分%i,值为0-59的整数
+* 获取秒%s,值为0-59的整数
+select date_format('2016-12-21','%Y %m %d');
+
+当前日期current_date()
+select current_date();
+当前时间current_time()
+select current_time();
+当前日期时间now()
+select now();
+
+
+类型转换函数
+有cast和convert两个函数
+语法如下:
+cast(value as type)
+convert(value, type)
+value表示要转换的值, type表示目标类型
+目标类型如下: 二进制binary, 字符型char,可指定字符个数如char(10), 日期date, 时间time,
+            日期时间型datetime, 浮点数decimal, 整数signed, 无符号整数unsigned
+例
+SELECT CONVERT('125.83',SIGNED);
+SELECT CAST('125.83' AS signed); -> 125
+SELECT CAST(125.83 AS signed); -> 126 四舍五入
+
+
+判断
+mysql> select case 1
+    -> when 1 then 'one'
+    -> when 2 then 'two'
+    -> else 'zero' end result;
+
+mysql> select case
+    -> when 1>2 then 'part1'
+    -> when 3>2 then 'part2'
+    -> else 'part3' end as result;
+
+if(表达式,结果1,结果2)
+select if(1>2,2,3) as result;
+
+
+ifnull语句
+说明:如果表达式1不为null,则返回表达式1的结果,否则返回表达式2的结果
+ifnull(表达式1,表达式2)
+select ifnull(1,0) as result;
+
+nullif语句
+说明:如果表达式1等于表达式2,则返回null,否则返回表达式1的结果
+nullif(表达式1,表达式2)
+select nullif(1,0) as result;
+
+
+select * from 表名;
+select * from students;
+
+查询指定字段
+在select后面的列名部分,可以使用as为列起别名,这个别名出现在结果集中
+select 列1,列2,... from 表名;
+select id,name,gender from students;
+
+消除重复行
+在select后面列前使用distinct可以消除重复的行
+select distinct 列1,... from 表名;
+select distinct gender from students;
+
+# 查看不重复的数量
+select count(distinct name) from t1;
+
+
+select * from 表名 where 条件;
+select * from students where id=1;
+比较运算符
+等于=
+大于>
+大于等于>=
+小于<
+小于等于<=
+不等于!=或<>
+
+逻辑运算符
+and
+or
+not
+
+模糊查询
+like
+%表示任意多个任意字符
+_表示一个任意字符
+select * from t1 where name like '%y%';
+select * from t1 where name like '%y___';
+
+
+范围查询
+in表示在一个非连续的范围内
+select * from t1 where id in (1,2,3);
+select * from t1 where id between 3 and 8 and name like '%y%';
+
+空值查询
+注意:null与''是不同的
+判空is null
+select * from t1 where more is null;
+select * from t1 where more is not null;
+
+优先级
+优先级由高到低的顺序为:小括号,not,比较运算符,逻辑运算符
+and比or先运算,如果同时出现并希望先算or,需要结合()使用
