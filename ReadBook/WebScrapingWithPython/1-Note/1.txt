@@ -1,0 +1,36 @@
+
+# 估算网站页面量
+baidu -> site:traincode.cn
+
+
+# 识别网站所用技术
+pip install builtwith
+import builtwith
+builtwith.parse("http://www.baidu.com")
+
+
+# 查看网站找所有者
+pip install python-whois
+import whois
+print(whois.whois("baidu.com"))
+
+
+# 爬取方式：网站地图，ID遍历，链接深度爬取
+
+# 回调函数
+def link_crawler(..., scrape_callback=None):
+    ...
+    links = []
+    if scrape_callback:
+        links.extend(scrape_callback(url, html) or [])
+
+# 为爬虫添加缓存支持
+1. 暂时存入内存
+2. 存入硬盘
+3. 压缩字符串
+
+# 压缩字符串：zlib
+
+# 使用mongodb update操作，避免创建冗余的数据
+# mongodb自动删除过期记录
+# 
