@@ -33,4 +33,42 @@ def link_crawler(..., scrape_callback=None):
 
 # 使用mongodb update操作，避免创建冗余的数据
 # mongodb自动删除过期记录
-# 
+
+
+# 多线程爬虫
+# 设置线程最大值，循环判断线程是否存活
+# 执行线程停止后的补充线程
+# 线程主线程守护模式 thread.setDaemon(True)
+# 去重集合/队列集合
+
+# 多进程爬虫，提升性能
+# 使用中间数据库作为队列
+
+# 动态内容的获取
+# 1. 逆向工程，关键字尝试
+# 2. 渲染动态网页，PyQt/PySide+WebKit或Selenium
+
+# 模拟登录
+# 1. POST请求
+# 2. Python2 Mechanize模块
+
+# 验证码处理
+# 1. OCR
+# 2. OCR API
+
+# Scrapy
+
+# Portia
+# Scrapely
+
+
+
+
+
+
+
+
+
+
+
+
