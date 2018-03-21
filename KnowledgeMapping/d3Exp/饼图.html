@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="d3.v3.min.js" charset="utf-8"></script>
+</head>
+<body>
+
+
+    <script>
+        var color = d3.scale.category10();   //有十种颜色的颜色比例尺
+        // 设置画布
+        var width = 500;
+        var height = 500;
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // 获取数据
+        var dataset = [ 30 , 10 , 43 , 55 , 13 ];
+        // 定义饼图布局
+        var pie = d3.layout.pie();
+        // 数据转换（将数据源计算为适合作图的数据）
+        var piedata = pie(dataset);
+
+        console.log(piedata);
+
+        // 定义圆弧的内外半径
+        var outerRadius = 150; //外半径
+        var innerRadius = 0; //内半径，为0则中间没有空白
+        // 构造弧生成器
+        var arc = d3.svg.arc()  //弧生成器
+            .innerRadius(innerRadius)   //设置内半径
+            .outerRadius(outerRadius);  //设置外半径
+
+        // 生成足够数量的分组元素
+        var arcs = svg.selectAll("g")
+            .data(piedata)
+            .enter()
+            .append("g")
+            .attr("transform","translate("+ (width/2) +","+ (width/2) +")"); // 指定在画布的位置
+
+        // 添加路径，路径使用转换数据调用弧生成器，得到路径值 d
+        arcs.append("path")
+            .attr("fill",function(d,i){
+                return color(i);
+            })
+            .attr("d",function(d){
+                return arc(d);   //调用弧生成器，得到路径值
+            });
+
+        // 在弧线中心添加文本
+        arcs.append("text")
+            .attr("transform",function(d){
+                return "translate(" + arc.centroid(d) + ")";
+            })
+            .attr("text-anchor","middle")
+            .text(function(d){
+                return d.data;
+            });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>HelloWorld</title>
+        <script src="d3.v3.min.js" charset="utf-8"></script>
+
+
+</head>
+<body>
+
+    <p>Apple</p>
+    <p id="myid">Pear</p>
+    <p>Banana</p>
+
+        <script>
+            var body = d3.select("body");
+
+            var p1 = body.select("p");
+            p1.style("color","red");
+
+            var p2 = body.select("#myid");
+            p2.style("color","red");
+
+            body.append("p").text("append p element");
+
+            body.insert("p","#myid").text("insert p element");
+
+            var p = body.select("#myid");
+            p.remove();
+        </script>
+
+        <script>
+            // 设置画布大小
+            var width = 300;  //画布的宽度
+            var height = 300;   //画布的高度
+
+            // 添加svg画布
+            var svg = d3.select("body")     //选择文档中的body元素
+                .append("svg")          //添加一个svg元素
+                .attr("width", width)       //设定宽度
+                .attr("height", height);    //设定高度
+
+            // 获取数据
+            var dataset = [ 250 , 210 , 170 , 130 , 90 ];  //数据（表示矩形的宽度）
+            // 设置元素高度
+            var rectHeight = 25;	//每个矩形所占的像素高度(包括空白)
+
+            // 生成矩形，操作矩形
+            svg.selectAll("rect")   // 选择svg内所有的矩形
+                .data(dataset)      // 绑定数组
+                .enter()            // 指定选择集的enter部分
+                .append("rect")     // 添加足够数量的矩形元素
+                .attr("x",20)       // 设置摆放位置
+                .attr("y",function(d,i){
+                     return i * rectHeight;
+                })
+                .attr("width",function(d){ // 设置元素属性宽度和高度
+                     return d;
+                })
+                .attr("height",rectHeight-2)
+                .attr("fill","steelblue"); // 填充颜色
+        </script>
+
+</body>
+</html>

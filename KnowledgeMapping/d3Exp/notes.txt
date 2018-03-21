@@ -1,0 +1,13 @@
+D3 总共提供了 12 个布局：
+饼状图（Pie）、
+力导向图（Force）、
+弦图（Chord）、
+树状图（Tree）、
+集群图（Cluster）、
+捆图（Bundle）、
+打包图（Pack）、
+直方图（Histogram）、
+分区图（Partition）、
+堆栈图（Stack）、
+矩阵树图（Treemap）、
+层级图（Hierarchy）。

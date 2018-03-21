@@ -35,3 +35,50 @@ Comms允许前端和内核之间的自定义消息。
 一个comm由一对对象组成，在内核和前端，有一个自动分配的唯一ID。
 当一方发送消息时，另一侧的回调由该消息数据触发。
 任何一方，前端或内核，都可以打开或关闭通讯。
+
+1. 在前端注册comm，在核心打开comm
+2. 在核心注册comm，在前端打开comm
+
+
+
+Configuration
+    - Jupyter’s common configuration system
+    - Notebook server
+    - Notebook front-end client
+    - Notebook extensions
+
+1. Jupyter通用配置系统
+2. Notebook服务器配置
+jupyter notebook --generate-config
+生成~/.jupyter/jupyter_notebook_config.py配置文件
+选项列表：jupyter notebook --help
+
+format
+    c.Application.log_datefmt = '%Y-%m-%d %H:%M:%S'
+    c.Application.log_format = '[%(color)s<%(levelname)7.s %(asctime)s.%(msecs).03d %(name)s>%(end_color)s %(message)s]'
+    %(levelname)7.5s -> 7是偏移位数，5是截取字符长度
+log_level
+    critical   50
+    error      40
+    warning    30
+    info       20
+    debug      10
+    notset     0
+
+可配置功能
+    - 日志格式、等级
+    - 配置文件路径、名称、自动生成
+    - 设置请求头参数和请求规则
+    - 设置登录身份，权限
+    - 设置SSL/TSL证书路径
+    - 设置传输速率
+    -
+
+
+3. 前端客户端配置
+4. notebook扩展插件
+
+
+
+
+

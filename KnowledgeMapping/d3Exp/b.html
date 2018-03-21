@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="d3.v3.min.js" charset="utf-8"></script>
+    <style>
+        .axis path,
+        .axis line{
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+
+        .axis text {
+            font-family: sans-serif;
+            font-size: 11px;
+        }
+    </style>
+
+</head>
+<body>
+
+
+
+
+
+    <script>
+        var dataset = [1.2, 2.3, 0.9, 1.5, 3.3];
+
+        var min = d3.min(dataset);
+        var max = d3.max(dataset);
+
+        var linear = d3.scale.linear()
+                .domain([min, max])
+                .range([0, 300]);
+
+        var a = linear(0.9);    //返回 0
+        var b = linear(2.3);    //返回 175
+        var c = linear(3.3);    //返回 300
+//        alert(a);
+//        alert(b);
+//        alert(c);
+
+    </script>
+    <script>
+        var index = [0, 1, 2, 3, 4];
+        var color = ["red", "blue", "green", "yellow", "black"];
+
+        var ordinal = d3.scale.ordinal()
+                .domain(index)
+                .range(color);
+
+        ordinal(0); //返回 red
+        ordinal(2); //返回 green
+        ordinal(4); //返回 black
+    </script>
+
+    <script>
+        // 线性比例函数
+        var dataset = [ 2.5 , 2.1 , 1.7 , 1.3 , 0.9 ];
+
+        var linear = d3.scale.linear()
+                .domain([0, d3.max(dataset)])
+                .range([0, 250]);
+
+
+        // 添加svg画布
+        var width = 300;  //画布的宽度
+        var height = 300;   //画布的高度
+        var svg = d3.select("body")     //选择文档中的body元素
+            .append("svg")          //添加一个svg元素
+            .attr("width", width)       //设定宽度
+            .attr("height", height);    //设定高度
+
+        var rectHeight = 25;   //每个矩形所占的像素高度(包括空白)
+
+        svg.selectAll("rect")
+            .data(dataset)
+            .enter()
+            .append("rect")
+            // 先定义好矩形的坐标位置
+            .attr("x",20)
+            .attr("y",function(d,i){
+                 return i * rectHeight;
+            })
+            // 然后定义矩形的大小
+            .attr("width",function(d){
+                 return linear(d);   //在这里用比例尺
+            })
+            .attr("height",rectHeight-2)
+            // 最后填充颜色
+            .attr("fill","steelblue");
+
+        // 添加坐标轴组件
+        var axis = d3.svg.axis()
+             .scale(linear)      //指定比例尺
+             .orient("bottom")   //指定刻度的方向
+             .ticks(7);          //指定刻度的数量
+
+        // 在画布中添加分组元素并且回调坐标轴函数
+        svg.append("g")
+          .attr("class","axis") // 绑定属性
+          .attr("transform","translate(20,130)") // 设置位置
+          .call(axis); // 回调显示坐标轴
+    </script>
+</body>
+</html>

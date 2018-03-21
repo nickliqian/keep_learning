@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="d3.v3.min.js" charset="utf-8"></script>
+</head>
+<body>
+
+    <script>
+        // 定义画布
+        var width = 500;
+        var height = 500;
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        var cr = 25;
+        var cx1 = 100;
+        var cy1 = 100;
+        var cx2 = 300;
+        var cy2 = 300;
+        var point1 = 5;
+
+        var lineOffset = 5;
+
+
+
+        // 定义圆
+        var circle1 = svg.append("circle")
+            .attr("cx", cx1)
+            .attr("cy", cy1)
+            .attr("r", cr)
+            .style("fill","green");
+        var circle2 = svg.append("circle")
+            .attr("cx", cx2)
+            .attr("cy", cy2)
+            .attr("r", cr)
+            .style("fill","green");
+        var circle3 = svg.append("circle")
+            .attr("cx", cx1)
+            .attr("cy", cx1)
+            .attr("r", point1)
+            .style("fill","black");
+        var line1 = svg.append("line")
+            .attr("x1", cx1)
+            .attr("y1", cy1)
+            .attr("x2", cx2)
+            .attr("y2", cy2)
+            .attr("stroke", "rgb(255,0,0)")
+            .attr("stroke-width", "2");
+
+        circle3.transition()
+            .duration(2000)
+            .attr("cx", cx2)
+            .attr("cy", cx2)
+
+//        var line2 = svg.append("line")
+//            .attr("x1", cx1+lineOffset)
+//            .attr("y1", cy1-lineOffset)
+//            .attr("x2", cx2+lineOffset)
+//            .attr("y2", cy2-lineOffset)
+//            .attr("stroke", "black")
+//            .attr("stroke-width", "2");
+
+
+
+
+        // <line x1="100" y1="100" x2="200" y2="200" stroke="rgb(255,0,0)" stroke-width="2" />
+    </script>
+</body>
+</html>

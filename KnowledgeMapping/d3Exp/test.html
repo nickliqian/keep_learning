@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="d3.v5.min.js" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        d3.select('#chart')
+          .selectAll("div")
+          .data([4, 8, 15, 16, 23, 42])
+          .enter()
+          .append("div")
+          .style("height", (d)=> d + "px")
+    </script>
+    <style type="text/css">
+        #chart div {
+          display: inline-block;
+          background: #4285F4;
+          width: 20px;
+          margin-right: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <svg width="500" height="500">
+          <circle fill="#3E5693" cx="100" cy="100" r="20" />
+          <!--<path d="M100,10L150,70L50,70Z" fill="#BEDBC3" stroke="#539E91" stroke-width="3">-->
+          <circle fill="#d83e3e" cx="200" cy="200" r="20" />
+          <line x1="100" y1="100" x2="200" y2="200" stroke="rgb(255,0,0)" stroke-width="2" />
+        </svg>
+
+
+    </div>
+
+
+    <div id="chart"></div>
+
+</body>
+</html>

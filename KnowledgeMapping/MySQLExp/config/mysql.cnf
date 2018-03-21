@@ -1,0 +1,91 @@
+[client]
+port = 3306
+socket = /tmp/mysql.sock
+
+[mysqld]
+
+#base
+port = 3306
+user = mysql
+socket = /tmp/mysql.sock
+pid-file = /tmp/mysql.pid
+basedir = /usr/local/mysql
+datadir = /data/mysqldb
+tmpdir = /opt/mysqltmp
+open_files_limit = 10240
+explicit_defaults_for_timestamp
+sql_mode = NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+federated
+
+#server_id = 706
+#replicate-do-db = posp
+#replicate-ignore-db = mysql
+#log-slave-updates = 1
+#event_scheduler=1
+
+max_connections = 2000
+max_connect_errors = 10000
+interactive_timeout = 600
+wait_timeout = 600
+skip-name-resolve
+sync_binlog=0
+log_bin_trust_function_creators = 1
+
+character-set-server = utf8
+default_storage_engine = InnoDB
+
+#log
+log-bin = /data/mysqldb/binlog/mysql-bin
+binlog_cache_size = 32m
+max_binlog_cache_size = 10g
+binlog_stmt_cache_size = 32m
+table_open_cache = 2048
+max_binlog_size = 1024m
+binlog_format = mixed
+log_output = FILE
+log-error = /data/mysqldb/log/mysql-error.log
+slow_query_log = 1
+slow_query_log_file = /data/mysqldb/log/mysql-slow_query.log
+general_log = 0
+general_log_file = /data/mysqldb/log/mysql-general-query.log
+expire-logs-days = 30
+relay-log = /data/mysqldb/binlog/relay-bin
+relay-log-index= /data/mysqldb/binlog/relay-bin.index
+#buffer
+sort_buffer_size = 2m
+read_buffer_size = 2m
+read_rnd_buffer_size = 2m
+join_buffer_size = 2m
+
+net_buffer_length = 16k
+max_allowed_packet = 512m
+bulk_insert_buffer_size = 32m
+max_heap_table_size = 512m
+tmp_table_size = 512m
+thread_cache_size = 100
+query_cache_size = 256m
+query_cache_limit = 10m
+query_cache_min_res_unit = 4k
+key_buffer_size = 16m
+myisam_sort_buffer_size = 64m
+myisam_max_sort_file_size = 10g
+myisam_repair_threads = 1
+
+#innodb
+innodb_file_per_table = 1
+innodb_data_file_path = ibdata1:2048M:autoextend
+innodb_log_file_size = 128m
+innodb_log_files_in_group = 3
+innodb_buffer_pool_size = 1g
+innodb_buffer_pool_instances = -1
+innodb_max_dirty_pages_pct = 70
+#innodb_thread_concurrency = 8
+innodb_flush_method = O_DIRECT
+innodb_log_buffer_size = 16m
+innodb_flush_log_at_trx_commit = 2
+
+[mysql]
+no-auto-rehash
+prompt = (\u@\h) [\d]\_
+default-character-set = utf8
+
