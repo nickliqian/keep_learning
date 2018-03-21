@@ -27,7 +27,9 @@ def line_c(point1, point2, circle_point, r):
         return 0
     xsq = (r**2+2*m-m**2-2*(b-n)-(b-n)**2)/(a**2-1)
     x = math.sqrt(xsq)
-    print(x)
+    print("x={}".format(x))
+    y = a*x + b
+    print("y={}".format(y))
 
 
 # (x-px)^2+(y-py)^2 = r^2

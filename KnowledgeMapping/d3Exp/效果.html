@@ -8,6 +8,102 @@
 <body>
 
     <script>
+        function myFunction(point1, point2, circle_point, r)
+        {
+            var x1 = point1[0];
+            var y1 = point1[1];
+            var x2 = point2[0];
+            var y2 = point2[1];
+            var m = circle_point[0];
+            var n = circle_point[1];
+
+            var b = (x1 * y2 - x2 * y1) / (x1 - x2);
+            var a = (y1 - b) / x1;
+            var a_back = (y2 - b) / x2;
+            if (a === a_back){
+                console.log("y="+a+"x+"+b);
+            }
+            else{
+                console.log("方程无解");
+                return 0
+            }
+            var xsq = (Math.pow(r,2)+2*m-Math.pow(m,2)-2*(b-n)-Math.pow(b-n,2))/(Math.pow(a,2)-1);
+            var x = Math.sqrt(xsq);
+            console.log("x="+x);
+            var y = a*x + b;
+            console.log("y="+y);
+            return [x, y]
+        }
+
+        // 根据两个点求直线的参数
+        function getLineArgs(point1, point2) {
+            var x1 = point1[0];
+            var y1 = point1[1];
+            var x2 = point2[0];
+            var y2 = point2[1];
+            var b = (x1 * y2 - x2 * y1) / (x1 - x2);
+            var k = (y1 - b) / x1;
+            var k_back = (y2 - b) / x2;
+            if (k === k_back){
+                console.log("y="+k+"x+"+b);
+                return [k, b]
+            }
+            else{
+                console.log("方程无解");
+                return 0
+            }
+        }
+
+        // 幂
+        function pow(x ,y) {
+            return Math.pow(x ,y);
+        }
+
+        // 开方
+        function sqrt(value) {
+            return Math.sqrt(value);
+        }
+
+        // 根据直线参数和x值求y的值
+        function getYVallue(args, x) {
+            var k = args[0];
+            var b = args[1];
+            var y = k*x + b;
+            return y;
+        }
+
+        // 根据直线参数和x值求y的值
+        function getXVallue(args, y) {
+            var k = args[0];
+            var b = args[1];
+            var x = (y - b)/k;
+            return x;
+        }
+        
+        // 求直线和圆的交点
+        function getPointOfInsertion(point1, point2, circle_point, r) {
+            var args = getLineArgs(point1, point2);
+            var k = args[0];
+            var b = args[1];
+            var c = circle_point[0];
+            var d = circle_point[1];
+
+            var x1 = (sqrt((pow(k,2)+1)*pow(r,2)-pow(c,2)*pow(k,2)+(2*c*d+2*b*c)*k-pow(d,2)-2*b*d-pow(2,b))+(d+b)*k+c)/(pow(k,2)+1);
+            var y1 = k*x1+b;
+
+            var x2 = (sqrt((pow(k,2)+1)*pow(r,2)-pow(c,2)*pow(k,2)+(2*c*d+2*b*c)*k-pow(d,2)-2*b*d-pow(2,b))-(d+b)*k-c)/(pow(k,2)+1);
+            x2 = -1*x2;
+            var y2 = k*x2+b;
+
+            console.log("("+x1+","+y1+"+),("+x2+","+y2+")");
+
+            return [[x1, y1],[x2, y2]]
+        }
+
+    </script>
+    
+    <script>
+
         // 定义画布
         var width = 500;
         var height = 500;
@@ -21,11 +117,15 @@
         var cy1 = 100;
         var cx2 = 300;
         var cy2 = 300;
-        var point1 = 5;
-
         var lineOffset = 5;
 
+        var point1 = getPointOfInsertion([cx1, cy1], [cx2, cy2], [cx1, cy1], cr);
+        var point2 = getPointOfInsertion([cx1, cy1], [cx2, cy2], [cx2, cy2], cr);
 
+        var c1x = point1[0][0];
+        var c1y = point1[0][1];
+        var c2x = point2[1][0];
+        var c2y = point2[1][1];
 
         // 定义圆
         var circle1 = svg.append("circle")
@@ -38,36 +138,37 @@
             .attr("cy", cy2)
             .attr("r", cr)
             .style("fill","green");
-        var circle3 = svg.append("circle")
-            .attr("cx", cx1)
-            .attr("cy", cx1)
-            .attr("r", point1)
-            .style("fill","black");
         var line1 = svg.append("line")
-            .attr("x1", cx1)
-            .attr("y1", cy1)
-            .attr("x2", cx2)
-            .attr("y2", cy2)
+            .attr("x1", c1x)
+            .attr("y1", c1y)
+            .attr("x2", c2x)
+            .attr("y2", c2y)
             .attr("stroke", "rgb(255,0,0)")
             .attr("stroke-width", "2");
 
-        circle3.transition()
-            .duration(2000)
-            .attr("cx", cx2)
-            .attr("cy", cx2)
+        var dataset = [0, 0, 0, 0, 0];
+        var data_flow = svg.selectAll("g")
+                .data(dataset)
+                .enter()
+                .append("circle")
+                .attr("cx", c1x)
+                .attr("cy", c1y)
+                .attr("r", lineOffset)
+                .style("fill","black");
 
-//        var line2 = svg.append("line")
-//            .attr("x1", cx1+lineOffset)
-//            .attr("y1", cy1-lineOffset)
-//            .attr("x2", cx2+lineOffset)
-//            .attr("y2", cy2-lineOffset)
-//            .attr("stroke", "black")
-//            .attr("stroke-width", "2");
+        // 数据流动动画
+        data_flow.transition()
+            .delay(function (d, i) {
+                console.log(i);
+                return 500*i;
+            })
+            .duration(function (d, i) {
+                return 5000;
+            })
+            .attr("cx", c2x)
+            .attr("cy", c2y);
 
 
-
-
-        // <line x1="100" y1="100" x2="200" y2="200" stroke="rgb(255,0,0)" stroke-width="2" />
     </script>
 </body>
 </html>
