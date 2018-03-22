@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>节点数据流动动画演示</title>
+    <script src="d3.v3.min.js" charset="utf-8"></script>
+</head>
+<body>
+
+
+<script>
+
+
+    // 幂
+    function pow(x ,y) {
+        return Math.pow(x ,y);
+    }
+
+    // 开方
+    function sqrt(value) {
+        return Math.sqrt(value);
+    }
+
+    // 返回上部坐标的y值
+    function ovalGetTopY(cx, cy, a, b, x) {
+        var m = (1-pow(x-cx,2)/pow(a,2))*pow(b,2);
+        var n = sqrt(m);
+        return cy-n;
+    }
+
+    // 返回下部坐标的y值
+    function ovalGetBottomY(cx, cy, a, b, x) {
+        var m = (1-pow(x-cx,2)/pow(a,2))*pow(b,2);
+        var n = sqrt(m);
+        return cy+n;
+    }
+
+    // 创建指定长度的数组
+    function createArry(count) {
+        var Arr = [];
+        for (var i=0;i<count;i++){
+            Arr.push(0);
+        }
+        return Arr;
+    }
+
+    // 创建指定长度的数组
+    function createIDArry(count) {
+        var Arr = [];
+        for (var i=0;i<count;i++){
+            Arr.push(i+1);
+        }
+        return Arr;
+    }
+
+    // 定义画布
+    var width = 1500;
+    var height = 1500;
+    var svg = d3.select("body")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    // 定义椭圆基本参数
+    var ovalX = 750;
+    var ovalY = 300;
+    var ovalLong = 500;
+    var ovalShort = 200;
+
+    // 创建椭圆
+    var ovalOrigin = svg.append("ellipse")
+        .attr("cx", ovalX)
+        .attr("cy", ovalY)
+        .attr("rx", ovalLong)
+        .attr("ry", ovalShort)
+        .style("fill", "white")
+        .style("stroke", "black")
+        .style("stroke-width", "2")
+        .attr("id", "oval_main");
+
+    // 定义圆
+    var circle1 = svg.append("circle")
+        .attr("cx", "750")
+        .attr("cy", "300")
+        .attr("r", "20");
+
+    // 假设节点个数为nodeCounts
+    var nodeCounts = 5;
+    // 创建节点id
+    var ids = createIDArry(nodeCounts);
+    // 定义隐藏节点的大小
+    var hideCircle = 10;
+
+    // 生成节点，计算上下节点数量
+    function createNodeConfig(ovalLong,nodeCounts,ids) {
+        var topNodes,bottomNodes;
+
+        if (nodeCounts%2===1){
+            topNodes = (nodeCounts+1)/2;
+            bottomNodes = (nodeCounts-1)/2;
+        }
+        else {
+            topNodes = nodeCounts/2;
+            bottomNodes = nodeCounts/2;
+        }
+        // 计算节点间距
+        var topDivideDistance = (2*ovalLong)/(topNodes+1);
+        var bottomDivideDistance = (2*ovalLong)/(bottomNodes+1);
+        console.log(topNodes, bottomNodes);
+        console.log(topDivideDistance, bottomDivideDistance);
+
+        // 创建数据节点
+        var topDataset = ids.slice(0,topNodes);
+        var bottomDataset = ids.slice(topNodes,nodeCounts);
+        console.log(topDataset);
+        console.log(bottomDataset);
+
+        return [topDivideDistance,bottomDivideDistance,topDataset,bottomDataset]
+    }
+
+    var configValue = createNodeConfig(ovalLong,nodeCounts,ids);
+    var topDivideDistance = configValue[0];
+    var bottomDivideDistance = configValue[1];
+    var topDataset = configValue[2];
+    var bottomDataset = configValue[3];
+
+/*
+
+    // 生成节点
+    // 计算上下节点数量
+    if (nodeCounts%2===1){
+        topNodes = (nodeCounts+1)/2;
+        bottomNodes = (nodeCounts-1)/2;
+    }
+    else {
+        topNodes = nodeCounts/2;
+        bottomNodes = nodeCounts/2;
+    }
+    // 计算节点间距
+    var topDivideDistance = (2*ovalLong)/(topNodes+1);
+    var bottomDivideDistance = (2*ovalLong)/(bottomNodes+1);
+    console.log(topNodes, bottomNodes);
+    console.log(topDivideDistance, bottomDivideDistance);
+
+    // 创建数据节点
+    var topDataset = ids.slice(0,topNodes);
+    var bottomDataset = ids.slice(topNodes,nodeCounts);
+    console.log(topDataset);
+    console.log(bottomDataset);
+*/
+
+    var x,y,i,point;
+
+
+    var topLocation = [];
+    for (i=0; i<topDataset.length; i++){
+        x = ovalX-ovalLong+(i+1)*topDivideDistance;
+        y = ovalGetTopY(ovalX, ovalY, ovalLong, ovalShort, x);
+        console.log(x,y);
+        point = {ID:topDataset[i],x:x,y:y};
+        topLocation.push(point);
+    }
+    console.log(topLocation);
+
+    var bottomLocation = [];
+    for (i=0; i<bottomDataset.length; i++){
+        x = ovalX-ovalLong+(i+1)*bottomDivideDistance;
+        y = ovalGetBottomY(ovalX, ovalY, ovalLong, ovalShort, x);
+        console.log(x,y);
+        point = {ID:bottomDataset[i],x:x,y:y};
+        bottomLocation.push(point);
+    }
+    console.log(bottomLocation);
+
+
+    var data_flow1 = svg.selectAll("g")
+        .data(topLocation)
+        .enter()
+        .append("circle")
+        .attr("cx", function (d,i) {
+            return topLocation[i].x;
+        })
+        .attr("cy", function (d,i) {
+            return topLocation[i].y;
+        })
+        .attr("r", hideCircle)
+        .attr("fill", "red");
+
+    var data_flow2 = svg.selectAll("g")
+        .data(bottomLocation)
+        .enter()
+        .append("circle")
+        .attr("cx", function (d,i) {
+            return bottomLocation[i].x;
+        })
+        .attr("cy", function (d,i) {
+            return bottomLocation[i].y;
+        })
+        .attr("r", hideCircle)
+        .attr("fill", "red");
+
+
+
+/*
+    var data_flow1 = svg.selectAll("g")
+            .data(dataset1)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d,i) {
+                return ovalX-ovalLong+(i+1)*topDivideDistance;
+            })
+            .attr("cy", function (d,i) {
+                var x = ovalX-ovalLong+(i+1)*topDivideDistance;
+                return ovalGetTopY(ovalX, ovalY, ovalLong, ovalShort, x);
+            })
+            .attr("r", hideCircle)
+            .attr("fill", "red");
+
+    // 创建数据节点
+    var dataset2 = createArry(bottomNodes);
+    var data_flow2 = svg.selectAll("g")
+            .data(dataset2)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d,i) {
+                return ovalX-ovalLong+(i+1)*bottomDivideDistance;
+            })
+            .attr("cy", function (d,i) {
+                var x = ovalX-ovalLong+(i+1)*bottomDivideDistance;
+                return ovalGetBottomY(ovalX, ovalY, ovalLong, ovalShort, x);
+            })
+            .attr("r", hideCircle)
+            .attr("fill", "red");
+*/
+
+
+</script>
+</body>
+
+
+</html>

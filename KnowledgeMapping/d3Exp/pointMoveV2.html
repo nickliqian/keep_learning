@@ -64,6 +64,11 @@
             return Math.sqrt(value);
         }
 
+        // 绝对值
+        function abs(value) {
+            return Math.abs(value);
+        }
+
         // 根据直线参数和x值求y的值
         function getYVallue(args, x) {
             var k = args[0];
@@ -79,7 +84,21 @@
             var x = (y - b)/k;
             return x;
         }
-        
+
+        function cel_part(k, b, c, d, r) {
+            var m = (pow(k,2)+1)*pow(r,2);
+            var n = pow(c,2)*pow(k,2);
+            var o = (2*c*d+2*b*c)*k;
+            var p = pow(b+d,2);
+            var left = m-n+o-p;
+
+            var right = (d+b)*k+c;
+            var bottom = pow(k,2)+1;
+
+            return (left+right)/bottom;
+
+        }
+
         // 求直线和圆的交点
         function getPointOfInsertion(point1, point2, circle_point, r) {
             var args = getLineArgs(point1, point2);
@@ -90,10 +109,12 @@
 
             console.log(k ,b, c, d);
 
-            var x1 = (sqrt((pow(k,2)+1)*pow(r,2)-pow(c,2)*pow(k,2)+(2*c*d+2*b*c)*k-pow(d,2)-2*b*d-pow(b,2))+(d+b)*k+c)/(pow(k,2)+1);
+            // var x1 = (sqrt((pow(k,2)+1)*pow(r,2)-pow(c,2)*pow(k,2)+(2*c*d+2*b*c)*k-pow(d,2)-2*b*d-pow(b,2))+((d+b)*k+c))/(pow(k,2)+1);
+            var x1 = cel_part(k, b, c, d, r);
             var y1 = k*x1+b;
 
-            var x2 = (sqrt((pow(k,2)+1)*pow(r,2)-pow(c,2)*pow(k,2)+(2*c*d+2*b*c)*k-pow(d,2)-2*b*d-pow(b,2))-(d+b)*k-c)/(pow(k,2)+1);
+
+            var x2 = (sqrt((pow(k,2)+1)*pow(r,2)-pow(c,2)*pow(k,2)+(2*c*d+2*b*c)*k-pow(d,2)-2*b*d-pow(b,2))+(-1*(d+b)*k+c))/(pow(k,2)+1);
             var y2 = k*x2+b;
 
             console.log("("+x1+","+y1+"+),("+x2+","+y2+")");
@@ -102,24 +123,128 @@
         }
 
     </script>
-    
+
     <script>
 
+        // cx1, cy1 起点
+        // cx2, cy2 终点
+        // cr 半径
+        function createNode(cx1, cy1, cr, dataNodeR, status) {
+            if (status>10){
+                return 0;
+            }
+            var cx2;
+            var cy2;
+
+            if (status%2===1){
+                    cx2 = getLeftLocation(200, 220);
+                    cy2 = 60*status+getLeftLocation(10, 60);
+                }
+                else{
+                    cy2 = getLeftLocation(80, 100);
+                    cx2 = 60*status+getLeftLocation(10, 60);
+                }
+
+            // 创建中间节点
+            var circle2 = svg.append("circle")
+                .attr("cx", cx2)
+                .attr("cy", cy2)
+                .attr("r", cr)
+                .style("fill","green");
+
+            // 节点连线
+            var line1 = svg.append("line")
+                .attr("x1", cx1)
+                .attr("y1", cy1)
+                .attr("x2", cx2)
+                .attr("y2", cy2)
+                .attr("stroke", "rgb(255,0,0)")
+                .attr("stroke-width", "2");
+
+            // 创建数据节点
+            var dataset = [0, 0, 0, 0, 0];
+            var data_flow = svg.selectAll("g")
+                    .data(dataset)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", cx1)
+                    .attr("cy", cy1)
+                    .attr("r", dataNodeR)
+                    .style("fill","green");
+
+
+            // 数据节点流动动画
+            data_flow.transition()
+                .delay(function (d, i) {
+                    console.log(i);
+                    return 500*i;
+                })
+                .duration(function (d, i) {
+                    return 5000;
+                })
+                .attr("cx", cx2)
+                .attr("cy", cy2);
+
+            createNode(cx2, cy2, cr, dataNodeR, status+1);
+        }
+
+        function getLeftLocation(min, max) {
+            return parseInt(Math.random()*(max-min+1)+min,10);
+        }
+
+
         // 定义画布
-        var width = 500;
-        var height = 500;
+        var width = 1000;
+        var height = 1000;
         var svg = d3.select("body")
             .append("svg")
             .attr("width", width)
             .attr("height", height);
+        // 定义基本参数
+        var cr = 15; // 节点半径
+        var cx0 = 100; // 初始节点位置
+        var cy0 = 100;
+        var dataNodeR = 5; // 数据节点半径
 
-        var cr = 15;
-        var cx1 = 100;
-        var cy1 = 100;
-        var cx2 = 300;
-        var cy2 = 150;
-        var lineOffset = 5;
+        // 定义起始节点圆
+        var circle1 = svg.append("circle")
+            .attr("cx", cx0)
+            .attr("cy", cy0)
+            .attr("r", cr)
+            .style("fill","green");
 
+        function startLoop(xo, yo, count) {
+            var xr;
+            var yr;
+            var i;
+            for (i=1; i<=count; i++) {
+                if (i%2===1){
+                    xr = getLeftLocation(200, 220);
+                    yr = 60*i+getLeftLocation(10, 60);
+                }
+                else{
+                    xr = getLeftLocation(80, 100);
+                    yr = 60*i+getLeftLocation(10, 60);
+                }
+                createNode(xo,yo,xr,yr,cr,dataNodeR);
+                xo = xr;
+                yo = yr;
+            }
+        }
+
+
+        // createNode(100,100,cr,dataNodeR,1);
+
+        startLoop(cx0, cy0, 5);
+
+        // createNode(100,100,300,150,cr,dataNodeR);
+        // createNode(300,150,200,200,cr,dataNodeR);
+
+
+
+
+
+/*
         var point1 = getPointOfInsertion([cx1, cy1], [cx2, cy2], [cx1, cy1], cr);
         var point2 = getPointOfInsertion([cx1, cy1], [cx2, cy2], [cx2, cy2], cr);
 
@@ -128,12 +253,7 @@
         var c2x = point2[1][0];
         var c2y = point2[1][1];
 
-        // 定义圆
-        var circle1 = svg.append("circle")
-            .attr("cx", cx1)
-            .attr("cy", cy1)
-            .attr("r", cr)
-            .style("fill","green");
+
         var circle2 = svg.append("circle")
             .attr("cx", cx2)
             .attr("cy", cy2)
@@ -154,7 +274,7 @@
                 .append("circle")
                 .attr("cx", cx1)
                 .attr("cy", cy1)
-                .attr("r", lineOffset)
+                .attr("r", dataNode)
                 .style("fill","green");
 
         // 数据流动动画
@@ -168,7 +288,7 @@
             })
             .attr("cx", cx2)
             .attr("cy", cy2);
-
+*/
 
     </script>
 </body>
