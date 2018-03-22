@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>节点数据流动动画演示</title>
+    <script src="d3.v3.min.js" charset="utf-8"></script>
+</head>
+<body>
+<div style="color: #CC3300;">hello</div>
+
+<script>
+
+    // 幂
+    function pow(x ,y) {
+        return Math.pow(x ,y);
+    }
+
+    // 开方
+    function sqrt(value) {
+        return Math.sqrt(value);
+    }
+
+    // 返回上部坐标的y值
+    function ovalGetTopY(cx, cy, a, b, x) {
+        var m = (1-pow(x-cx,2)/pow(a,2))*pow(b,2);
+        var n = sqrt(m);
+        return cy-n;
+    }
+
+    // 返回下部坐标的y值
+    function ovalGetBottomY(cx, cy, a, b, x) {
+        var m = (1-pow(x-cx,2)/pow(a,2))*pow(b,2);
+        var n = sqrt(m);
+        return cy+n;
+    }
+
+    // 创建指定长度的数组
+    function createArry(count) {
+        var Arr = [];
+        for (var i=0;i<count;i++){
+            Arr.push(0);
+        }
+        return Arr;
+    }
+
+    // 创建指定长度的数组
+    function createIDArry(count) {
+        var Arr = [];
+        for (var i=0;i<count;i++){
+            Arr.push(i+1);
+        }
+        return Arr;
+    }
+
+    // 生成节点，计算上下节点数量
+    function createNodeConfig(ovalLong,nodeCounts,ids) {
+        var topNodes,bottomNodes;
+
+        if (nodeCounts%2===1){
+            topNodes = (nodeCounts+1)/2;
+            bottomNodes = (nodeCounts-1)/2;
+        }
+        else {
+            topNodes = nodeCounts/2;
+            bottomNodes = nodeCounts/2;
+        }
+        // 计算节点间距
+        var topDivideDistance = (2*ovalLong)/(topNodes+1);
+        var bottomDivideDistance = (2*ovalLong)/(bottomNodes+1);
+
+        // 创建数据节点
+        var topDataset = ids.slice(0,topNodes);
+        var bottomDataset = ids.slice(topNodes,nodeCounts);
+
+        return [topDivideDistance,bottomDivideDistance,topDataset,bottomDataset]
+    }
+
+    // 实现数据流动的效果 从点1到点2
+    function transferData(pointID1, pointID2, number) {
+        var sx = wholeLocation[pointID1-1].x;
+        var sy = wholeLocation[pointID1-1].y;
+        var ex = wholeLocation[pointID2-1].x;
+        var ey = wholeLocation[pointID2-1].y;
+
+        var nodeTime = 2000;
+
+        // 创建节点连线
+        var line1 = svg.append("line")
+            .attr("display", "none")
+            .attr("x1", sx)
+            .attr("y1", sy)
+            .attr("x2", ex)
+            .attr("y2", ey)
+            .attr("stroke", "#5f92c3")
+            .attr("stroke-width", "2");
+
+        line1.transition()
+            .delay(number*nodeTime)
+            .attr("display", "inline");
+
+        // 创建数据节点
+        var dataset = [0, 0, 0, 0, 0];
+        var data_flow = svg.selectAll("g")
+                .data(dataset)
+                .enter()
+                .append("circle")
+                .attr("cx", sx)
+                .attr("cy", sy)
+                .attr("r", 5)
+                .style("fill","#5f92c3");
+
+        // 数据节点流动动画
+        data_flow.transition()
+            .delay(function (d, i) {
+                return 200*i+number*nodeTime;
+            })
+            .duration(function (d, i) {
+                return nodeTime;
+            })
+            .attr("cx", ex)
+            .attr("cy", ey);
+
+        line1.transition()
+            .delay(1000+nodeTime+number*nodeTime)
+            .attr("display", "none");
+
+        data_flow.transition()
+            .delay(1000+nodeTime+number*nodeTime)
+            .attr("display", "none");
+    }
+</script>
+
+
+<script>
+
+    // 定义画布
+    var width = 1500;
+    var height = 1500;
+    var svg = d3.select("body")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    // 定义椭圆基本参数
+    var ovalX = 750;
+    var ovalY = 500;
+    var ovalLong = 500;
+    var ovalShort = 100;
+
+    // 创建椭圆
+    var ovalOrigin = svg.append("ellipse")
+        .attr("cx", ovalX)
+        .attr("cy", ovalY)
+        .attr("rx", ovalLong)
+        .attr("ry", ovalShort)
+        .style("fill", "white")
+        .style("stroke", "black")
+        .style("stroke-width", "2")
+        .attr("id", "oval_main");
+
+    // 假设节点个数为nodeCounts
+    var nodeCounts = 9;
+    // 创建节点id
+    var ids = createIDArry(nodeCounts);
+    // 定义隐藏节点的大小
+    var hideCircle = 20;
+
+    // 节点数据
+    var configValue = createNodeConfig(ovalLong,nodeCounts,ids);
+    var topDivideDistance = configValue[0];
+    var bottomDivideDistance = configValue[1];
+    var topDataset = configValue[2];
+    var bottomDataset = configValue[3];
+
+    // 定义上下节点参数，节点形式为object = {ID:id,x:x,y:y}
+    var x,y,i,point;
+
+    // 生成上半部分节点坐标
+    var topLocation = [];
+    for (i=0; i<topDataset.length; i++){
+        x = ovalX-ovalLong+(i+1)*topDivideDistance;
+        y = ovalGetTopY(ovalX, ovalY, ovalLong, ovalShort, x);
+        point = {ID:topDataset[i],x:x,y:y};
+        topLocation.push(point);
+    }
+    console.log(topLocation);
+
+    // 生成下半部分节点坐标
+    var bottomLocation = [];
+    for (i=0; i<bottomDataset.length; i++){
+        x = ovalX-ovalLong+(i+1)*bottomDivideDistance;
+        y = ovalGetBottomY(ovalX, ovalY, ovalLong, ovalShort, x);
+        point = {ID:bottomDataset[i],x:x,y:y};
+        bottomLocation.push(point);
+    }
+    console.log(bottomLocation);
+
+    // 数组合并 -> 所有节点信息，key-value形式
+    var wholeLocation = [];
+    var t;
+    for(t=0;t<topLocation.length;t++){
+        wholeLocation.push(topLocation[t]);
+    }
+    for(t=0;t<bottomLocation.length;t++){
+        wholeLocation.push(bottomLocation[t]);
+    }
+    console.log(wholeLocation);
+
+    // 生成服务器节点
+    var data_flow = svg.selectAll("g")
+        .data(wholeLocation)
+        .enter()
+        .append("image")
+        .attr("x", function (d,i) {
+            return wholeLocation[i].x-100;
+        })
+        .attr("y", function (d,i) {
+            return wholeLocation[i].y-100;
+        })
+        .attr("xlink:href", "node.png")
+        .attr("height", "200")
+        .attr("width", "200");
+
+    // 自动传输算法
+    var j = 0;
+    var a,b,c;
+    for (i=1;i<nodeCounts;i++) {
+
+        if (nodeCounts%2===0) {
+            if (i===1){
+                a = i;
+                b = nodeCounts/2+1;
+            }
+            transferData(a,b,j);
+            c = a;
+            a = b;
+            b = c+1;
+            j = j + 1;
+        }
+        else{
+            if (i===1){
+                a = i;
+                b = (nodeCounts+1)/2+1;
+            }
+            transferData(a,b,j);
+            c = a;
+            a = b;
+            b = c+1;
+            j = j + 1;
+        }
+    }
+
+</script>
+</body>
+
+
+</html>
