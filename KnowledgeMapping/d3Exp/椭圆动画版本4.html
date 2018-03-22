@@ -6,10 +6,9 @@
     <script src="d3.v3.min.js" charset="utf-8"></script>
 </head>
 <body>
-
+<div style="color: #CC3300;">hello</div>
 
 <script>
-
 
     // 幂
     function pow(x ,y) {
@@ -77,22 +76,27 @@
     }
 
     // 实现数据流动的效果 从点1到点2
-    function transferData(pointID1, pointID2) {
-        var sx = wholeLocation[pointID1].x;
-        var sy = wholeLocation[pointID1].y;
-        var ex = wholeLocation[pointID2].x;
-        var ey = wholeLocation[pointID2].y;
+    function transferData(pointID1, pointID2, number) {
+        var sx = wholeLocation[pointID1-1].x;
+        var sy = wholeLocation[pointID1-1].y;
+        var ex = wholeLocation[pointID2-1].x;
+        var ey = wholeLocation[pointID2-1].y;
+
+        var nodeTime = 2000;
 
         // 创建节点连线
         var line1 = svg.append("line")
+            .attr("display", "none")
             .attr("x1", sx)
             .attr("y1", sy)
             .attr("x2", ex)
             .attr("y2", ey)
-            .attr("stroke", "#6b9ccd")
-            .attr("stroke-width", "2")
-            .style("position", "relative")
-            .style("z-index", "-1");
+            .attr("stroke", "#5f92c3")
+            .attr("stroke-width", "2");
+
+        line1.transition()
+            .delay(number*nodeTime)
+            .attr("display", "inline");
 
         // 创建数据节点
         var dataset = [0, 0, 0, 0, 0];
@@ -103,19 +107,26 @@
                 .attr("cx", sx)
                 .attr("cy", sy)
                 .attr("r", 5)
-                .style("fill","#6b9ccd");
+                .style("fill","#5f92c3");
 
         // 数据节点流动动画
         data_flow.transition()
             .delay(function (d, i) {
-                return 200*i;
+                return 200*i+number*nodeTime;
             })
             .duration(function (d, i) {
-                return 3000;
+                return nodeTime;
             })
             .attr("cx", ex)
             .attr("cy", ey);
 
+        line1.transition()
+            .delay(1000+nodeTime+number*nodeTime)
+            .attr("display", "none");
+
+        data_flow.transition()
+            .delay(1000+nodeTime+number*nodeTime)
+            .attr("display", "none");
     }
 </script>
 
@@ -161,9 +172,10 @@
     var topDataset = configValue[2];
     var bottomDataset = configValue[3];
 
-    // 生成上下节点
+    // 定义上下节点参数，节点形式为object = {ID:id,x:x,y:y}
     var x,y,i,point;
 
+    // 生成上半部分节点坐标
     var topLocation = [];
     for (i=0; i<topDataset.length; i++){
         x = ovalX-ovalLong+(i+1)*topDivideDistance;
@@ -173,6 +185,7 @@
     }
     console.log(topLocation);
 
+    // 生成下半部分节点坐标
     var bottomLocation = [];
     for (i=0; i<bottomDataset.length; i++){
         x = ovalX-ovalLong+(i+1)*bottomDivideDistance;
@@ -182,49 +195,8 @@
     }
     console.log(bottomLocation);
 
-    var data_flow1 = svg.selectAll("g")
-        .data(topLocation)
-        .enter()
-        .append("circle")
-        .attr("cx", function (d,i) {
-            return topLocation[i].x;
-        })
-        .attr("cy", function (d,i) {
-            return topLocation[i].y;
-        })
-        .attr("r", hideCircle)
-        .attr("fill", "green");
-
-    var data_flow2 = svg.selectAll("g")
-        .data(bottomLocation)
-        .enter()
-        .append("circle")
-        .attr("cx", function (d,i) {
-            return bottomLocation[i].x;
-        })
-        .attr("cy", function (d,i) {
-            return bottomLocation[i].y;
-        })
-        .attr("r", hideCircle)
-        .attr("fill", "green");
-
-    var data_flow3 = svg.selectAll("g")
-        .data(bottomLocation)
-        .enter()
-        .append("image")
-        .attr("x", function (d,i) {
-            return bottomLocation[i].x-100;
-        })
-        .attr("y", function (d,i) {
-            return bottomLocation[i].y-100;
-        })
-        .attr("xlink:href", "node.png")
-        .attr("height", "200")
-        .attr("width", "200");
-
+    // 数组合并 -> 所有节点信息，key-value形式
     var wholeLocation = [];
-
-    // 数组合并
     var t;
     for(t=0;t<topLocation.length;t++){
         wholeLocation.push(topLocation[t]);
@@ -234,13 +206,40 @@
     }
     console.log(wholeLocation);
 
-    transferData(1,4);
-    transferData(2,4);
-    transferData(3,4);
+    // 生成服务器节点
+    var data_flow = svg.selectAll("g")
+        .data(wholeLocation)
+        .enter()
+        .append("image")
+        .attr("x", function (d,i) {
+            return wholeLocation[i].x-100;
+        })
+        .attr("y", function (d,i) {
+            return wholeLocation[i].y-100;
+        })
+        .attr("xlink:href", "node.png")
+        .attr("height", "200")
+        .attr("width", "200");
 
+/*
+    for (i=0;i<nodeCounts-1;i++){
+        transferData(topLocation[i].ID,bottomLocation[i].ID);
+    }
 
+       transferData(1,4);
+    transferData(4,2);
+    transferData(2,5);
+    transferData(5,3);
+*/
+    transferData(1,4,0);
+    transferData(4,2,1);
+    transferData(2,5,2);
+    transferData(5,3,3);
 
-
+    transferData(3,5,4);
+    transferData(5,2,5);
+    transferData(2,4,6);
+    transferData(4,1,7);
 
 
 </script>
