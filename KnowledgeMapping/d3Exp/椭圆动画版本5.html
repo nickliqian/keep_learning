@@ -6,7 +6,29 @@
     <script src="d3.v3.min.js" charset="utf-8"></script>
 </head>
 <body>
-<div style="color: #CC3300;">hello</div>
+
+
+
+
+<div>
+
+
+    <div style="color: #CC3300;">操作项 <button type="submit" id="btn_submit"> 切换大楼显示 </button></div>
+
+    <svg width="1500" height="700" id="abc">
+        <defs>
+            <linearGradient id="orange_red" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#0f8da1;stop-opacity:1"/>
+                <stop offset="90%" style="stop-color:#232121;stop-opacity:1"/>
+            </linearGradient>
+        </defs>
+
+        <rect width="1500" height="700" style="fill:url(#orange_red);stroke-width:1;stroke:rgb(0,0,0)" />
+    </svg>
+</div>
+
+
+
 
 <script>
 
@@ -72,7 +94,7 @@
         var topDataset = ids.slice(0,topNodes);
         var bottomDataset = ids.slice(topNodes,nodeCounts);
 
-        return [topDivideDistance,bottomDivideDistance,topDataset,bottomDataset]
+        return [topNodes,bottomNodes,topDivideDistance,bottomDivideDistance,topDataset,bottomDataset]
     }
 
     // 实现数据流动的效果 从点1到点2
@@ -84,7 +106,7 @@
 
         var nodeTime = 2000;
 
-        // 创建节点连线
+        // 创建节点连线 -> 连线先隐藏
         var line = svg.append("line")
             .attr("display", "none")
             .attr("x1", sx)
@@ -92,8 +114,10 @@
             .attr("x2", ex)
             .attr("y2", ey)
             .attr("stroke", "#b0afb1")
-            .attr("stroke-width", "2");
+            .attr("stroke-width", "5")
+            .attr("box-shadow", "10px 10px 5px #888888");
 
+        // 连线显示
         line.transition()
             .delay(number*nodeTime)
             .attr("display", "inline");
@@ -106,8 +130,8 @@
                 .append("circle")
                 .attr("cx", sx)
                 .attr("cy", sy)
-                .attr("r", 5)
-                .style("fill","#b0afb1");
+                .attr("r", 3)
+                .style("fill","gold");
 
         // 数据节点流动动画
         dataNodes.transition()
@@ -120,14 +144,89 @@
             .attr("cx", ex)
             .attr("cy", ey);
 
+        // 连线隐藏
         line.transition()
             .delay(1000+nodeTime+number*nodeTime)
             .attr("display", "none");
 
+        // 数据节点隐藏
         dataNodes.transition()
             .delay(1000+nodeTime+number*nodeTime)
             .attr("display", "none");
     }
+
+    // 生成服务器节点
+    function createServerNodes(wholeLocation) {
+        return svg.selectAll("g")
+            .data(wholeLocation)
+            .enter()
+            .append("image")
+            .attr("id", "server")
+            .attr("x", function (d,i) {
+                return wholeLocation[i].x-30;
+            })
+            .attr("y", function (d,i) {
+                return wholeLocation[i].y-50;
+            })
+            .attr("xlink:href", "server.png")
+            .attr("height", "80")
+            .attr("width", "80");
+    }
+
+    function createBuilding() {
+        // 生成大楼模型
+        var buildings = svg.selectAll("g")
+            .data(wholeLocation)
+            .enter()
+            .append("image")
+            .attr("x", function (d,i) {
+                return wholeLocation[i].x-65;
+            })
+            .attr("y", function (d,i) {
+                if (i<topNodes) {
+                    return 460;
+                }
+                else {
+                    return 560;
+                }
+            })
+            .attr("xlink:href", "building2.png")
+            .attr("height", "140")
+            .attr("width", "140")
+            .attr("id", "building")
+            .attr("display", "none");
+
+        // 创建大楼连线
+        var buildingLines = svg.selectAll("g")
+            .data(wholeLocation)
+            .enter()
+            .append("line")
+            .attr("x1", function (d,i) {
+                return wholeLocation[i].x+7;
+            })
+            .attr("y1", function (d,i) {
+                return wholeLocation[i].y;
+            })
+            .attr("x2", function (d,i) {
+                return wholeLocation[i].x+7;
+            })
+            .attr("y2", function (d,i) {
+                if (i<topNodes) {
+                    return 488;
+                }
+                else {
+                    return 592;
+                }
+            })
+            .attr("stroke", "black")
+            .attr("stroke-dasharray", "20,10,5,5,5,10")
+            .attr("stroke-width", "1")
+            .attr("id", "buildingLine")
+            .attr("display", "none");
+
+        return [buildings,buildingLines]
+    }
+
 </script>
 
 
@@ -135,17 +234,21 @@
 
     // 定义画布
     var width = 1500;
-    var height = 1500;
-    var svg = d3.select("body")
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height);
+    var height = 700;
+    var backColor = "rgba(89,134,185,0.8)"; // 画布背景颜色
+    // var backColor = "linear-gradient(to right, rgba(255,0,0,0), rgba(255,0,0,1));"; // 画布背景颜色
+
+    var svg = d3.select("body").select("#abc");
+        // .append("svg")
+        // .attr("width", width)
+        // .attr("height", height)
+        // .style("background", backColor);
 
     // 定义椭圆基本参数
     var ovalX = 750;
-    var ovalY = 300;
+    var ovalY = 250;
     var ovalLong = 500;
-    var ovalShort = 100;
+    var ovalShort = 180;
 
     // 创建椭圆
     var ovalOrigin = svg.append("ellipse")
@@ -153,10 +256,18 @@
         .attr("cy", ovalY)
         .attr("rx", ovalLong)
         .attr("ry", ovalShort)
-        .style("fill", "white")
+        .style("fill", "#ffffff00")
         .style("stroke", "black")
         .style("stroke-width", "2")
         .attr("id", "oval_main");
+
+    // 定义中间元素 地球
+    var worldPng = svg.append("image")
+        .attr("x", ovalX-280)
+        .attr("y", ovalY-310)
+        .attr("xlink:href", "5.png")
+        .attr("height", "600")
+        .attr("width", "600");
 
     // 假设节点个数为nodeCounts
     var nodeCounts = 9;
@@ -167,10 +278,12 @@
 
     // 节点数据
     var configValue = createNodeConfig(ovalLong,nodeCounts,ids);
-    var topDivideDistance = configValue[0];
-    var bottomDivideDistance = configValue[1];
-    var topDataset = configValue[2];
-    var bottomDataset = configValue[3];
+    var topNodes = configValue[0];
+    var bottomNodes = configValue[1];
+    var topDivideDistance = configValue[2];
+    var bottomDivideDistance = configValue[3];
+    var topDataset = configValue[4];
+    var bottomDataset = configValue[5];
 
     // 定义上下节点参数，节点形式为object = {ID:id,x:x,y:y}
     var x,y,i,point;
@@ -207,20 +320,10 @@
     console.log(wholeLocation);
 
     // 生成服务器节点
-    var serverNodes = svg.selectAll("g")
-        .data(wholeLocation)
-        .enter()
-        .append("image")
-        .attr("id", "server")
-        .attr("x", function (d,i) {
-            return wholeLocation[i].x-50;
-        })
-        .attr("y", function (d,i) {
-            return wholeLocation[i].y-50;
-        })
-        .attr("xlink:href", "server.png")
-        .attr("height", "100")
-        .attr("width", "100");
+    var serverNodes = createServerNodes(wholeLocation);
+    var buildingModle = createBuilding();
+    var buildings = buildingModle[0];
+    var buildingLines = buildingModle[1];
 
     // 自动传输算法
     var j = 0;
@@ -232,8 +335,7 @@
                 a = i;
                 b = nodeCounts/2+1;
             }
-            transferData(a,b,j);
-            svg.appendChild(serverNodes);
+            transferData(a,b,j,svg,serverNodes);
             c = a;
             a = b;
             b = c+1;
@@ -244,14 +346,36 @@
                 a = i;
                 b = (nodeCounts+1)/2+1;
             }
-            transferData(a,b,j);
-            svg.appendChild(serverNodes);
+            transferData(a,b,j,svg,serverNodes);
             c = a;
             a = b;
             b = c+1;
             j = j + 1;
         }
     }
+
+    // 覆盖线条 serverNodes.moveUp()
+    serverNodes.remove();
+    serverNodes = createServerNodes(wholeLocation);
+
+    // 大楼显示隐藏按钮
+    var buildStatus = 0;
+    var but1 = d3.select("#btn_submit")
+        .on("click", function () {
+            if (buildStatus===0) {
+                buildings.attr("display","inline");
+                buildingLines.attr("display","inline");
+                buildStatus = 1;
+            }
+            else {
+                buildings.attr("display","none");
+                buildingLines.attr("display","none");
+                buildStatus = 0;
+            }
+        });
+
+
+
 
 </script>
 </body>
