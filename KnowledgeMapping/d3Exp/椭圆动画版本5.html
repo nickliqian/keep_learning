@@ -85,32 +85,32 @@
         var nodeTime = 2000;
 
         // 创建节点连线
-        var line1 = svg.append("line")
+        var line = svg.append("line")
             .attr("display", "none")
             .attr("x1", sx)
             .attr("y1", sy)
             .attr("x2", ex)
             .attr("y2", ey)
-            .attr("stroke", "#5f92c3")
+            .attr("stroke", "#b0afb1")
             .attr("stroke-width", "2");
 
-        line1.transition()
+        line.transition()
             .delay(number*nodeTime)
             .attr("display", "inline");
 
         // 创建数据节点
         var dataset = [0, 0, 0, 0, 0];
-        var data_flow = svg.selectAll("g")
+        var dataNodes = svg.selectAll("g")
                 .data(dataset)
                 .enter()
                 .append("circle")
                 .attr("cx", sx)
                 .attr("cy", sy)
                 .attr("r", 5)
-                .style("fill","#5f92c3");
+                .style("fill","#b0afb1");
 
         // 数据节点流动动画
-        data_flow.transition()
+        dataNodes.transition()
             .delay(function (d, i) {
                 return 200*i+number*nodeTime;
             })
@@ -120,11 +120,11 @@
             .attr("cx", ex)
             .attr("cy", ey);
 
-        line1.transition()
+        line.transition()
             .delay(1000+nodeTime+number*nodeTime)
             .attr("display", "none");
 
-        data_flow.transition()
+        dataNodes.transition()
             .delay(1000+nodeTime+number*nodeTime)
             .attr("display", "none");
     }
@@ -143,7 +143,7 @@
 
     // 定义椭圆基本参数
     var ovalX = 750;
-    var ovalY = 500;
+    var ovalY = 300;
     var ovalLong = 500;
     var ovalShort = 100;
 
@@ -207,19 +207,20 @@
     console.log(wholeLocation);
 
     // 生成服务器节点
-    var data_flow = svg.selectAll("g")
+    var serverNodes = svg.selectAll("g")
         .data(wholeLocation)
         .enter()
         .append("image")
+        .attr("id", "server")
         .attr("x", function (d,i) {
-            return wholeLocation[i].x-100;
+            return wholeLocation[i].x-50;
         })
         .attr("y", function (d,i) {
-            return wholeLocation[i].y-100;
+            return wholeLocation[i].y-50;
         })
-        .attr("xlink:href", "node.png")
-        .attr("height", "200")
-        .attr("width", "200");
+        .attr("xlink:href", "server.png")
+        .attr("height", "100")
+        .attr("width", "100");
 
     // 自动传输算法
     var j = 0;
@@ -232,6 +233,7 @@
                 b = nodeCounts/2+1;
             }
             transferData(a,b,j);
+            svg.appendChild(serverNodes);
             c = a;
             a = b;
             b = c+1;
@@ -243,6 +245,7 @@
                 b = (nodeCounts+1)/2+1;
             }
             transferData(a,b,j);
+            svg.appendChild(serverNodes);
             c = a;
             a = b;
             b = c+1;
