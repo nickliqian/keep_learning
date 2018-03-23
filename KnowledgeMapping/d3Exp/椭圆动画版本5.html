@@ -21,9 +21,21 @@
                 <stop offset="0%" style="stop-color:#0f8da1;stop-opacity:1"/>
                 <stop offset="90%" style="stop-color:#232121;stop-opacity:1"/>
             </linearGradient>
+            <filter id="f1" x="0" y="0" width="200%" height="200%">
+              <feOffset result="offOut" in="SourceGraphic" dx="20" dy="20" />
+              <feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" />
+              <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+            </filter>
+            <filter id="f2" x="0" y="0" width="200%" height="200%">
+              <feOffset result="offIn" in="SourceGraphic" dx="3" dy="3" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+            </filter>
+            <filter id="f3" x="0" y="0" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="5"/>
+            </filter>
         </defs>
 
-        <rect width="1500" height="700" style="fill:url(#orange_red);stroke-width:1;stroke:rgb(0,0,0)" />
+        <rect width="1500" height="700" fill="url(#orange_red)" stroke-width="1;stroke:rgb(0,0,0)" filter="url(#f1)" />
     </svg>
 </div>
 
@@ -40,6 +52,11 @@
     // 开方
     function sqrt(value) {
         return Math.sqrt(value);
+    }
+
+    // 产生限定范围的随机整数
+    function getLeftLocation(min, max) {
+        return parseInt(Math.random()*(max-min+1)+min,10);
     }
 
     // 返回上部坐标的y值
@@ -113,9 +130,9 @@
             .attr("y1", sy)
             .attr("x2", ex)
             .attr("y2", ey)
-            .attr("stroke", "#b0afb1")
+            .attr("stroke", "#f3e4df")
             .attr("stroke-width", "5")
-            .attr("box-shadow", "10px 10px 5px #888888");
+            .attr("filter", "url(#f2)");
 
         // 连线显示
         line.transition()
@@ -123,7 +140,7 @@
             .attr("display", "inline");
 
         // 创建数据节点
-        var dataset = [0, 0, 0, 0, 0];
+        var dataset = [0, 0, 0, 0, 0, 0, 0];
         var dataNodes = svg.selectAll("g")
                 .data(dataset)
                 .enter()
@@ -131,12 +148,12 @@
                 .attr("cx", sx)
                 .attr("cy", sy)
                 .attr("r", 3)
-                .style("fill","gold");
+                .style("fill","#ad3209");
 
         // 数据节点流动动画
         dataNodes.transition()
             .delay(function (d, i) {
-                return 200*i+number*nodeTime;
+                return 100*i+number*nodeTime;
             })
             .duration(function (d, i) {
                 return nodeTime;
@@ -231,7 +248,7 @@
 
 
 <script>
-
+    /* -----------------建模----------------- */
     // 定义画布
     var width = 1500;
     var height = 700;
@@ -325,6 +342,24 @@
     var buildings = buildingModle[0];
     var buildingLines = buildingModle[1];
 
+    // 大楼显示隐藏按钮
+    var buildStatus = 0;
+    var but1 = d3.select("#btn_submit")
+        .on("click", function () {
+            if (buildStatus===0) {
+                buildings.attr("display","inline");
+                buildingLines.attr("display","inline");
+                buildStatus = 1;
+            }
+            else {
+                buildings.attr("display","none");
+                buildingLines.attr("display","none");
+                buildStatus = 0;
+            }
+        });
+
+    /* -----------------动态----------------- */
+    /*
     // 自动传输算法
     var j = 0;
     var a,b,c;
@@ -353,30 +388,18 @@
             j = j + 1;
         }
     }
+    */
+    // 随机传输算法
+    var startNode,endNode;
+    for (i=1;i<30;i++) {
+        startNode = getLeftLocation(1, nodeCounts);
+        endNode = getLeftLocation(1, nodeCounts);
+        transferData(startNode,endNode,i-1,svg,serverNodes);
+    }
 
     // 覆盖线条 serverNodes.moveUp()
     serverNodes.remove();
     serverNodes = createServerNodes(wholeLocation);
-
-    // 大楼显示隐藏按钮
-    var buildStatus = 0;
-    var but1 = d3.select("#btn_submit")
-        .on("click", function () {
-            if (buildStatus===0) {
-                buildings.attr("display","inline");
-                buildingLines.attr("display","inline");
-                buildStatus = 1;
-            }
-            else {
-                buildings.attr("display","none");
-                buildingLines.attr("display","none");
-                buildStatus = 0;
-            }
-        });
-
-
-
-
 </script>
 </body>
 
