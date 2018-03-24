@@ -326,3 +326,22 @@ select * from t1 where more is not null;
 优先级
 优先级由高到低的顺序为:小括号,not,比较运算符,逻辑运算符
 and比or先运算,如果同时出现并希望先算or,需要结合()使用
+
+
+求总数
+select count(*) from students;
+
+求最大值
+select max(id) from students where gender=0;
+
+求最小值
+select min(id) from students where isdelete=0;
+
+
+
+
+
+
+
+
+
