@@ -161,6 +161,7 @@ define(['base/js/namespace'], function(Jupyter){
 
 ### Security in the Jupyter Notebook Server (安全性)
 正常情况下有以下三种方式认证请求
+```
 1. 设置header中的Authorization
     ```angular2html
        Authorization: token abcdef...
@@ -170,6 +171,7 @@ define(['base/js/namespace'], function(Jupyter){
     https://my-notebook/tree/?token=abcdef...
     ```
 3. 使用密码登录
+```
 
 另外，令牌会在服务器启动的时候自动生成，可以复制到浏览器中，
 同时系统也会生成一个打开浏览器记录cookie的一次性标记。
@@ -203,6 +205,79 @@ c.NotebookApp.password = ''
 每次打开笔记本时服务器都会计算签名并且检查他是否在数据库中，然后签名匹配那么HTML和JS输出时的加载就是可信任的。
 
 
-```angular2html
+### 更新信任
+notebook的信任签名会在保存的时候更新。
+如果有任何不受信任的输出在notebook中，notebook将标记为不受信任状态，也不会储存签名。
+如果所有不受信任的签名被移除，通过`clear output`或者`重新执行`方式，那么botebook又将被标记为可信。
+虽然每个输出都更新了信任，但这仅在单个会话期间进行。一个新加载的笔记本文件要么是可信的，要么不是完整的。
 
+
+### 显示信任
+有时候重新执行笔记本来生成信任的输出不是一种选择，要么是因为依赖不可用，要么需要很长时间。
+用户可以通过两种方式显式信任笔记本(生成签名)：
 ```
+# 在命令行中使用
+jupyter trust /path/to/notebook.ipynb
+# 加载文件后，使用 File/Trust Notebook
+```
+这两种方法只是加载笔记本，计算一个新的签名，并将该签名添加到用户的数据库。
+
+
+### notebook主题机制
+可能会提供主题机制: 使用custom.css或者CSS/HTML输出，但只对收信任的文档有效。
+
+
+### 合作 Collaboration
+合作使用notebook共享文件时，信任机制会导致每次共享都是从一个不受信任的状态开始的。
+三种方法：
+```
+- 重新把notebook跑一遍
+- 使用命令行或者文件信任个能来更新信任
+- 共享签名数据库，修改配置如下，指定数据库路径
+c.NotebookNotary.data_dir = "/path/to/signature_dir"
+```
+
+
+## 配置notebook前端
+这个文档是关于如何为Notebook JavaScript保存一些配置选项的粗略解释。
+由于大多数选项都传递到其他库，所以没有完整的配置选项列表，这意味着如果没有任何错误消息，就可以忽略非有效配置。
+### 如何进行前端配置工作
+- get a handle of a configurable JavaScript object.
+>获取可配置JavaScript对象的句柄
+- access its configuration attribute.
+>访问配置属性
+- update its configuration attribute with a JSON patch.
+>使用JSON补丁更新配置属性
+### 示例配置
+为CodeMirror代码单元indentUnit的默认配置
+在控制台运行如下代码，然后刷新页面，就可以修改缩进。
+```
+// 修改缩进
+var cell = Jupyter.notebook.get_selected_cell();
+var config = cell.config;
+var patch = {
+      CodeCell:{
+        cm_config:{indentUnit:2}
+      }
+    };
+config.update(patch)
+
+// 恢复缩进
+var cell = Jupyter.notebook.get_selected_cell();
+var config = cell.config;
+var patch = {
+      CodeCell:{
+        cm_config:{indentUnit: null} // only change here.
+      }
+    }
+config.update(patch)
+```
+### 可持久的配置
+通过修改`~/.jupyter/nbconfig/<section>.json`下的内容
+可以然后前端配置持久修改
+section可以是notebook/tree/editor等
+这会应用到所有页面
+
+
+
+
