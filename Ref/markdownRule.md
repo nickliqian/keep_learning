@@ -1,3 +1,6 @@
+> https://daringfireball.net/projects/markdown/syntax
+> Markdown参考
+
 # 欢迎使用 Cmd Markdown 编辑阅读器
 
 ------
@@ -191,3 +194,78 @@ Bob-->Alice: I am good thanks!
 [3]: http://weibo.com/ghosert
 [4]: http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference
 
+<table>
+    <tr>
+        <td>Foo</td>
+    </tr>
+    <tr>
+        <td>Foo</td>
+    </tr>
+</table>
+
+
+| 项目        | 价格   |  数量  |
+| --------   | -----:  | :----:  |
+| 计算机       |$1600 |   5     |
+| 手机        |$12   |   12   |
+| 管线        |$1    |  234  |
+
+
+> This is the first level of quoting.
+>
+> > This is nested blockquote.
+>
+> Back to the first level.
+
+
+> ## This is a header.
+> 
+> 1.   This is the first list item.
+> 2.   This is the second list item.
+> 
+> Here's some example code:
+> 
+>     return shell_exec("echo $input | $markdown_script");
+
+
+无序列表使用星号，加号和连字符 - 可互换 - 作为列表标记：
+
+*   Red
+*   Green
+*   Blue
+相当于：
+
++   Red
++   Green
++   Blue
+和：
+
+-   Red
+-   Green
+-   Blue
+有序列表使用数字后跟句点：
+
+1.  Bird
+2.  McHale
+3.  Parish
+
+<ol>
+<li>Bird</li>
+<li>McHale</li>
+<li>Parish</li>
+</ol>
+
+
+*   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+    Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
+    viverra nec, fringilla in, laoreet vitae, risus.
+*   Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
+    Suspendisse id sem consectetuer libero luctus adipiscing.
+    
+    
+*   A list item with a code block:
+
+        <code goes here>
+        
+
+\*literal asterisks\*

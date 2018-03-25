@@ -12,7 +12,7 @@ jupyter qtconsole --existing 87f7d2c0
 ### IPython魔法方法
 ```
 %connect_info 显示连接信息
-```
+
 =====================================================================
 {
   "iopub_port": 58689,
@@ -35,7 +35,7 @@ or even just:
     $> jupyter <app> --existing
 if this is the most recent Jupyter kernel you have started.
 =====================================================================
-
+```
 ### Comm
 Comms允许前端和内核之间的自定义消息。
 例如，ipywidgets使用comm来更新小部件状态。
