@@ -289,9 +289,15 @@ notebook客户端和服务端都是可深度定制的
 - bundler extension
     一个可导入的Python模块，生成 File->Download as / Deploy 作为菜单项触发器
 ### 安装Jupyter扩展
+
 ### 查看Jupyter扩展列表
+
 ### 在包中添加资源
+
 ### 示例-服务器扩展
+
 ### 示例-服务器扩展和notebook扩展
+
 ### 示例-绑定扩展
+
 
