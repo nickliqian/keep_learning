@@ -279,5 +279,19 @@ section可以是notebook/tree/editor等
 这会应用到所有页面
 
 
-
+## 将Jupyter扩展作为Python包分发
+notebook客户端和服务端都是可深度定制的
+- nbextension  
+    单个js文件或者包含css/js文件的文件夹等  
+    至少包含一个js模块/包，作为一个AMD模块导出为一个`load_ipython_extension`函数
+- server extension  
+    一个可导入的Python模块，需要实现`load_jupyter_server_extension`函数
+- bundler extension
+    一个可导入的Python模块，生成 File->Download as / Deploy 作为菜单项触发器
+### 安装Jupyter扩展
+### 查看Jupyter扩展列表
+### 在包中添加资源
+### 示例-服务器扩展
+### 示例-服务器扩展和notebook扩展
+### 示例-绑定扩展
 
