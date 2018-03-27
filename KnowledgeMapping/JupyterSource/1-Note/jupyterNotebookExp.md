@@ -289,15 +289,108 @@ notebook客户端和服务端都是可深度定制的
 - bundler extension
     一个可导入的Python模块，生成 File->Download as / Deploy 作为菜单项触发器
 ### 安装Jupyter扩展
-
-### 查看Jupyter扩展列表
+```
+pip install helpful_package
+# or
+conda install helpful_package
+# or
+apt-get install helpful_package
+# where 'helpful_package' is a Python package containing one or more Jupyter Extensions
+```
+#### 使用服务器扩展
+```
+# pip user
+jupyter serverextension enable --py helpful_package
+# virtualenv or conda user 
+# Make sure that your virtualenv or conda environment is activated
+[source] activate my-environment
+jupyter serverextension enable --py helpful_package --sys-prefix
+```
+#### 安装nbextension扩展
+安装前端扩展，默认情况不启用
+```
+jupyter nbextension install --py helpful_package # or --sys-prefix if using virtualenv or conda
+```
+#### 启用nbextension扩展
+如果每次在浏览器中加载Jupyter应用程序（例如实验室，笔记本，仪表板，终端）时应该加载一个包
+则可以使用以下命令启用nbextension：
+```
+jupyter nbextension enable --py helpful_package # or --sys-prefix if using virtualenv or conda
+```
+### 查看扩展列表
+```
+jupyter nbextension list
+jupyter serverextension list
+jupyter bundlerextension list
+```
 
 ### 在包中添加资源
 
 ### 示例-服务器扩展
+```
+- setup.py
+- MANIFEST.in
+- my_module/
+  - __init__.py
+```
+在`my_module/__init__.py`中定义`load_jupyter_server_extension`
+```
+def _jupyter_server_extension_paths():
+    return [{
+        "module": "my_module"
+    }]
+
+def load_jupyter_server_extension(nbapp):
+    nbapp.log.info("my module enabled!")
+```
+安装和启用
+```
+jupyter serverextension enable --py my_module [--sys-prefix]
+```
 
 ### 示例-服务器扩展和notebook扩展
+```
+- setup.py
+- MANIFEST.in
+- my_fancy_module/
+  - __init__.py
+  - static/
+    index.js
+```
+my_fancy_module/__init__.py
+```
+def _jupyter_server_extension_paths():
+    return [{
+        "module": "my_fancy_module"
+    }]
+
+# Jupyter Extension points
+def _jupyter_nbextension_paths():
+    return [dict(
+        section="notebook",
+        # the path is relative to the `my_fancy_module` directory
+        src="static",
+        # directory in the `nbextension/` namespace
+        dest="my_fancy_module",
+        # _also_ in the `nbextension/` namespace
+        require="my_fancy_module/index")]
+
+def load_jupyter_server_extension(nbapp):
+    nbapp.log.info("my module enabled!")
+```
+安装和启用前端和服务端扩展
+```
+jupyter nbextension install --py my_fancy_module [--sys-prefix|--user]
+jupyter nbextension enable --py my_fancy_module [--sys-prefix|--system]
+jupyter serverextension enable --py my_fancy_module [--sys-prefix|--system]
+```
 
 ### 示例-绑定扩展
+
+
+...
+
+
+## 扩展Notebook
 
 
