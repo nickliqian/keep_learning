@@ -357,7 +357,7 @@ jupyter serverextension enable --py my_module [--sys-prefix]
   - static/
     index.js
 ```
-my_fancy_module/__init__.py
+修改文件`my_fancy_module/__init__.py`
 ```
 def _jupyter_server_extension_paths():
     return [{
