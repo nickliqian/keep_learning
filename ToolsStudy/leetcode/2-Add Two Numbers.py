@@ -35,11 +35,13 @@ class Solution:
             if r > 10:
                 m = r - 10
                 flag = True
+            else:
+                m = r
             a.append(m)
         print(a)
 
 
 s = Solution()
-a = [1, 2, 3]
-b = [3, 4, 5]
+a = [1, 6, 3]
+b = [3, 9, 5]
 s.addTwoNumbers(a, b)
