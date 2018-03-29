@@ -24,7 +24,7 @@ class Solution:
         :type l2: ListNode
         :rtype: ListNode
         """
-        a = []
+        al = []
         flag = False
         for i in range(len(l1)):
             if flag == True:
@@ -37,11 +37,12 @@ class Solution:
                 flag = True
             else:
                 m = r
-            a.append(m)
-        print(a)
+            al.append(m)
+        return al
 
 
 s = Solution()
-a = [1, 6, 3]
+a = [9, 6, 9]
 b = [3, 9, 5]
-s.addTwoNumbers(a, b)
+c = s.addTwoNumbers(a, b)
+print(c)
