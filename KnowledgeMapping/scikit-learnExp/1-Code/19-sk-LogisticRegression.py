@@ -10,7 +10,7 @@ import numpy as np
 def logistic():
 
     # 导入数据
-    column_names = ['Sample code number', 'Clump Thickness', 'Uniformity of Cell Size', 'Uniformity of Cell Shape',
+    column_names = ['Sample codedir number', 'Clump Thickness', 'Uniformity of Cell Size', 'Uniformity of Cell Shape',
                     'Marginal Adhesion', 'Single Epithelial Cell Size', 'Bare Nuclei', 'Bland Chromatin',
                     'Normal Nucleoli', 'Mitoses', 'Class']
     data = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/"

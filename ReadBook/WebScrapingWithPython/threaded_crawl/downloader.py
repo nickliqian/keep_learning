@@ -25,7 +25,7 @@ class Downloader:
             except KeyError:
                 pass
             else:
-                if self.num_retries > 0 and 500 <= result["code"] < 600:
+                if self.num_retries > 0 and 500 <= result["codedir"] < 600:
                     result = None
 
         if result is None:
@@ -55,6 +55,6 @@ class Downloader:
             if code != 200:
                 if num_retries > 0:
                     return self.download(url, headers, proxy, num_retries - 1, data, params)
-        return {'html': html, 'code': code}
+        return {'html': html, 'codedir': code}
 
 

@@ -43,6 +43,6 @@ init_op = tf.global_variables_initializer()
 
 with sess:
     sess.run(init_op)
-    tf.summary.FileWriter('/home/nick/Desktop/gitProject/ralph_doc_to_chinese/code/TensorFlowExp/board/', graph=sess.graph)
+    tf.summary.FileWriter('/home/nick/Desktop/gitProject/ralph_doc_to_chinese/codedir/TensorFlowExp/board/', graph=sess.graph)
     sess.run([con, var])
 

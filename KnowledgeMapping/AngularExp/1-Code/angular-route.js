@@ -64,10 +64,10 @@ function $RouteProvider() {
    *    * `path` can contain optional named groups with a question mark: e.g.`:name?`.
    *
    *    For example, routes like `/color/:color/largecode/:largecode*\/edit` will match
-   *    `/color/brown/largecode/code/with/slashes/edit` and extract:
+   *    `/color/brown/largecode/codedir/with/slashes/edit` and extract:
    *
    *    * `color: brown`
-   *    * `largecode: code/with/slashes`.
+   *    * `largecode: codedir/with/slashes`.
    *
    *
    * @param {Object} route Mapping information to be assigned to `$route.current` on route

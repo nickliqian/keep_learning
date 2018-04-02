@@ -50,12 +50,12 @@ def achieve_linear():
         sess.run(init_op)
 
         # 添加事件文件
-        filewriter = tf.summary.FileWriter('/home/nick/Desktop/gitProject/ralph_doc_to_chinese/code/TensorFlowExp/board'
+        filewriter = tf.summary.FileWriter('/home/nick/Desktop/gitProject/ralph_doc_to_chinese/codedir/TensorFlowExp/board'
                                            , graph=sess.graph)
 
         # 判断是否有模型文件，如果有就直接加载模型
-        if os.path.exists("/home/nick/Desktop/gitProject/ralph_doc_to_chinese/code/TensorFlowExp/modelsave/checkpoint"):
-            save.restore(sess, "/home/nick/Desktop/gitProject/ralph_doc_to_chinese/code/TensorFlowExp/modelsave/")
+        if os.path.exists("/home/nick/Desktop/gitProject/ralph_doc_to_chinese/codedir/TensorFlowExp/modelsave/checkpoint"):
+            save.restore(sess, "/home/nick/Desktop/gitProject/ralph_doc_to_chinese/codedir/TensorFlowExp/modelsave/")
 
         # 打印初始模型
         a = weights.eval()
@@ -78,7 +78,7 @@ def achieve_linear():
         print('--------------End------------------------------')
 
         # 保存模型
-        save.save(sess, "/home/nick/Desktop/gitProject/ralph_doc_to_chinese/code/TensorFlowExp/modelsave/")
+        save.save(sess, "/home/nick/Desktop/gitProject/ralph_doc_to_chinese/codedir/TensorFlowExp/modelsave/")
 
 
 if __name__ == "__main__":

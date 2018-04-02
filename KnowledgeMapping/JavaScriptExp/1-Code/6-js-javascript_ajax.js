@@ -7,7 +7,7 @@ function success(test) {
 
 function fail(code) {
     var textarea = document.getElementById('test-response-text');
-    textarea.value = 'Error code: ' + code;
+    textarea.value = 'Error codedir: ' + code;
 }
 
 // 新建XMLHttpRequest对象 --> onreadystatechange  回调，判断状态
