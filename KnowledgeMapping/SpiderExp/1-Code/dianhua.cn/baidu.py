@@ -81,8 +81,16 @@ def generate_number(number_prefix):
         tag = req_number(complete_number)
         with open("./{}.csv".format(number_prefix), "a+") as f:
             f.write("{},{}\n".format(complete_number, tag))
-        time.sleep(1)
+        time.sleep(0.5)
 
 
 if __name__ == '__main__':
-    generate_number(1300100)
+    # 连接redis
+    r_pool = redis.ConnectionPool(host='127.0.0.1', port=6379)
+    r_conn = redis.Redis(connection_pool=r_pool)
+
+    while True:
+        num_b = r_conn.spop("telephone_task")
+        if num_b:
+            num = num_b.decode("utf-8")
+            generate_number(num)
