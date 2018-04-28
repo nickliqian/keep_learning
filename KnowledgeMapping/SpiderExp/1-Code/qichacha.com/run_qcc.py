@@ -1,9 +1,13 @@
+"""
+循环采集企查查的公司名称
+"""
 import requests
 from lxml import etree
 import pymysql
 import redis
 import time
 import random
+from get_area_dict import write_area_dict
 
 
 def get_proxy():
@@ -62,11 +66,16 @@ def parse_page(resp, area_dict, page_num):
 # 获取一个 city-url 字典
 def get_task():
     area_b = redis_conn.spop("QCC:area_dict")
-    area = area_b.decode("utf8")
-    return eval(area)
+    if area_b:
+        area = area_b.decode("utf8")
+        return eval(area)
+    else:
+        print("redis 数据为空")
+        write_area_dict()
 
 
 if __name__ == '__main__':
+
     # 连接MySQL
     print("Connect to mysql...")
     mysql_conn = pymysql.connect(host='192.168.70.40', port=3306, user='root', passwd='mysql', db='qichacha', charset='utf8')
@@ -82,20 +91,27 @@ if __name__ == '__main__':
     }
     site = "http://www.qichacha.com"
 
-    # 获取一个 city-url 字典
-    area_d = get_task()
-
-    for i in range(1, 501):
-        print("page <{}>".format(i))
-        r = req_page(area_d, i)
-        time.sleep(0.2)
-        if r:
-            parse_page(r, area_d, i)
-        else:
-            print("采集失败 <{}> <{}>".format(area_d, i))
-
-    # 关闭mysql连接
-    mysql_cursor.close()
-    mysql_conn.close()
-    print("Close MySQL Connection...")
-    print("end")
+    try:
+        while True:
+            # 获取一个 city-url 字典
+            area_b = get_task()
+            print(area_b)
+            if area_b != 0:
+                for i in range(1, 501):
+                    print("page <{}>".format(i))
+                    r = req_page(area_b, i)
+                    # time.sleep(0.2)
+                    if r:
+                        parse_page(r, area_b, i)
+                    else:
+                        print("采集失败 <{}> <{}>".format(area_b, i))
+            else:
+                break
+    except Exception as e:
+        raise e
+    finally:
+        # 关闭mysql连接
+        mysql_cursor.close()
+        mysql_conn.close()
+        print("Close MySQL Connection...")
+        print("end")

@@ -1,3 +1,6 @@
+"""
+所有号码段存入127.0.0.1的redis
+"""
 import os
 import redis
 
