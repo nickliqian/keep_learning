@@ -72,6 +72,7 @@ def get_task():
     else:
         print("redis 数据为空")
         write_area_dict()
+        get_task()
 
 
 if __name__ == '__main__':
@@ -95,18 +96,16 @@ if __name__ == '__main__':
         while True:
             # 获取一个 city-url 字典
             area_b = get_task()
-            print(area_b)
-            if area_b != 0:
+            print("get from redis -> {}".format(area_b))
+            if area_b:
                 for i in range(1, 501):
                     print("page <{}>".format(i))
                     r = req_page(area_b, i)
-                    # time.sleep(0.2)
+                    time.sleep(0.2)
                     if r:
                         parse_page(r, area_b, i)
                     else:
                         print("采集失败 <{}> <{}>".format(area_b, i))
-            else:
-                break
     except Exception as e:
         raise e
     finally:
