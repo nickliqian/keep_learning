@@ -29,8 +29,8 @@ class CrawlCampanyName(threading.Thread):
         # 数据库连接
         self.mysql_conn = mysql_conn
         self.mysql_cursor = mysql_cursor
-        self.mysql_db = ""
-        self.mysql_table = ""
+        self.mysql_db = "qishun"
+        self.mysql_table = "qishun_company_name"
         self.redis_conn = redis_conn
         self.redis_db = "qishun_list"
 
@@ -82,8 +82,18 @@ class CrawlCampanyName(threading.Thread):
                 print(e)
                 time.sleep(1)
 
+    # 插入数据库
+    def insert_sql(self, items, row):
+        for item in items:
+            sql = "INSERT INTO {} (area,industry,source_url,company_name,company_url) VALUE ('{}','{}','{}','{}','{}')"\
+                .format(self.mysql_table, row["area"], row["industry"], row["url"], item["name"], item["href"])
+            self.mysql_cursor.execute(sql)
+            print("Write data <{}> <{}> <{}> <{}> <{}>".format(row["area"], row["industry"], row["url"], item["name"], item["href"]))
+        self.mysql_conn.commit()
+
     # 请求指定url（企顺网）
     def req_url(self, target_url):
+        time.sleep(0.5)
         f = 0
         while f < 3:
             try:
@@ -96,6 +106,7 @@ class CrawlCampanyName(threading.Thread):
 
                     if text.startswith("没找到"):
                         print("页面没有数据：没找到 {}".format(target_url))
+                        return None
 
                     return response
                 else:
@@ -107,38 +118,94 @@ class CrawlCampanyName(threading.Thread):
         self.add_log("Request value<{}> failed".format(target_url))
         return None
 
-    def parse_page(self, index_response):
-        html = etree.HTML(index_response.text)
-        results = html.xpath("//ul[@class='companylist']/li/div[@class='f_l']/h4/a")
+    # 解析页面数据
+    def parse_page(self, response):
+        items = []
+        html = etree.HTML(response.text)
+
+        # 抽取公司名称
+        results = html.xpath("//div[@class='f_l']/h4/a")
+        print("{} 本次抓取公司名称<{}>个 {}".format(self.get_now_time(), len(results), response.url))
         if results:
             for result in results:
-                name = result.xpath("./text()")[0]
-                href = result.xpath("./@href")[0]
-                sql = ""
-        # /html/body/div[@id='main']/div[@id='il']/div[@class='pages']/a/em/../following-sibling::*[1]
-        # 同级元素的后玲元素
+                item = {}
+                name = result.xpath("./text()")[0].strip()
+                href = result.xpath("./@href")[0].strip("//")
+                if not href.startswith("http://"):
+                    href = "http://" + href
+                item["name"] = name
+                item["href"] = href
+                items.append(item)
+        else:
+            print("{} 本分类本页无公司 {}".format(self.get_now_time(), response.url))
+            return items, 0
 
+        # 判断是否有下一页
+        results = html.xpath("//div[@class='pages']/a/em/../following-sibling::*[1]")
+        if results:
+            result = results[0]
+            flag = result.xpath("./text()")[0]
+            print("下一个标签是 <{}>".format(flag))
+            if flag != "尾页":
+                href = result.xpath("./@href")[0].strip("//")
+                if not href.startswith("http://"):
+                    href = "http://" + href
+            else:
+                print("{} 已经是最后一页 {}".format(self.get_now_time(), response.url))
+                return items, 1
+        else:
+            print("{} 本分类仅一页 {}".format(self.get_now_time(), response.url))
+            return items, 1
 
-    def crawl_classification(self, row):
-        resp = self.req_url(row["url"])
-        if resp:
-            self.parse_page(resp)
+        return items, href
 
+    # 采集某类企业
+    def crawl_classification(self, response, row):
 
+        items, href = self.parse_page(response)
+        if href == 0:
+            # print("本分类无公司")
+            pass
+        elif href == 1:
+            # print("已经是最后一页")
+            # 数据保存
+            with self.threading_lock:
+                self.insert_sql(items, row)
+        else:
+            # 数据保存
+            with self.threading_lock:
+                self.insert_sql(items, row)
+            # 请求下一页
+            response = self.req_url(href)
+            if response:
+                self.crawl_classification(response, row)
+            else:
+                print("{} 页面异常或者为空，无需解析 {}".format(self.get_now_time(), response.url))
 
-
+    # Start
     def run(self):
         while not self.stop_flag:
             # 获取任务
             row = self.get_task()
             print("Start task {}".format(row))
 
-            if row:
-                self.crawl_classification(row)
-            else:
-                print("Redis has no task")
+            try:
+                if row:
+                    resp = self.req_url(row["url"])
+                    if resp:
+                        self.crawl_classification(resp, row)
+                    else:
+                        print("页面异常或者为空，无需解析")
+                else:
+                    print("Redis has no task")
+            except Exception as e:
+                self.redis_conn.sadd(self.redis_db, row)
+                if isinstance(e, RequestError):
+                    pass
+                else:
+                    self.add_log("{}--{}--{}--{}--{}".format(self.get_now_time(), self.process_id, self.threading_name, str(row), e))
 
-        print("<{}> 线程退出".format(self.threading_name))
+        print("{} {} 线程退出".format(self.get_now_time(), self.threading_name))
 
 
 if __name__ == '__main__':
@@ -149,11 +216,12 @@ if __name__ == '__main__':
 
     # 连接MySQL
     print("Connect to mysql...")
-    m_conn = pymysql.connect(host='192.168.70.40', port=3306, user='root', passwd='mysql', db='phone_number_info', charset='utf8')
+    mysql_db = "qishun"
+    m_conn = pymysql.connect(host='192.168.70.40', port=3306, user='root', passwd='mysql', db=mysql_db, charset='utf8')
     m_cursor = m_conn.cursor()
 
     # 线程数量
-    thread_num = 15
+    thread_num = 8
     # 线程锁
     t_lock = threading.Lock()
     # 线程列表
