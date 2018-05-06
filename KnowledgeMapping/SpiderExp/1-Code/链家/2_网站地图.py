@@ -20,7 +20,12 @@ def test_city_have_xiaoqu():
     for city in city_list_dict:
         url = "https://{}.lianjia.com/xiaoqu/".format(city["code"])
         print(url)
-        response = requests.get(url=url, headers=headers)
+        while True:
+            try:
+                response = requests.get(url=url, headers=headers, verify=False, timeout=6)
+                break
+            except Exception:
+                pass
         html = etree.HTML(response.text)
         result = html.xpath("/html/body/div[@class='content']/div[@class='leftContent']"
                             "/div[@class='resultDes clear']/h2[@class='total fl']/text()")
@@ -34,7 +39,7 @@ def crawl_area_href(city):
     # 构造小区链接
     city_url = domain + "/xiaoqu/"
     # 发送请求
-    response = requests.get(url=city_url, headers=headers)
+    response = requests.get(url=city_url, headers=headers, verify=False, timeout=6)
     # 抓取每个街道的名称和链接
     html = etree.HTML(response.text)
     areas = html.xpath("/html/body/div[@class='m-filter']/div[@class='position']/dl[2]/dd/div/div[1]/a")
@@ -50,22 +55,28 @@ def crawl_area_href(city):
 
 
 def crawl_street_href(url, city):
+    city_name = city["name"]
+    city_code = city["code"]
+
     # 构造不同城市的链接
     domain = "https://{}.lianjia.com".format(city["code"])
     # 发送请求
-    response = requests.get(url=url, headers=headers)
+    response = requests.get(url=url, headers=headers, verify=False, timeout=6)
     # 抓取每个街道的名称和链接
     html = etree.HTML(response.text)
     streets = html.xpath("/html/body/div[@class='m-filter']/div[@class='position']/dl[2]/dd/div/div[2]/a")
     for street in streets:
+        item = {}
         street_name = street.xpath("./text()")[0]
         street_href = street.xpath("./@href")[0]
         if street_href.startswith("/"):
             street_href = domain+street_href
-        city["street"] = street_name
-        city["href"] = street_href
-        print(city)
-        items.append(city)
+        item["street"] = street_name
+        item["href"] = street_href
+        item["city_name"] = city_name
+        item["city_code"] = city_code
+        print(item)
+        items.append(item)
     time.sleep(3)
 
 
@@ -77,5 +88,5 @@ if __name__ == '__main__':
     # 列表数据转为json字符串
     rows_data = json.dumps(items, ensure_ascii=False)
     # json字符串写入文件，持久性保存
-    with open("./street_map.json", "w") as f:
+    with open("./street_map.json", "w", encoding="utf-8") as f:
         f.write(rows_data)

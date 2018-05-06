@@ -20,6 +20,7 @@ def crawl_xiaoqu(street_url):
     results = html.xpath("/html/body/div[@class='content']/div[@class='leftContent']/ul[@class='listContent']"
                        "/li[@class='clear xiaoquListItem']")
 
+    print("\n---------------本页的小区为---------------")
     for result in results:
         # 小区名称
         name = result.xpath("./div[@class='info']/div[@class='title']/a/text()")[0]
@@ -35,17 +36,16 @@ def crawl_xiaoqu(street_url):
 
         print(name, href, house_type_count, house_buy, house_rent)
 
-    j_next = html.xpath("//div[@class='page-box']/div[@class='page-box']/a[last()]")
-    print(j_next)
-    j_next_name = j_next.xpath("./text()")[0]
-
-    if j_next_name == "下一页":
-        j_next_href = j_next.xpath("./@href")[0]
-        next_page_string = j_next_href.strip("/").split("/")[-1]
-        next_url = j_next_href + next_page_string + "/"
-        print(next_url)
-
-    print("本街道已经采集完成")
+    try:
+        j_next = html.xpath("//div[@class='page-box house-lst-page-box']/@page-data")[0]
+        j_next = eval(j_next)
+        if j_next["curPage"] == j_next["totalPage"]:
+            print("本街道已经采集完成")
+        else:
+            pg = "pg" + str(int(j_next["curPage"] + 1)) + "/"
+            crawl_xiaoqu(street_url + pg)
+    except Exception as e:
+        raise e
 
 
 if __name__ == '__main__':
