@@ -50,11 +50,11 @@ def crawl_area_href(city):
         if area_href.startswith("/"):
             area_href = domain+area_href
         print(area_name, area_href)
-        crawl_street_href(area_href, city)
+        crawl_street_href(area_href, city, area_name)
     time.sleep(3)
 
 
-def crawl_street_href(url, city):
+def crawl_street_href(url, city, area_name):
     city_name = city["name"]
     city_code = city["code"]
 
@@ -75,6 +75,7 @@ def crawl_street_href(url, city):
         item["href"] = street_href
         item["city_name"] = city_name
         item["city_code"] = city_code
+        item["area_name"] = area_name
         print(item)
         items.append(item)
     time.sleep(3)
