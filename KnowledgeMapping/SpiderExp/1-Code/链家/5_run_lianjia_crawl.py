@@ -96,7 +96,7 @@ class SpiderMySQLRedis(threading.Thread):
                 self.logger.debug("proxy: {}".format(ip_num))
                 return ip_num
             except Exception as e:
-                self.logger.info(e)
+                self.logger.debug(e)
                 time.sleep(1)
 
     # check response, means site refuse get normal page, need repeat request
@@ -110,6 +110,9 @@ class SpiderMySQLRedis(threading.Thread):
         while f < 5:
             try:
                 response = requests.get(url=target_url, headers=self.headers, proxies={"http": self.get_proxy_from_wuyou_api()}, timeout=8)
+                if response.status_code == 404:
+                    return None
+
                 if response.status_code == 200:
                     if self.check_response_abnormal(response):
                         raise ResponseAbnormalError
@@ -119,7 +122,7 @@ class SpiderMySQLRedis(threading.Thread):
                     self.logger.warning("response status code abnormal <{}> <{}>".format(target_url, response.status_code))
                     f += 1
             except Exception as e:
-                self.logger.warning("request abnormal <{}> <{}>".format(target_url, e))
+                self.logger.debug("request abnormal <{}> <{}>".format(target_url, e))
                 f += 1
         self.logger.error("Request failed for five times <{}>".format(target_url))
         return None
@@ -180,32 +183,39 @@ class SpiderMySQLRedis(threading.Thread):
 
                 price_data = time.strftime("%Y%m%d")
 
+                # 价格
+                price = result.xpath(".//div[@class='totalPrice']/span/text()")[0].strip()
+                price_desc = result.xpath(".//div[@class='priceDesc']/text()")[0].strip()
+
                 item = [price_data, builing_name, builing_href, house_type_count, house_buy, house_rent, house_district,
                       house_bizcircle, year, house_type_string, task_dict["city_name"], task_dict["area_name"],
-                      task_dict["street"], task_dict["href"]]
+                      task_dict["street"], task_dict["href"],price,price_desc]
 
                 self.logger.debug(str(item))
 
                 with self.threading_lock:
                     self.save_data(item)
 
-            try:
-                j_next = html.xpath("//div[@class='page-box house-lst-page-box']/@page-data")[0]
-                cur_page = int(eval(j_next)["curPage"])
-                total_page = int(eval(j_next)["totalPage"])
-                print(">>> 本页是第{}页，共有{}页".format(cur_page, total_page))
-                if cur_page == total_page:
-                    print(">>> 本街道已经采集完成")
-                    return None
-                else:
-                    pg = "pg" + str(cur_page + 1) + "/"
-                    return origin + pg
-            except Exception as e:
-                raise e
+            if int(count) > 30:
+                try:
+                    j_next = html.xpath("//div[@class='page-box house-lst-page-box']/@page-data")[0]
+                    cur_page = int(eval(j_next)["curPage"])
+                    total_page = int(eval(j_next)["totalPage"])
+                    print(">>> 本页是第{}页，共有{}页".format(cur_page, total_page))
+                    if cur_page == total_page:
+                        print(">>> 本街道已经采集完成")
+                        return None
+                    else:
+                        pg = "pg" + str(cur_page + 1) + "/"
+                        return origin + pg
+                except Exception as e:
+                    raise e
+            else:
+                print(">>> 无下一页")
 
     # insert data to db or file
     def save_data(self, item):
-        sql = "INSERT INTO {}(price_data,builing_name,builing_href,house_type_count,house_buy,house_rent,house_district,house_bizcircle,year,house_type_string,city_name,area_name,street,source_href) VALUE ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')"\
+        sql = "INSERT INTO {}(price_data,builing_name,builing_href,house_type_count,house_buy,house_rent,house_district,house_bizcircle,year,house_type_string,city_name,area_name,street,source_href,price,price_desc) VALUE ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')"\
             .format(self.mysql_table, *item)
         self.mysql_cursor.execute(sql)
         self.mysql_conn.commit()
@@ -238,11 +248,11 @@ class SpiderMySQLRedis(threading.Thread):
                         else:
                             break
                 else:
-                    self.logger.warning("Redis has no task")
+                    self.logger.info("Redis has no task")
                     self.redis_empty_callback()
             # if any exception, rollback task to redis
             except Exception as main_error:
-                self.redis_conn.sadd(self.redis_key, task)
+                self.redis_conn.sadd("lianjia_task_error", task)
                 # for ResponseAbnormalError, just re-request
                 if isinstance(main_error, ResponseAbnormalError):
                     pass

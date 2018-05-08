@@ -11,6 +11,8 @@ headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
 def crawl_xiaoqu(street_url, origin):
     print("\nCrawl >>> " + street_url)
     response = requests.get(url=street_url, headers=headers)
+    print(response)
+    print(response.status_code)
     html = etree.HTML(response.text)
 
     count = html.xpath("/html/body/div[@class='content']/div[@class='leftContent']/div[@class='resultDes clear']/h2[@class='total fl']/span/text()")[0]
@@ -56,26 +58,33 @@ def crawl_xiaoqu(street_url, origin):
 
         price_data = time.strftime("%Y%m%d")
 
-        print(price_data, builing_name, builing_href, house_type_count, house_buy, house_rent, house_district, house_bizcircle, year, house_type_string)
+        # 价格
+        price = result.xpath(".//div[@class='totalPrice']/span/text()")[0].strip()
+        price_desc = result.xpath(".//div[@class='priceDesc']/text()")[0].strip()
 
-    try:
-        j_next = html.xpath("//div[@class='page-box house-lst-page-box']/@page-data")[0]
-        cur_page = int(eval(j_next)["curPage"])
-        total_page = int(eval(j_next)["totalPage"])
-        print(">>> 本页是第{}页，共有{}页".format(cur_page, total_page))
-        if cur_page == total_page:
-            print(">>> 本街道已经采集完成")
-            return None
-        else:
-            pg = "pg" + str(cur_page + 1) + "/"
-            time.sleep(5)
-            return origin + pg
-    except Exception as e:
-        raise e
+        print(price_data, builing_name, builing_href, house_type_count, house_buy, house_rent, house_district, house_bizcircle, year, house_type_string, price, price_desc)
+
+    if int(count) > 30:
+        try:
+            j_next = html.xpath("//div[@class='page-box house-lst-page-box']/@page-data")[0]
+            cur_page = int(eval(j_next)["curPage"])
+            total_page = int(eval(j_next)["totalPage"])
+            print(">>> 本页是第{}页，共有{}页".format(cur_page, total_page))
+            if cur_page == total_page:
+                print(">>> 本街道已经采集完成")
+                return None
+            else:
+                pg = "pg" + str(cur_page + 1) + "/"
+                time.sleep(5)
+                return origin + pg
+        except Exception as e:
+            raise e
+    else:
+        print(">>> 无下一页")
 
 
 if __name__ == '__main__':
-    url = "https://fs.lianjia.com/xiaoqu/nanhaidadaonan/"
+    url = "https://gz.lianjia.com/xiaoqu/conghua1/"
     origin = url
     while True:
         if url:
