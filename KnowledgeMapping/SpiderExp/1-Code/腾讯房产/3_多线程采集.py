@@ -55,15 +55,24 @@ def get_proxy_from_wuyou_api():
             time.sleep(1)
 
 
+def req_get(f_url, f_headers, f_params=None, timeout=8):
+    while True:
+        try:
+            response = requests.get(url=f_url,
+                                    headers=f_headers,
+                                    params=f_params,
+                                    proxies={"http": get_proxy_from_wuyou_api(), "https": get_proxy_from_wuyou_api()},
+                                    timeout=timeout)
+            return response
+        except Exception:
+            print("retry -> {}".format(f_url))
+
+
 def get_area_code(city_dict):
     param_city = city_dict["city_url"].split("?")[1].split("&")[1].split("=")[1]
 
-    while True:
-        try:
-            response = requests.get(url=city_dict["city_url"], headers=headers, proxies={"http": get_proxy_from_wuyou_api()}, timeout=8)
-            break
-        except Exception:
-            pass
+    # 请求到地区代码
+    response = req_get(f_url=city_dict["city_url"], f_headers=headers)
 
     html = etree.HTML(response.text)
     areas = html.xpath("//dl[@id='search_condition_container_region']/dd/ul[@id='search_condition_region1']/li/a")
@@ -76,7 +85,6 @@ def get_area_code(city_dict):
         area_name = area.xpath("./text()")[0]
         param_CA = city_dict["city_code"]+":"+area_code
 
-
         req_area(param_city, param_CA, area_name, city_dict["city_name"])
 
 
@@ -86,13 +94,8 @@ def req_area(param_city, param_CA, area_name, city_name):
 
     # 获取第一页中的数字-数据总量
     params["page_no"] = "1"
-
-    while True:
-        try:
-            response = requests.get(url=url, headers=headers, params=params, proxies={"http": get_proxy_from_wuyou_api()}, timeout=8)
-            break
-        except Exception:
-            pass
+    print(params)
+    response = req_get(f_url=url, f_headers=headers, f_params=params)
 
     # 抽取文本
     results = re.findall(r'var\ssearch_result\s=\s"(.*?);var\ssearch_result_list_num\s=\s(.*?);', response.text)
@@ -106,9 +109,14 @@ def req_area(param_city, param_CA, area_name, city_name):
     # 循环所有页面
     for num in range(1, page_num+1):
         params["page_no"] = str(num)
-        response = requests.get(url=url, headers=headers, params=params)
-        parse_resp(response, area_name, city_name)
-        time.sleep(10)
+        print("采集第{}页".format(num))
+        while True:
+            try:
+                response = req_get(f_url=url, f_headers=headers, f_params=params)
+                parse_resp(response, area_name, city_name)
+                break
+            except IndexError:
+                print("IndexError --> retry --> {}".format(params))
 
 
 def parse_resp(response, area_name, city_name):
