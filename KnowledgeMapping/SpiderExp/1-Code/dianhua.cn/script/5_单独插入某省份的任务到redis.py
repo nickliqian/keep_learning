@@ -17,14 +17,14 @@ if __name__ == '__main__':
 
     try:
 
-        sql = "select prefix from number_test where province='广东' and flag=0"
+        sql = "select prefix, prefix_id from number_prefix where province='广东' and flag=0"
         mysql_cursor.execute(sql)
         results = mysql_cursor.fetchall()
 
         if results:
             for r in results:
-                print(r[0])
-                r_conn.sadd("telephone_task", r[0])
+                print(r)
+                r_conn.sadd("telephone_task", r)
         else:
             print("empty")
 

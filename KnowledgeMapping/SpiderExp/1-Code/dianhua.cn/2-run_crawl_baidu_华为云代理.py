@@ -1,5 +1,5 @@
 """
-从redis获取任务采集百度电话号码标记，main程序
+从redis获取任务采集百度电话号码标记，main程序 >>> 无忧代理接口
 """
 import os
 import pymysql
@@ -9,7 +9,6 @@ import time
 import random
 import redis
 import threading
-
 
 
 class CrawlTelephone(threading.Thread):
@@ -55,6 +54,7 @@ class CrawlTelephone(threading.Thread):
         info_id_byte = self.redis_conn.spop(self.redis_db)
         if info_id_byte:
             info_id = info_id_byte.decode("utf-8")
+            info_id = eval(info_id)
             return info_id
         else:
             return None
@@ -70,6 +70,23 @@ class CrawlTelephone(threading.Thread):
         else:
             return None
 
+    # 从redis获取代理IP
+    def get_proxy(self):
+        while True:
+            try:
+                num_list = [i for i in range(1, 21)]
+                ip_choice = random.choice(num_list)
+                ip_str = "myip" + str(ip_choice)
+                ip_num = self.redis_conn.mget(ip_str)[0]
+                if not ip_num:
+                    return None
+                ip_num = ip_num.decode('utf-8')
+                print("proxy: %s" % ip_num)
+                return ip_num
+            except Exception as e:
+                print(e)
+                time.sleep(1)
+
     def req_number(self, number):
         self.params["wd"] = number
         f = 0
@@ -78,12 +95,31 @@ class CrawlTelephone(threading.Thread):
                 response = requests.get(url=self.url, headers=self.headers, params=self.params, proxies={"http": "117.78.31.36:1080"}, timeout=8)
                 if response.status_code == 200:
                     html = etree.HTML(response.text)
-                    results = html.xpath("//div[@class='c-border op_fraudphone_container']/div//div[@class='op_fraudphone_word']/strong/text()")
+                    # results = html.xpath("//div[@class='c-border op_fraudphone_container']/div//div[@class='op_fraudphone_word']/strong/text()")
+
+                    results = html.xpath("//div[@class='c-border op_fraudphone_container']/div//div[@class='op_fraudphone_word']")
+
                     if results:
-                        print(number, results[0])
-                        return results[0].replace('"', '')
+
+                        try:
+                            mark_person = results[0].xpath("./text()")[0].strip().replace("被", "").replace("个", "")
+                        except IndexError:
+                            mark_person = "-1"
+
+                        try:
+                            tag = results[0].xpath("./strong/text()")[0].replace('"', '')
+                        except IndexError:
+                            tag = "-1"
+
+                        try:
+                            source_site = results[0].xpath("./a/text()")[0]
+                        except IndexError:
+                            source_site = "-1"
+
+                        print("Parse >>> <{}> <{}> <{}>".format(mark_person, tag, source_site))
+                        return mark_person, tag, source_site
                     else:
-                        print(number, results)
+                        print("empty page >>> <{}> {}".format(number, results))
                         return None
                 else:
                     print("状态码异常：{},{},{}\n".format(self.get_now_time(), number, response.status_code))
@@ -94,44 +130,50 @@ class CrawlTelephone(threading.Thread):
         self.add_log("Request value<{}> failed".format(number))
         return None
 
-    def generate_number(self, number_prefix, id_result):
+    def generate_number(self, id_result):
+        number_prefix, prefix_id = id_result
+
         if type(number_prefix) == int:
             number_prefix = str(number_prefix)
         for i in range(10000):
+            print(i)
             if self.stop_flag:
                 self.redis_conn.sadd(self.redis_db, str(id_result))
                 print("循环请求退出， id=<{}>写回redis".format(id_result))
                 break
             number_suffix = (4-len(str(i)))*'0'+str(i)
             complete_number = number_prefix + number_suffix
-            tag = self.req_number(complete_number)
-            if tag:
-                print(complete_number, tag, id_result)
-                sql = "INSERT INTO number_tag(number,tag,prefix_id) VALUE ('{}','{}','{}')".format(complete_number, tag, id_result)
+            print("Request >>> {}".format(complete_number))
+            req_result = self.req_number(complete_number)
+            if req_result:
+                mark_person, tag, source_site = self.req_number(complete_number)
+                sql = "INSERT INTO number_tag(number,tag,prefix_id,mark_person,source_site) VALUE ('{}','{}','{}','{}','{}')"\
+                    .format(complete_number, tag, prefix_id, mark_person, source_site)
+                self.mysql_cursor.execute(sql)
                 with self.threading_lock:
-                    self.mysql_cursor.execute(sql)
                     self.mysql_conn.commit()
-            time.sleep(0.5)
+                print("Insert to MySQL >>> <{}> <{}> <{}> <{}>".format(complete_number, tag, mark_person, source_site))
 
     def run(self):
         while not self.stop_flag:
             # 获取任务-前缀数据id
             id_result = self.get_task()
-            print("Start task {}".format(id_result))
+            print("Start task >>> prefix&id:{}".format(id_result))
             if id_result:
                 # 到mysql查询数据id返回对应的前缀号码
-                print("查询 id {} ".format(id_result))
-                prefix_num = self.search_mysql(id_result)
-                if prefix_num:
-                    # 生成10000个此号码段的请求
-                    try:
-                        self.generate_number(prefix_num, id_result)
-                    except Exception as e:
-                        self.add_log("Generate number id=<{}> prefix=<{}> raise exception: {}".format(id_result, prefix_num, e))
-                else:
-                    self.add_log("Mysql search result is empty when id=<{}>".format(id_result))
+                # print("查询 id {} ".format(id_result))
+                # prefix_num = self.search_mysql(id_result)
+
+                # 生成10000个此号码段的请求
+                try:
+                    self.generate_number(id_result)
+                except Exception as e:
+                    print("Generate number id=<{}>  raise exception: {}".format(id_result, e))
+                    self.add_log("Generate number id=<{}>  raise exception: {}".format(id_result, e))
+
             else:
                 self.add_log("Redis task is empty")
+                break
         print("<{}> 线程退出".format(self.threading_name))
 
 
