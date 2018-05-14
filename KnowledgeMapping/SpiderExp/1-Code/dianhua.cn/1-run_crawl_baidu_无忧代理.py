@@ -83,8 +83,8 @@ class CrawlTelephone(threading.Thread):
                 ip_num = ip_num.decode('utf-8')
                 print("proxy: %s" % ip_num)
                 return ip_num
-            except Exception as e:
-                print(e)
+            except Exception as get_proxy_error:
+                print(get_proxy_error)
                 time.sleep(1)
 
     def req_number(self, number):
@@ -124,8 +124,8 @@ class CrawlTelephone(threading.Thread):
                 else:
                     print("状态码异常：{},{},{}\n".format(self.get_now_time(), number, response.status_code))
                     f += 1
-            except Exception as e:
-                print("请求异常：{},{},{}\n".format(self.get_now_time(), number, e))
+            except Exception as req_number_e:
+                print("请求异常：{},{},{}\n".format(self.get_now_time(), number, req_number_e))
                 f += 1
         self.add_log("Request value<{}> failed".format(number))
         return None
@@ -167,10 +167,9 @@ class CrawlTelephone(threading.Thread):
                 # 生成10000个此号码段的请求
                 try:
                     self.generate_number(id_result)
-                except Exception as e:
-                    print("Generate number id=<{}>  raise exception: {}".format(id_result, e))
-                    self.add_log("Generate number id=<{}>  raise exception: {}".format(id_result, e))
-
+                except Exception as run_error:
+                    print("Generate number id=<{}> raise exception: {}".format(id_result, run_error))
+                    self.add_log("Generate number id=<{}>  raise exception: {}".format(id_result, run_error))
             else:
                 self.add_log("Redis task is empty")
                 break
@@ -202,14 +201,14 @@ if __name__ == '__main__':
             jobList.append(t)
         for t in jobList:
             t.join()
-    except KeyboardInterrupt as e:
+    except KeyboardInterrupt:
         # 手动停止时,执行所有对象的stop函数
         if jobList:
             for t in jobList:
                 t.stop()
-    except Exception as e:
+    except Exception as main_error:
         # info_by_mail(">> gd spider stop", "进程报错 >> {}: {}".format(type(e), e))
-        raise e
+        raise main_error
     finally:
         m_cursor.close()
         m_conn.close()
