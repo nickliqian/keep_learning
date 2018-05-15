@@ -11,6 +11,10 @@ import redis
 import threading
 
 
+class CrawlInterrupterError(Exception):
+    pass
+
+
 class CrawlTelephone(threading.Thread):
 
     def __init__(self, process_id, threading_name, mysql_conn, mysql_cursor, redis_conn, threading_lock):
@@ -28,7 +32,7 @@ class CrawlTelephone(threading.Thread):
         self.redis_db = "telephone_task"
 
         # 网络请求参数
-        self.url = "https://www.baidu.com/s"
+        self.url = "http://www.baidu.com/s"
         self.params = {"wd": "1388888888"}
         self.headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36"}
 
@@ -40,14 +44,14 @@ class CrawlTelephone(threading.Thread):
 
     # 停止运行
     def stop(self):
-        print("停止标志 -> stop_flag = True")
+        print("停止标志 >>> stop_flag = True")
         self.stop_flag = True
 
     # 向公共log文件中添加log信息
     def add_log(self, desc):
         with self.threading_lock:
             with open("./crawl.log", "a+") as f:
-                f.write("T:<{}> P:<{}> T:<{}> D:<{}>\n".format(self.get_now_time(), self.process_id, self.threading_name, desc))
+                f.write("<{}> desc:<{}>\n".format(self.get_now_time(), desc))
 
     # 获取redis任务数字-号码前缀数据的id
     def get_task(self):
@@ -81,99 +85,109 @@ class CrawlTelephone(threading.Thread):
                 if not ip_num:
                     return None
                 ip_num = ip_num.decode('utf-8')
-                print("proxy: %s" % ip_num)
+                # print("proxy >>> {}".format(ip_num))
                 return ip_num
             except Exception as get_proxy_error:
-                print(get_proxy_error)
+                print("get proxy error >>> {}".format(get_proxy_error))
                 time.sleep(1)
 
-    def req_number(self, number):
+    def req_number(self, number, id_result):
         self.params["wd"] = number
-        f = 0
-        while f < 3:
+        while True:
+            # 判断线程状态
+            if self.stop_flag:
+                self.redis_conn.sadd(self.redis_db, str(id_result))
+                print("循环请求退出 >>> id<{}>写回redis".format(id_result))
+                break
             try:
-                response = requests.get(url=self.url, headers=self.headers, params=self.params, proxies={"http": self.get_proxy()}, timeout=8)
+                response = requests.get(url=self.url, headers=self.headers, params=self.params,
+                                        proxies={"http": self.get_proxy()},
+                                        timeout=8, verify=True)
                 if response.status_code == 200:
                     html = etree.HTML(response.text)
-                    # results = html.xpath("//div[@class='c-border op_fraudphone_container']/div//div[@class='op_fraudphone_word']/strong/text()")
-
                     results = html.xpath("//div[@class='c-border op_fraudphone_container']/div//div[@class='op_fraudphone_word']")
 
+                    # 判断xpath结果是否为空，不为空则进一步解析并返回数据，否则返回None
                     if results:
-
+                        # 如果解析不到某个字段就置为-1
                         try:
                             mark_person = results[0].xpath("./text()")[0].strip().replace("被", "").replace("个", "")
                         except IndexError:
                             mark_person = "-1"
-
                         try:
                             tag = results[0].xpath("./strong/text()")[0].replace('"', '')
                         except IndexError:
                             tag = "-1"
-
                         try:
                             source_site = results[0].xpath("./a/text()")[0]
                         except IndexError:
                             source_site = "-1"
 
-                        print("Parse >>> <{}> <{}> <{}>".format(mark_person, tag, source_site))
                         return mark_person, tag, source_site
                     else:
-                        print("empty page >>> <{}> {}".format(number, results))
                         return None
                 else:
-                    print("状态码异常：{},{},{}\n".format(self.get_now_time(), number, response.status_code))
-                    f += 1
+                    print("状态码异常 >>> {},{},{}".format(self.get_now_time(), number, response.status_code))
             except Exception as req_number_e:
-                print("请求异常：{},{},{}\n".format(self.get_now_time(), number, req_number_e))
-                f += 1
-        self.add_log("Request value<{}> failed".format(number))
-        return None
+                # 连接过程中异常
+                if isinstance(req_number_e, requests.ConnectionError):
+                    print("requests.ConnectionError")
+                elif isinstance(req_number_e, requests.ReadTimeout):
+                    print("requests.ReadTimeout")
+                else:
+                    print("请求异常 >>> {},{},{},{}".format(self.get_now_time(), number, type(req_number_e), req_number_e))
 
     def generate_number(self, id_result):
+        # 初始化请求参数 >>> number_prefix:号码前缀 prefix_id:前缀对应表中的id
         number_prefix, prefix_id = id_result
-
         if type(number_prefix) == int:
             number_prefix = str(number_prefix)
-        for i in range(10000):
-            print(i)
+
+        # 开始循环10000
+        for tail_num in range(10000):
+
+            # 判断线程状态
             if self.stop_flag:
                 self.redis_conn.sadd(self.redis_db, str(id_result))
-                print("循环请求退出， id=<{}>写回redis".format(id_result))
+                print("循环请求退出 >>> id<{}>写回redis".format(id_result))
                 break
-            number_suffix = (4-len(str(i)))*'0'+str(i)
+            # 组合号码并请求
+            number_suffix = (4-len(str(tail_num)))*'0'+str(tail_num)
             complete_number = number_prefix + number_suffix
-            print("Request >>> {}".format(complete_number))
-            req_result = self.req_number(complete_number)
-            if req_result:
-                mark_person, tag, source_site = self.req_number(complete_number)
-                sql = "INSERT INTO number_tag(number,tag,prefix_id,mark_person,source_site) VALUE ('{}','{}','{}','{}','{}')"\
-                    .format(complete_number, tag, prefix_id, mark_person, source_site)
-                self.mysql_cursor.execute(sql)
-                with self.threading_lock:
-                    self.mysql_conn.commit()
-                print("Insert to MySQL >>> <{}> <{}> <{}> <{}>".format(complete_number, tag, mark_person, source_site))
+            try:
+                print("Request >>> {}".format(complete_number))
+                req_result = self.req_number(complete_number, id_result)
+                # 判断请求结果 tuple->(save to mysql) or None->(pass)
+                if req_result:
+                    mark_person, tag, source_site = req_result
+                    # 插入数据库
+                    sql = "INSERT INTO number_tag(number,tag,prefix_id,mark_person,source_site) VALUE ('{}','{}','{}','{}','{}')"\
+                        .format(complete_number, tag, prefix_id, mark_person, source_site)
+                    with self.threading_lock:
+                        self.mysql_cursor.execute(sql)
+                        self.mysql_conn.commit()
+                    print("{} Insert to MySQL >>> <{}> <{}> <{}> <{}>".format(self.get_now_time(), complete_number, tag, mark_person, source_site))
+            except Exception as generate_number_error:
+                print("Generate_number error >>> {}".format(complete_number))
+                self.add_log("Generate_number error >>> {}".format(type(complete_number), complete_number))
+                # raise generate_number_error
 
     def run(self):
         while not self.stop_flag:
             # 获取任务-前缀数据id
             id_result = self.get_task()
-            print("Start task >>> prefix&id:{}".format(id_result))
+            # print("Start task >>> prefix&id:{}".format(id_result))
             if id_result:
-                # 到mysql查询数据id返回对应的前缀号码
-                # print("查询 id {} ".format(id_result))
-                # prefix_num = self.search_mysql(id_result)
 
                 # 生成10000个此号码段的请求
                 try:
                     self.generate_number(id_result)
                 except Exception as run_error:
-                    print("Generate number id=<{}> raise exception: {}".format(id_result, run_error))
-                    self.add_log("Generate number id=<{}>  raise exception: {}".format(id_result, run_error))
+                    raise run_error
             else:
-                self.add_log("Redis task is empty")
+                print("Redis task is empty >>> break")
                 break
-        print("<{}> 线程退出".format(self.threading_name))
+        print("<{}> threading quit".format(self.threading_name))
 
 
 if __name__ == '__main__':
