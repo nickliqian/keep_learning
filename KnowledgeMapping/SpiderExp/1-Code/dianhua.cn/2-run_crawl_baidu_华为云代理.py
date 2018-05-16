@@ -127,7 +127,7 @@ class CrawlTelephone(threading.Thread):
                     else:
                         return None
                 else:
-                    print("状态码异常 >>> {},{},{}".format(self.get_now_time(), number, response.status_code))
+                    self.add_log("状态码异常 >>> {},{},{}".format(self.get_now_time(), number, response.status_code))
             except Exception as req_number_e:
                 # 连接过程中异常
                 if isinstance(req_number_e, requests.ConnectionError):
@@ -169,7 +169,7 @@ class CrawlTelephone(threading.Thread):
                     print("{} Insert to MySQL >>> <{}> <{}> <{}> <{}>".format(self.get_now_time(), complete_number, tag, mark_person, source_site))
             except Exception as generate_number_error:
                 print("Generate_number error >>> {}".format(complete_number))
-                self.add_log("Generate_number error >>> {}".format(type(complete_number), complete_number))
+                self.add_log("Generate_number error >>> {},{},{}".format(type(complete_number), complete_number, generate_number_error))
                 # raise generate_number_error
 
     def run(self):
