@@ -9,6 +9,7 @@ import time
 import random
 import redis
 import threading
+from requests.exceptions import ReadTimeout, ConnectionError
 
 
 class CrawlInterrupterError(Exception):
@@ -130,9 +131,9 @@ class CrawlTelephone(threading.Thread):
                     self.add_log("状态码异常 >>> {},{},{}".format(self.get_now_time(), number, response.status_code))
             except Exception as req_number_e:
                 # 连接过程中异常
-                if isinstance(req_number_e, requests.ConnectionError):
+                if isinstance(req_number_e, ConnectionError):
                     print("requests.ConnectionError")
-                elif isinstance(req_number_e, requests.ReadTimeout):
+                elif isinstance(req_number_e, ReadTimeout):
                     print("requests.ReadTimeout")
                 else:
                     print("请求异常 >>> {},{},{},{}".format(self.get_now_time(), number, type(req_number_e), req_number_e))
