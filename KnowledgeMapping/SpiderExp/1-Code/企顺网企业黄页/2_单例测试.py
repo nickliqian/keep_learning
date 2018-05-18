@@ -1,6 +1,7 @@
 import requests
 from lxml import etree
 import time
+import re
 
 
 def req_url(url):
@@ -24,7 +25,7 @@ def req_url(url):
                 print("状态码异常")
                 f += 1
         except Exception as e:
-            print("请求异常：{},{},{}\n")
+            print("请求异常：{},{}\n".format(type(e), e))
             f += 1
 
 
@@ -40,8 +41,12 @@ def parse_page(response):
             href = result.xpath("./@href")[0].strip("//")
             # print(name, href)
     else:
-        print("本分类无公司")
-        return 0
+        flag = re.findall(r"(没有找到相关公司)", response.text)
+        if flag:
+            print("本分类无公司")
+            return 0
+        else:
+            print("出现了一点异常")
 
     # 判断是否有下一页
     results = html.xpath("//div[@class='pages']/a/em/../following-sibling::*[1]")
@@ -61,5 +66,5 @@ def parse_page(response):
 
 
 if __name__ == '__main__':
-    url = "http://www.11467.com/shenzhen/dir/a02.htm"
+    url = "http://wulanchabu.11467.com/fengzhen/pn9399"
     req_url(url)
