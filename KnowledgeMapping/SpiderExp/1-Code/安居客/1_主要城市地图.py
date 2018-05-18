@@ -18,7 +18,7 @@ def get_proxy():
             if not ip_num:
                 return None
             ip_num = ip_num.decode('utf-8')
-            print("proxy: %s" % ip_num)
+            # print("proxy: %s" % ip_num)
             return ip_num
         except Exception as e:
             print(e)
@@ -32,7 +32,27 @@ def req_url(url):
                 "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
             }
             r = requests.get(url=url, headers=headers, proxies={"https": get_proxy()}, timeout=8, verify=False)
-            return r
+
+            html = etree.HTML(r.text)
+
+            # 判断1
+            yan = html.xpath("//title/text()")
+            con = html.xpath("/html/body/div[@class='error-page clearfix']/div/text()")
+
+            if "访问验证" in yan[0]:
+                print("访问验证-安居客")
+
+            # 判断2
+            elif con:
+                if "抓取工具" in con[0]:
+                    print("系统检测到您正在使用网页抓取工具访问安居客网站，请卸载删除后访问")
+                else:
+                    print("非预期的异常")
+                    with open("./newFail.html", "w") as f:
+                        f.write(r.text)
+                    raise Exception("非预期的异常")
+            else:
+                return r
         except Exception as e:
             print(type(e), e)
 
@@ -59,9 +79,9 @@ def verify_city_community_url(city_url_list):
 
     items = []
     for city_url_dict in city_url_list:
-        print("\n>>> {}".format(city_url_dict))
+        print("---------------------------------------------------------------")
+        print(">>> {}".format(city_url_dict))
 
-        print("命中")
         city_url = city_url_dict["city_href"]
         if city_url.endswith("/"):
             city_url += 'community/'
@@ -76,7 +96,7 @@ def verify_city_community_url(city_url_list):
         results = html.xpath("//div[@class='items'][1]/span[@class='elems-l pp-mod']/a[position()>1]")
         if not results:
             results = html.xpath("//div[@class='items'][1]/span[@class='elems-l ']/a[position()>1]")
-        print(results)
+        print("Area -> {}".format(len(results)))
 
         for result in results:
 
@@ -90,8 +110,10 @@ def verify_city_community_url(city_url_list):
             side_names = html.xpath("//span[@class='elems-l pp-mod']//div[@class='sub-items']/a[position()>1]")
             if not results:
                 side_names = html.xpath("//span[@class='elems-l ']//div[@class='sub-items']/a[position()>1]")
+
             # 获取每个街道的详细数据-dict
             print(">>> {} >>> {} >>> {}".format(city, area, area_href))
+            print("street -> {}".format(len(side_names)))
             for side_name in side_names:
                 item = dict()
                 item['city'] = city
@@ -102,7 +124,7 @@ def verify_city_community_url(city_url_list):
                 item['street_href'] = side_name.xpath("./@href")[0]
                 # print(item)
                 items.append(item)
-            time.sleep(3)
+            time.sleep(1)
     return items
 
         # results = html.xpath("//div[@class='li-info']/h3/a")
