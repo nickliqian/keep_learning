@@ -15,6 +15,10 @@ class ResponseAbnormalError(Exception):
     pass
 
 
+class InterruptByHandle(Exception):
+    pass
+
+
 class SpiderMySQLRedis(threading.Thread):
     def __init__(self, mysql_conn, mysql_cursor, redis_conn, threading_lock, mysql_table, redis_key, logger):
         super(SpiderMySQLRedis, self).__init__()
@@ -92,7 +96,10 @@ class SpiderMySQLRedis(threading.Thread):
         self.params["city"] = task_dict["city_word"]
         self.params["CA"] = task_dict["city_code"] + ":" + task_dict["area_code"] + ":" + task_dict["street_code"]
         self.params["page_no"] = str(page_num)
-        while not self.stop_flag:
+        while True:
+            if self.stop_flag:
+                raise InterruptByHandle
+
             try:
                 response = requests.get(url=self.domain, headers=self.headers, params=self.params,
                                         proxies={"http": self.get_proxy_from_wuyou_api()}, timeout=8)
@@ -119,9 +126,9 @@ class SpiderMySQLRedis(threading.Thread):
     # parse html or json data
     def parse_page(self, task_dict):
         page_num = 1
-        while not self.stop_flag:
-            # self.logger.debug("Crawl >>> {}?f=h5&page={}".format(task_dict['street_url'], page_num))
-
+        while True:
+            if self.stop_flag:
+                raise InterruptByHandle
             response = self.req_url(task_dict, page_num)
             if not response:
                 raise ResponseAbnormalError()
@@ -219,6 +226,7 @@ class SpiderMySQLRedis(threading.Thread):
 
     def redis_empty_callback(self):
         self.stop()
+        # raise InterruptByHandle
 
     # start
     def run(self):
@@ -240,6 +248,8 @@ class SpiderMySQLRedis(threading.Thread):
 
                 # for ResponseAbnormalError, just re-request
                 if isinstance(main_error, ResponseAbnormalError):
+                    pass
+                elif isinstance(main_error, InterruptByHandle):
                     pass
                 else:
                     self.logger.error("Response exception >>> {} >>> {}".format(task, main_error))
@@ -335,7 +345,7 @@ if __name__ == '__main__':
         # info_by_mail(">> gd spider stop", "进程报错 >> {}: {}".format(type(e), e))
         raise e
     finally:
-        time.sleep(25)
+        time.sleep(40)
         m_cursor.close()
         m_conn.close()
         print("进程 {} 已经退出".format(os.getpid()))
