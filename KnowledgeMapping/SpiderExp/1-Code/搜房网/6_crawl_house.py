@@ -10,6 +10,7 @@ import redis
 import threading
 import logging
 from json.decoder import JSONDecodeError
+from requests.exceptions import ReadTimeout, ConnectionError
 
 
 class ResponseAbnormalError(Exception):
@@ -67,10 +68,10 @@ class SpiderMySQLRedis(threading.Thread):
                 if not ip_num:
                     return None
                 ip_num = ip_num.decode('utf-8')
-                self.logger.debug("proxy: {}".format(ip_num))
+                # self.logger.debug("proxy: {}".format(ip_num))
                 return ip_num
             except Exception as get_proxy_error:
-                self.logger.debug(get_proxy_error)
+                # self.logger.debug(get_proxy_error)
                 time.sleep(1)
 
     # check response, means site refuse get normal page, need repeat request
@@ -99,25 +100,24 @@ class SpiderMySQLRedis(threading.Thread):
                     self.logger.warning(
                         "response status code abnormal <{}> <{}>".format(target_url, response.status_code))
             except Exception as request_error:
-                self.logger.debug("request abnormal <{}> <{}>".format(target_url, request_error))
+                if isinstance(request_error, ReadTimeout):
+                    pass
+                elif isinstance(request_error, ConnectionError):
+                    pass
+                else:
+                    self.logger.debug("request abnormal <{}> <{}> <{}>".format(type(request_error), target_url, request_error))
                 # raise request_error
-        self.logger.error("Request failed for five times <{}>".format(target_url))
 
     # parse html or json data
     def parse_page(self, task_dict):
         page_num = 1
         while not self.stop_flag:
-            print("\nCrawl >>> " + task_dict['street_url'], page_num)
+            self.logger.debug("Crawl >>> {}?f=h5&page={}".format(task_dict['street_url'], page_num))
             response = self.req_url(task_dict['street_url'], page_num)
             if not response:
                 raise ResponseAbnormalError()
             if response.text != "[]":
-                try:
-                    data = json.loads(response.text)
-                except JSONDecodeError as e:
-                    with open("record.html", "w") as f:
-                        f.write(response.text)
-                    # raise e
+                data = json.loads(response.text)
                 res_bool = data["resBool"]
 
                 if not res_bool:
@@ -176,23 +176,24 @@ class SpiderMySQLRedis(threading.Thread):
             # start schedule task
             try:
                 if task:
-                    self.logger.debug("Start task <{}>".format(task))
+                    self.logger.debug("Task >>> {}".format(task))
                     self.parse_page(task)
                 else:
                     self.logger.info("Redis has no task")
                     self.redis_empty_callback()
             # if any exception, rollback task to redis
             except Exception as main_error:
-                self.redis_conn.sadd(self.redis_key+"_error", task)
+                self.logger.debug("Rollback >>> {}".format(task))
+                self.redis_conn.sadd(self.redis_key, task)
+
                 # for ResponseAbnormalError, just re-request
                 if isinstance(main_error, ResponseAbnormalError):
                     pass
                 else:
-                    self.logger.error("Task <{}> response exception as <{}>".format(task, main_error))
-                    self.stop()
+                    self.logger.error("Response exception >>> {} >>> {}".format(task, main_error))
                     # raise main_error
 
-        self.logger.info("Threading quit")
+        self.logger.debug("Threading quit")
 
 
 # register logger
@@ -221,9 +222,9 @@ def register_logger(project_name):
     logger.addHandler(log_console)
 
     # 测试
-    logger.debug("Test logging debug")
-    logger.info("Test logging info")
-    logger.warning("Test logging warning")
+    # logger.debug("Test logging debug")
+    # logger.info("Test logging info")
+    # logger.warning("Test logging warning")
 
     return logger
 

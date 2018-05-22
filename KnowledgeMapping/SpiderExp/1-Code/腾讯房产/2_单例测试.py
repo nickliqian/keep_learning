@@ -7,12 +7,29 @@ def to_chinese(string):
     return string.encode('utf-8').decode('unicode_escape')
 
 
-url = "http://db.house.qq.com/index.php?mod=search&act=newsearch&city=sz&showtype=1&page_no=2&mod=search&city=sz"
+task = {"area_code": "5", "city_code": "1", "street_name": "百子湾", "street_code": "353", "area_name": "朝阳",
+        "city_name": "北京", "city_word": "bj"}
+
+url = "http://db.house.qq.com/index.php"
+
+params = dict()
+params.update({
+    "mod": "search",
+    "act": "newsearch",
+    "city": "sz",
+    "showtype": "1",
+    "unit": "1",
+    "page_no": "1",
+    "CA": "4:559:2855",
+})
+
+params["city"] = task["city_word"]
+params["CA"] = task["city_code"] + ":" + task["area_code"] + ":" + task["street_code"]
 headers = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
 }
 
-response = requests.get(url=url, headers=headers)
+response = requests.get(url=url, headers=headers, params=params)
 
 # 抽取文本
 results = re.findall(r'var\ssearch_result\s=\s"(.*?);var\ssearch_result_list_num\s=\s(.*?);', response.text)
@@ -20,6 +37,10 @@ result = results[0]
 
 # 本分类总数
 count = int(result[1])
+page_num = int(count/10 + 1)
+print("本地区共{}页".format(page_num))
+
+
 # html源码转换
 text = result[0].replace(r'\"', '"').replace(r"\/", "/")
 
@@ -63,8 +84,9 @@ for building in buildings:
     build_price_price = to_chinese(building.xpath(".//li[@class='title']/p[@class='fr']/a/text()")[0]).strip()
     build_price_unit = to_chinese(building.xpath(".//li[@class='title']/p[@class='fr']/text()")[1]).strip()
 
-    print("{:<15s}{:<30s}{:<10s}{:<30s}{:<30s}{:<15s}{:<15s}{:<15s}{:<15s}"
+    print("{:<15s}{:<40}{:<10s}{:<30s}{:<30s}{:<15s}{:<15s}{:<15s}{:<15s}"
           .format(build_name, build_name_href, build_status,
                   build_house_type, build_address, build_tags,
-                  build_price_type, build_price_price, build_price_unit
+                  build_price_type, build_price_price, build_price_unit,
+                  task['city_name'], task['area_name'], task['street_name'], response.url
                   ))
