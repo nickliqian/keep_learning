@@ -88,7 +88,10 @@ class SpiderMySQLRedis(threading.Thread):
 
     # check response, means site refuse get normal page, need repeat request
     def check_response_abnormal(self, response):
-        pass
+        if "too many request" in response.text:
+            return True
+        else:
+            return False
 
     # request special url
     def req_url(self, task_dict, page_num):
@@ -132,92 +135,97 @@ class SpiderMySQLRedis(threading.Thread):
             response = self.req_url(task_dict, page_num)
             if not response:
                 raise ResponseAbnormalError()
-            # 抽取文本
-            results = re.findall(r'var\ssearch_result\s=\s"(.*?);var\ssearch_result_list_num\s=\s(.*?);', response.text)
-            result = results[0]
+            try:
+                # 抽取文本
+                results = re.findall(r'var\ssearch_result\s=\s"(.*?);var\ssearch_result_list_num\s=\s(.*?);', response.text)
+                result = results[0]
 
-            # 本分类总数
-            count = int(result[1])
-            total_page = int(count / 10 + 1)
-            self.logger.debug("Crawl >>> 地区 {}-{}-{} 共 {} 页, 正在解析第 {} 页"
-                              .format(task_dict["city_name"], task_dict["area_name"],
-                                      task_dict["street_name"], total_page, page_num))
+                # 本分类总数
+                count = int(result[1])
+                total_page = int(count / 10 + 1)
+                self.logger.debug("Crawl >>> 地区 {}-{}-{} 共 {} 页, 正在解析第 {} 页"
+                                  .format(task_dict["city_name"], task_dict["area_name"],
+                                          task_dict["street_name"], total_page, page_num))
 
-            # html源码转换
-            text = result[0].replace(r'\"', '"').replace(r"\/", "/")
+                # html源码转换
+                text = result[0].replace(r'\"', '"').replace(r"\/", "/")
 
-            # lxml解析
-            html = etree.HTML(text)
-            buildings = html.xpath("//div[@class='textList fl']")
+                # lxml解析
+                html = etree.HTML(text)
+                buildings = html.xpath("//div[@class='textList fl']")
 
-            row_count = 0
-            for building in buildings:
+                row_count = 0
+                for building in buildings:
 
-                # 楼盘名称
-                build_name = self.to_chinese(building.xpath(".//h2/a/text()")[0]).strip()
+                    # 楼盘名称
+                    build_name = self.to_chinese(building.xpath(".//h2/a/text()")[0]).strip()
 
-                # 楼盘链接
-                build_name_href = self.to_chinese(building.xpath(".//h2/a/@href")[0]).strip()
+                    # 楼盘链接
+                    build_name_href = self.to_chinese(building.xpath(".//h2/a/@href")[0]).strip()
 
-                # 楼盘状态
-                build_status = self.to_chinese(building.xpath(".//li[@class='title']/span/text()")[0]).strip()
+                    # 楼盘状态
+                    build_status = self.to_chinese(building.xpath(".//li[@class='title']/span/text()")[0]).strip()
 
-                # 楼盘户型
-                build_house_type_xpath = building.xpath(".//li[@class='h_type']/a/text()")
-                if build_house_type_xpath:
-                    build_house_type = self.to_chinese(",".join(build_house_type_xpath)).strip()
-                else:
-                    build_house_type = "暂无资料"
+                    # 楼盘户型
+                    build_house_type_xpath = building.xpath(".//li[@class='h_type']/a/text()")
+                    if build_house_type_xpath:
+                        build_house_type = self.to_chinese(",".join(build_house_type_xpath)).strip()
+                    else:
+                        build_house_type = "暂无资料"
 
-                # 楼盘地址
-                build_address = self.to_chinese(building.xpath(".//li[@class='address']/@title")[0]).strip()
-                if not build_address:
-                    build_address = self.to_chinese(building.xpath(".//li[@class='address']/a/text()")[0]).strip()
+                    # 楼盘地址
+                    build_address = self.to_chinese(building.xpath(".//li[@class='address']/@title")[0]).strip()
+                    if not build_address:
+                        build_address = self.to_chinese(building.xpath(".//li[@class='address']/a/text()")[0]).strip()
 
-                # 楼盘标签
-                build_tags_xpath = building.xpath(".//li[@class='tags']/a/text()")
-                if build_tags_xpath:
-                    build_tags = self.to_chinese(",".join(build_tags_xpath)).strip()
-                else:
-                    build_tags = "暂无标签"
+                    # 楼盘标签
+                    build_tags_xpath = building.xpath(".//li[@class='tags']/a/text()")
+                    if build_tags_xpath:
+                        build_tags = self.to_chinese(",".join(build_tags_xpath)).strip()
+                    else:
+                        build_tags = "暂无标签"
 
-                # 楼盘价格
-                build_price_type = self.to_chinese(
-                    building.xpath(".//li[@class='title']/p[@class='fr']/text()")[0]).strip()
-                build_price_price = self.to_chinese(
-                    building.xpath(".//li[@class='title']/p[@class='fr']/a/text()")[0]).strip()
-                build_price_unit = self.to_chinese(
-                    building.xpath(".//li[@class='title']/p[@class='fr']/text()")[1]).strip()
+                    # 楼盘价格
+                    build_price_type = self.to_chinese(
+                        building.xpath(".//li[@class='title']/p[@class='fr']/text()")[0]).strip()
+                    build_price_price = self.to_chinese(
+                        building.xpath(".//li[@class='title']/p[@class='fr']/a/text()")[0]).strip()
+                    build_price_unit = self.to_chinese(
+                        building.xpath(".//li[@class='title']/p[@class='fr']/text()")[1]).strip()
 
-                # print("{:<15s}{:<40}{:<10s}{:<30s}{:<30s}{:<15s}{:<15s}{:<15s}{:<15s}"
-                #       .format(build_name, build_name_href, build_status,
-                #               build_house_type, build_address, build_tags,
-                #               build_price_type, build_price_price, build_price_unit,
-                #               task_dict['city_name'], task_dict['area_name'], task_dict['street_name'], response.url
-                #               ))
+                    # print("{:<15s}{:<40}{:<10s}{:<30s}{:<30s}{:<15s}{:<15s}{:<15s}{:<15s}"
+                    #       .format(build_name, build_name_href, build_status,
+                    #               build_house_type, build_address, build_tags,
+                    #               build_price_type, build_price_price, build_price_unit,
+                    #               task_dict['city_name'], task_dict['area_name'], task_dict['street_name'], response.url
+                    #               ))
 
-                price_data = time.strftime("%Y%m%d")
+                    price_data = time.strftime("%Y%m%d")
 
-                sql = "insert into tencentHouse_price(build_name, build_name_href, build_status, build_house_type," \
-                      " build_address, build_tags, build_price_type, build_price_price, build_price_unit, city_name," \
-                      " area_name, street_name, source_href, price_data)" \
-                      " VALUE ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')"\
-                    .format(build_name, build_name_href, build_status,
-                            build_house_type, build_address, build_tags,
-                            build_price_type, build_price_price, build_price_unit,
-                            task_dict['city_name'], task_dict['area_name'], task_dict['street_name'],
-                            response.url, price_data)
+                    sql = "insert into tencentHouse_price(build_name, build_name_href, build_status, build_house_type," \
+                          " build_address, build_tags, build_price_type, build_price_price, build_price_unit, city_name," \
+                          " area_name, street_name, source_href, price_data)" \
+                          " VALUE ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')"\
+                        .format(build_name, build_name_href, build_status,
+                                build_house_type, build_address, build_tags,
+                                build_price_type, build_price_price, build_price_unit,
+                                task_dict['city_name'], task_dict['area_name'], task_dict['street_name'],
+                                response.url, price_data)
 
-                with self.threading_lock:
-                    m_cursor.execute(sql)
-                    m_conn.commit()
-                row_count += 1
+                    with self.threading_lock:
+                        m_cursor.execute(sql)
+                        m_conn.commit()
+                    row_count += 1
 
-            self.logger.debug("Save >>> 存入 {} 条".format(row_count))
+                self.logger.debug("Save >>> 存入 {} 条".format(row_count))
 
-            page_num += 1
-            if page_num > total_page:
-                break
+                page_num += 1
+                if page_num > total_page:
+                    break
+            except IndexError as index_error_function:
+                with open("index_error.html", "w") as f:
+                    f.write(response.text)
+                raise index_error_function
 
     # stop threading
     def stop(self):

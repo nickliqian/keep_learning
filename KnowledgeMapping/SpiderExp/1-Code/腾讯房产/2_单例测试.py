@@ -7,8 +7,7 @@ def to_chinese(string):
     return string.encode('utf-8').decode('unicode_escape')
 
 
-task = {"area_code": "5", "city_code": "1", "street_name": "百子湾", "street_code": "353", "area_name": "朝阳",
-        "city_name": "北京", "city_word": "bj"}
+task = {'city_name': '深圳', 'street_name': '蛇口', 'city_code': '4', 'area_code': '561', 'street_code': '2875', 'city_word': 'sz', 'area_name': '南山'}
 
 url = "http://db.house.qq.com/index.php"
 
