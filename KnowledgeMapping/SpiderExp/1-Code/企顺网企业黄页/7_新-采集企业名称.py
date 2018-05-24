@@ -101,6 +101,9 @@ class CrawlCampanyName(threading.Thread):
             try:
                 response = requests.get(url=target_url, headers=self.headers, proxies={"http": self.get_proxy()}, timeout=8)
                 text = response.text
+                if response.status_code == 404:
+                    return 404
+
                 if response.status_code == 200:
                     if (text.startswith("采集大神饶命")) or ("too many request" in text) or "":
                         time.sleep(1)
@@ -200,15 +203,19 @@ class CrawlCampanyName(threading.Thread):
             try:
                 if row:
                     resp = self.req_url(row[2])
-                    if resp.text:
-                        self.crawl_classification(resp, row)
+                    if resp == 404:
+                        print("页面 {} 响应为404，丢弃任务")
+                        self.redis_conn.sadd("qishun_list_404_response", str(row))
                     else:
-                        print("页面异常或者为空，无需解析")
+                        if resp.text:
+                            self.crawl_classification(resp, row)
+                        else:
+                            print("页面异常或者为空，无需解析")
                 else:
                     print("Redis has no task")
                     break
             except Exception as e:
-                self.redis_conn.sadd(self.redis_db, row)
+                self.redis_conn.sadd(self.redis_db, str(row))
                 if isinstance(e, RequestError):
                     print("RequestError，任务写回redis")
                 elif isinstance(e, KeyboardInterrupt):

@@ -89,6 +89,7 @@ class SpiderMySQLRedis(threading.Thread):
     # check response, means site refuse get normal page, need repeat request
     def check_response_abnormal(self, response):
         if "too many request" in response.text:
+            self.logger.debug("too many request >>> {}".format(response.url))
             return True
         else:
             return False

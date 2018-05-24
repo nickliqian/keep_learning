@@ -131,7 +131,10 @@ class SpiderMySQLRedis(threading.Thread):
                         cityId = build['cityId']
                         cityAreaId = build['cityAreaId']
                         subwayStation = build['subwayStation']
-                        spiderSource = build['spiderSource']
+                        try:
+                            spiderSource = build['spiderSource']
+                        except KeyError:
+                            spiderSource = "None"
                         address = build['address']
                         rentCount = build['rentCount']
                         saleCount = build['saleCount']
@@ -191,7 +194,7 @@ class SpiderMySQLRedis(threading.Thread):
                     pass
                 else:
                     self.logger.error("Response exception >>> {} >>> {}".format(task, main_error))
-                    # raise main_error
+                    raise main_error
 
         self.logger.debug("Threading quit")
 
