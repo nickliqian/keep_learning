@@ -1,3 +1,4 @@
+import json
 import os
 import re
 import pymysql
@@ -8,14 +9,11 @@ import random
 import redis
 import threading
 import logging
+from json.decoder import JSONDecodeError
 from requests.exceptions import ReadTimeout, ConnectionError
 
 
 class ResponseAbnormalError(Exception):
-    pass
-
-
-class InterruptByHandle(Exception):
     pass
 
 
@@ -39,21 +37,15 @@ class SpiderMySQLRedis(threading.Thread):
         self.redis_key = redis_key
 
         # 网络请求参数
-        self.domain = "http://db.house.qq.com/index.php"
+        self.domain = "http://www.11467.com"
         self.headers = {
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
-                          " (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 "
+                          "(KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1",
         }
-        self.params = dict()
-        self.params.update({
-            "mod": "search",
-            "act": "newsearch",
-            "city": "sz",
-            "showtype": "1",
-            "unit": "1",
-            "page_no": "1",
-            "CA": "4:559:2855",
-        })
+        self.params = {
+            "f": "h5",
+            "page": "1",
+        }
 
     # 获取redis任务
     def get_task(self):
@@ -64,10 +56,6 @@ class SpiderMySQLRedis(threading.Thread):
             return info_dict
         else:
             return None
-
-    @staticmethod
-    def to_chinese(string):
-        return string.encode('utf-8').decode('unicode_escape')
 
     # get proxy from redis wuyou api
     def get_proxy_from_wuyou_api(self):
@@ -82,30 +70,24 @@ class SpiderMySQLRedis(threading.Thread):
                 ip_num = ip_num.decode('utf-8')
                 # self.logger.debug("proxy: {}".format(ip_num))
                 return ip_num
-            except Exception:
+            except Exception as get_proxy_error:
                 # self.logger.debug(get_proxy_error)
                 time.sleep(1)
 
     # check response, means site refuse get normal page, need repeat request
     def check_response_abnormal(self, response):
         if "too many request" in response.text:
-            self.logger.debug("too many request >>> {}".format(response.url))
             return True
         else:
             return False
 
     # request special url
-    def req_url(self, task_dict, page_num):
+    def req_url(self, target_url, page_num):
         time.sleep(1)
-        self.params["city"] = task_dict["city_word"]
-        self.params["CA"] = task_dict["city_code"] + ":" + task_dict["area_code"] + ":" + task_dict["street_code"]
-        self.params["page_no"] = str(page_num)
-        while True:
-            if self.stop_flag:
-                raise InterruptByHandle
-
+        self.params["page"] = str(page_num)
+        while not self.stop_flag:
             try:
-                response = requests.get(url=self.domain, headers=self.headers, params=self.params,
+                response = requests.get(url=target_url, headers=self.headers, params=self.params,
                                         proxies={"http": self.get_proxy_from_wuyou_api()}, timeout=8)
                 if response.status_code == 404:
                     return None
@@ -116,117 +98,70 @@ class SpiderMySQLRedis(threading.Thread):
                         return response
                 else:
                     self.logger.warning(
-                        "response status code abnormal <{}> <{}>".format(task_dict, response.status_code))
+                        "response status code abnormal <{}> <{}>".format(target_url, response.status_code))
             except Exception as request_error:
                 if isinstance(request_error, ReadTimeout):
                     pass
                 elif isinstance(request_error, ConnectionError):
                     pass
                 else:
-                    self.logger.debug("request abnormal <{}> <{}> <{}>"
-                                      .format(type(request_error), task_dict, request_error))
+                    self.logger.debug("request abnormal <{}> <{}> <{}>".format(type(request_error), target_url, request_error))
                 # raise request_error
 
     # parse html or json data
     def parse_page(self, task_dict):
         page_num = 1
-        while True:
-            if self.stop_flag:
-                raise InterruptByHandle
-            response = self.req_url(task_dict, page_num)
+        while not self.stop_flag:
+            self.logger.debug("Crawl >>> {}?f=h5&page={}".format(task_dict['street_url'], page_num))
+            response = self.req_url(task_dict['street_url'], page_num)
             if not response:
                 raise ResponseAbnormalError()
-            try:
-                # 抽取文本
-                results = re.findall(r'var\ssearch_result\s=\s"(.*?);var\ssearch_result_list_num\s=\s(.*?);', response.text)
-                result = results[0]
+            if response.text != "[]":
+                data = json.loads(response.text)
+                res_bool = data["resBool"]
 
-                # 本分类总数
-                count = int(result[1])
-                total_page = int(count / 10 + 1)
-                self.logger.debug("Crawl >>> 地区 {}-{}-{} 共 {} 页, 正在解析第 {} 页"
-                                  .format(task_dict["city_name"], task_dict["area_name"],
-                                          task_dict["street_name"], total_page, page_num))
+                if not res_bool:
+                    buildings = data["builds"]
+                    for build_info in buildings:
+                        build = build_info["_source"]
+                        # 字段
+                        house_id = build["id"]
+                        name = build["name"]
+                        provinceId = build['provinceId']
+                        cityId = build['cityId']
+                        cityAreaId = build['cityAreaId']
+                        subwayStation = build['subwayStation']
+                        try:
+                            spiderSource = build['spiderSource']
+                        except KeyError:
+                            spiderSource = "None"
+                        address = build['address']
+                        rentCount = build['rentCount']
+                        saleCount = build['saleCount']
 
-                # html源码转换
-                text = result[0].replace(r'\"', '"').replace(r"\/", "/")
+                        buildPriceAvg = build['buildPriceAvg']
+                        buildPriceAvgUnit = build['buildPriceAvgUnit']
+                        salesStatusPeriods = build['salesStatusPeriods']
 
-                # lxml解析
-                html = etree.HTML(text)
-                buildings = html.xpath("//div[@class='textList fl']")
+                        price_data = time.strftime("%Y%m%d")
 
-                row_count = 0
-                for building in buildings:
+                        sql = "insert into soufang_price(house_id, name, provinceId, cityId, cityAreaId, subwayStation," \
+                              " spiderSource, address, rentCount, saleCount, buildPriceAvg, buildPriceAvgUnit," \
+                              " salesStatusPeriods, priceDate, source_href, city_name, area_name, street_name)" \
+                              " VALUE ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}'," \
+                              "'{}','{}')".format(house_id, name, provinceId, cityId, cityAreaId, subwayStation,
+                                                  spiderSource, address, rentCount, saleCount, buildPriceAvg,
+                                                  buildPriceAvgUnit, salesStatusPeriods, price_data, response.url,
+                                                  task_dict["city_name"], task_dict["city_name"], task_dict["city_name"])
+                        with self.threading_lock:
+                            m_cursor.execute(sql)
+                            m_conn.commit()
 
-                    # 楼盘名称
-                    build_name = self.to_chinese(building.xpath(".//h2/a/text()")[0]).strip()
-
-                    # 楼盘链接
-                    build_name_href = self.to_chinese(building.xpath(".//h2/a/@href")[0]).strip()
-
-                    # 楼盘状态
-                    build_status = self.to_chinese(building.xpath(".//li[@class='title']/span/text()")[0]).strip()
-
-                    # 楼盘户型
-                    build_house_type_xpath = building.xpath(".//li[@class='h_type']/a/text()")
-                    if build_house_type_xpath:
-                        build_house_type = self.to_chinese(",".join(build_house_type_xpath)).strip()
-                    else:
-                        build_house_type = "暂无资料"
-
-                    # 楼盘地址
-                    build_address = self.to_chinese(building.xpath(".//li[@class='address']/@title")[0]).strip()
-                    if not build_address:
-                        build_address = self.to_chinese(building.xpath(".//li[@class='address']/a/text()")[0]).strip()
-
-                    # 楼盘标签
-                    build_tags_xpath = building.xpath(".//li[@class='tags']/a/text()")
-                    if build_tags_xpath:
-                        build_tags = self.to_chinese(",".join(build_tags_xpath)).strip()
-                    else:
-                        build_tags = "暂无标签"
-
-                    # 楼盘价格
-                    build_price_type = self.to_chinese(
-                        building.xpath(".//li[@class='title']/p[@class='fr']/text()")[0]).strip()
-                    build_price_price = self.to_chinese(
-                        building.xpath(".//li[@class='title']/p[@class='fr']/a/text()")[0]).strip()
-                    build_price_unit = self.to_chinese(
-                        building.xpath(".//li[@class='title']/p[@class='fr']/text()")[1]).strip()
-
-                    # print("{:<15s}{:<40}{:<10s}{:<30s}{:<30s}{:<15s}{:<15s}{:<15s}{:<15s}"
-                    #       .format(build_name, build_name_href, build_status,
-                    #               build_house_type, build_address, build_tags,
-                    #               build_price_type, build_price_price, build_price_unit,
-                    #               task_dict['city_name'], task_dict['area_name'], task_dict['street_name'], response.url
-                    #               ))
-
-                    price_data = time.strftime("%Y%m%d")
-
-                    sql = "insert into tencentHouse_price(build_name, build_name_href, build_status, build_house_type," \
-                          " build_address, build_tags, build_price_type, build_price_price, build_price_unit, city_name," \
-                          " area_name, street_name, source_href, price_data)" \
-                          " VALUE ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')"\
-                        .format(build_name, build_name_href, build_status,
-                                build_house_type, build_address, build_tags,
-                                build_price_type, build_price_price, build_price_unit,
-                                task_dict['city_name'], task_dict['area_name'], task_dict['street_name'],
-                                response.url, price_data)
-
-                    with self.threading_lock:
-                        m_cursor.execute(sql)
-                        m_conn.commit()
-                    row_count += 1
-
-                self.logger.debug("Save >>> 存入 {} 条".format(row_count))
-
-                page_num += 1
-                if page_num > total_page:
+                    page_num += 1
+                else:
                     break
-            except IndexError as index_error_function:
-                with open("index_error.html", "w") as f:
-                    f.write(response.text)
-                raise index_error_function
+            else:
+                break
 
     # stop threading
     def stop(self):
@@ -235,7 +170,6 @@ class SpiderMySQLRedis(threading.Thread):
 
     def redis_empty_callback(self):
         self.stop()
-        # raise InterruptByHandle
 
     # start
     def run(self):
@@ -258,11 +192,9 @@ class SpiderMySQLRedis(threading.Thread):
                 # for ResponseAbnormalError, just re-request
                 if isinstance(main_error, ResponseAbnormalError):
                     pass
-                elif isinstance(main_error, InterruptByHandle):
-                    pass
                 else:
                     self.logger.error("Response exception >>> {} >>> {}".format(task, main_error))
-                    # raise main_error
+                    raise main_error
 
         self.logger.debug("Threading quit")
 
@@ -292,6 +224,11 @@ def register_logger(project_name):
     logger.addHandler(log_file)
     logger.addHandler(log_console)
 
+    # 测试
+    # logger.debug("Test logging debug")
+    # logger.info("Test logging info")
+    # logger.warning("Test logging warning")
+
     return logger
 
 
@@ -301,17 +238,17 @@ if __name__ == '__main__':
         # redis
         "redis_host": "127.0.0.1",
         "redis_port": 6379,
-        "redis_key": "tencentHouse:task",
+        "redis_key": "soufang:task",
         # mysql
         "mysql_host": "192.168.70.40",
         "mysql_port": 3306,
         "mysql_user": "root",
         "mysql_password": "mysql",
-        "mysql_db": "tencentHouse",
-        "mysql_table": "tencentHouse_price",
+        "mysql_db": "soufang",
+        "mysql_table": "soufang_price",
         # other config
         "thread_count": 5,
-        "project_name": "spider.com.tencentHouse",
+        "project_name": "spider.com.soufang",
     }
 
     # 注册记录器
@@ -354,7 +291,7 @@ if __name__ == '__main__':
         # info_by_mail(">> gd spider stop", "进程报错 >> {}: {}".format(type(e), e))
         raise e
     finally:
-        time.sleep(40)
+        time.sleep(25)
         m_cursor.close()
         m_conn.close()
         print("进程 {} 已经退出".format(os.getpid()))
