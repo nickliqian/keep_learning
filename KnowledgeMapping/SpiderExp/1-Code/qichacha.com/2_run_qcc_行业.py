@@ -53,7 +53,7 @@ def req_page(industry_dict, page_num):
         if f > 3:
             return 0
         try:
-            response = requests.get(url=url, headers=headers, params=params, timeout=6, proxies={"http": "117.78.31.36:1080", "https": "117.78.31.36:1080"})
+            response = requests.get(url=url, headers=headers, params=params, timeout=6, proxies={"http": get_proxy()})
             if response.text.startswith("<script>") or response.text.startswith("<html><head><title>too many request"):
                 print("request again")
                 time.sleep(0.5)
@@ -115,7 +115,15 @@ if __name__ == '__main__':
 
     # 参数设置
     headers = {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
+        'Host': "www.qichacha.com",
+        'User-Agent': "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0",
+        'Accept': "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        'Accept-Language': "en-GB,en;q=0.5",
+        'Accept-Encoding': "gzip, deflate, br",
+        'Referer': "https://www.qichacha.com/",
+        'Cookie': "PHPSESSID=ru60bhoufj1lhg1m3sjfftj4q1; zg_did=%7B%22did%22%3A%20%22163a46c367a158-0ddfd0ff3b2e0d-77256752-1fa400-163a46c367bc4%22%7D; zg_de1d1a35bfa24ce29bbf2c7eb17e6c4f=%7B%22sid%22%3A%201527475246083%2C%22updated%22%3A%201527475468455%2C%22info%22%3A%201527471945343%2C%22superProperty%22%3A%20%22%7B%7D%22%2C%22platform%22%3A%20%22%7B%7D%22%2C%22utm%22%3A%20%22%7B%7D%22%2C%22referrerDomain%22%3A%20%22www.qichacha.com%22%2C%22cuid%22%3A%20%2233799dc8c55df5d568574fe8b8e6d743%22%7D; Hm_lvt_3456bee468c83cc63fb5147f119f1075=1527471946,1527475469; Hm_lpvt_3456bee468c83cc63fb5147f119f1075=1527475469; hasShow=1; acw_tc=AQAAAL3ktQTl5woAahZ0cSZmyE+sfgTk; _uab_collina=152747224744409167053837; _umdata=65F7F3A2F63DF020D87880E9B80A96A075249762FF74E57905ED55924DBB6DCB2C9C029F1779208CCD43AD3E795C914C952A43E8A7CBBE835A6FD6035C591050",
+        'DNT': "1",
+        'Cache-Control': "no-cache",
     }
 
     site = "http://www.qichacha.com"
@@ -135,6 +143,7 @@ if __name__ == '__main__':
                         parse_page(r, row, i)
                     else:
                         print("采集失败 <{}> <{}>".format(row, i))
+                    time.sleep(5)
     except Exception as e:
         raise e
     finally:
