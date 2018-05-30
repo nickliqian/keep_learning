@@ -2,6 +2,7 @@
 import os
 from ising import ising, ising1000
 import sys, getopt
+import numpy as np
 
 opts, args = getopt.getopt(sys.argv[1:], 'n:s:i:t:w')
 
