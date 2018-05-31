@@ -7,13 +7,13 @@ from sklearn.metrics import silhouette_score
 
 
 # 订单与商品
-prior = pd.read_csv('D://A//data//instacart//order_products__prior.csv')
+prior = pd.read_csv('/home/nick/Desktop/kaggleData/order_products__prior.csv')
 # 商品购买信息
-product = pd.read_csv('D://A//data//instacart//products.csv')
+product = pd.read_csv('/home/nick/Desktop/kaggleData/products.csv')
 # 用户与订单信息
-order = pd.read_csv('D://A//data//instacart//orders.csv')
+order = pd.read_csv('/home/nick/Desktop/kaggleData/orders.csv')
 # 商品与类别
-aisles = pd.read_csv('D://A//data//instacart//aisles.csv')
+aisles = pd.read_csv('/home/nick/Desktop/kaggleData/aisles.csv')
 # 合并数据
 pp = pd.merge(prior, product, on=['product_id', 'product_id'])
 po = pd.merge(pp, order, on=['order_id', 'order_id'])
