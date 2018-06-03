@@ -8,7 +8,9 @@ from sklearn.preprocessing import StandardScaler
 def sdcaler():
     std = StandardScaler()
     data = std.fit_transform([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    new_data = std.inverse_transform(data)
     print(data)
+    print(new_data)
 
 
 if __name__ == "__main__":
