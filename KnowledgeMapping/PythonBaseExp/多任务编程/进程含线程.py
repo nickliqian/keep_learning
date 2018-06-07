@@ -39,7 +39,6 @@ class Work(threading.Thread):
         self.work()
 
 
-
 def more_threading(process_name):
     print('Run child process %s (%s)...' % (process_name, os.getpid()))
     num = 5
