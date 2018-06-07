@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)http://visjs.org/examples/network/basicUsage.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Network | Basic usage</title>
+
+  <script type="text/javascript" src="./Network _ Basic usage_files/vis.js"></script>
+  <link href="./Network _ Basic usage_files/vis-network.min.css" rel="stylesheet" type="text/css">
+
+  <style type="text/css">
+    #mynetwork {
+      width: 600px;
+      height: 400px;
+      border: 1px solid lightgray;
+    }
+  </style>
+</head>
+<body youdao="bind">
+
+<p>
+  Create a simple network with some nodes and edges.
+</p>
+
+<div id="mynetwork"><div class="vis-network" tabindex="900" style="position: relative; overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); width: 100%; height: 100%;"><canvas width="750" height="500" style="position: relative; touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); width: 100%; height: 100%;"></canvas></div></div>
+
+<script type="text/javascript">
+  // create an array with nodes
+  var node_data = {name: "阿里巴巴", subnode:[{name: "A"}, {name: "B"}, {name: "C"}, {name: "D"}]};
+
+  var nodes = new vis.DataSet([
+    {id: 1, label: node_data.name},
+    {id: 2, label: node_data.subnode[0].name},
+    {id: 3, label: node_data.subnode[1].name},
+    {id: 4, label: node_data.subnode[2].name},
+    {id: 5, label: node_data.subnode[3].name}
+  ]);
+
+  // create an array with edges
+  var edges = new vis.DataSet([
+    {from: 1, to: 2},
+    {from: 1, to: 3},
+    {from: 1, to: 4},
+    {from: 1, to: 5}
+  ]);
+
+  // create a network
+  var container = document.getElementById('mynetwork');
+  var data = {
+    nodes: nodes,
+    edges: edges
+  };
+  var options = {};
+  var network = new vis.Network(container, data, options);
+</script>
+
+
+
+
+<audio controls="controls" style="display: none;"></audio><div id="ydNoteExtensionClipper" style="position: fixed; right: 10px; top: 10px; padding-bottom: 10px; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 12px; line-height: 100%; font-family: arial, sans-serif; color: rgb(51, 51, 51); z-index: 2147483647 !important; height: 230px; width: 300px; display: none;"><div id="ydNoteExtensionClipper-New" class="ydnwc-dialog" style="width: 292px;"><div id="ydNoteExtensionClipper_view" style="height: 220px; width: 290px;"></div><div id="ydNoteExtensionClipper_loadview" style="position: absolute; height: 258px; background: rgb(255, 255, 255); top: 0px; left: 50%; display: none;"><img src="./Network _ Basic usage_files/loading.gif" style="position: absolute;top: 20%;margin-left: -20px;"></div></div><div style="display: none;"><form id="_YNoteContentForm" name="_YNoteContentForm" action="http://note.youdao.com/yws/mapi/wcp?method=putfile&amp;keyfrom=wcp&amp;from=chrome&amp;vendor=ChromeStore&amp;vn=2" target="1ContentFrame&amp;ChromeStore" enctype="multipart/form-data" method="POST"><input type="text" name="tl" id="_YNoteContentFormtitle" value=""><input type="text" name="p" id="_YNoteContentFormpath" value=""><textarea name="bs" id="_YNoteContentFormcontent"></textarea><input type="text" name="src" id="_YNoteContentFormsource" value=""><input type="text" name="type" id="_YNoteContentFormtype" value=""><input type="text" name="userid" id="_YNoteContentFormuserid" value=""><input type="text" name="len" id="_YNoteContentFormlen" value=""><input type="text" name="cs" id="_YNoteContentFormcharset" value=""><input type="text" name="e" id="_YNoteContentFormsign" value=""></form></div></div></body><style type="text/css">#yddContainer{display:block;font-family:Microsoft YaHei;position:relative;width:100%;height:100%;top:-4px;left:-4px;font-size:12px;border:1px solid}#yddTop{display:block;height:22px}#yddTopBorderlr{display:block;position:static;height:17px;padding:2px 28px;line-height:17px;font-size:12px;color:#5079bb;font-weight:bold;border-style:none solid;border-width:1px}#yddTopBorderlr .ydd-sp{position:absolute;top:2px;height:0;overflow:hidden}.ydd-icon{left:5px;width:17px;padding:0px 0px 0px 0px;padding-top:17px;background-position:-16px -44px}.ydd-close{right:5px;width:16px;padding-top:16px;background-position:left -44px}#yddKeyTitle{float:left;text-decoration:none}#yddMiddle{display:block;margin-bottom:10px}.ydd-tabs{display:block;margin:5px 0;padding:0 5px;height:18px;border-bottom:1px solid}.ydd-tab{display:block;float:left;height:18px;margin:0 5px -1px 0;padding:0 4px;line-height:18px;border:1px solid;border-bottom:none}.ydd-trans-container{display:block;line-height:160%}.ydd-trans-container a{text-decoration:none;}#yddBottom{position:absolute;bottom:0;left:0;width:100%;height:22px;line-height:22px;overflow:hidden;background-position:left -22px}.ydd-padding010{padding:0 10px}#yddWrapper{color:#252525;z-index:10001;background:url(chrome-extension://eopjamdnofihpioajgfdikhhbobonhbb/ab20.png);}#yddContainer{background:#fff;border-color:#4b7598}#yddTopBorderlr{border-color:#f0f8fc}#yddWrapper .ydd-sp{background-image:url(chrome-extension://eopjamdnofihpioajgfdikhhbobonhbb/ydd-sprite.png)}#yddWrapper a,#yddWrapper a:hover,#yddWrapper a:visited{color:#50799b}#yddWrapper .ydd-tabs{color:#959595}.ydd-tabs,.ydd-tab{background:#fff;border-color:#d5e7f3}#yddBottom{color:#363636}#yddWrapper{min-width:250px;max-width:400px;}</style></html>
