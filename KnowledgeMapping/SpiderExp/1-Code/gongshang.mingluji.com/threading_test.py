@@ -61,7 +61,7 @@ class CrawlList(threading.Thread):
             try:
                 print(">>> {}".format(task_number))
                 self.query_string["page"] = str(task_number)
-                response = requests.get(url=self.url, params=self.query_string, headers=self.headers, timeout=30)
+                response = requests.get(url=self.url, params=self.query_string, headers=self.headers, timeout=30, verify=False)
                 return response
             except Exception as req_url_error:
                 # ip = self.get_proxy()
