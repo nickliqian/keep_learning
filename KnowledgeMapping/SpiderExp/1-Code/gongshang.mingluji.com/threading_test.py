@@ -1,3 +1,5 @@
+import random
+
 import requests
 from lxml import etree
 import time
@@ -7,17 +9,14 @@ import redis
 
 
 class CrawlList(threading.Thread):
-    def __init__(self, url_location, area_name, mysql_conn, mysql_cursor, redis_conn, threading_lock):
+    def __init__(self, mysql_conn, mysql_cursor, redis_conn, threading_lock):
         super(CrawlList, self).__init__()
         # 线程参数
         self.threading_lock = threading_lock
         self.stop_flag = False
         # 请求参数
         # self.ip = self.get_proxy()
-        self.url_location = url_location
-        self.area_name = area_name
         self.base = "https://gongshang.mingluji.com"
-        self.url = "https://gongshang.mingluji.com/{}/list".format(self.url_location)
         self.query_string = {
             "page": "1",
         }
@@ -29,17 +28,24 @@ class CrawlList(threading.Thread):
         self.mysql_cursor = mysql_cursor
         # Redis
         self.redis_conn = redis_conn
-        self.redis_db = "mingluji_task"
+        self.redis_db = "mingluji"
 
-    @staticmethod
-    def get_proxy():
-        url = "http://127.0.0.1:7865/random_https"
+    # 从redis获取代理IP
+    def get_proxy(self):
         while True:
             try:
-                response = requests.get(url=url)
-                return response.text.strip()
-            except:
-                pass
+                num_list = [i for i in range(1, 21)]
+                ip_choice = random.choice(num_list)
+                ip_str = "myip" + str(ip_choice)
+                ip_num = self.redis_conn.mget(ip_str)[0]
+                if not ip_num:
+                    return None
+                ip_num = ip_num.decode('utf-8')
+                print("proxy: %s" % ip_num)
+                return ip_num
+            except Exception as e:
+                print(e)
+                time.sleep(1)
 
     # 停止运行
     def stop(self):
@@ -48,6 +54,7 @@ class CrawlList(threading.Thread):
 
     # 获取redis任务
     def get_task(self):
+        # ('湖北', '10519', 'hubei')
         info_byte = self.redis_conn.spop(self.redis_db)
         if info_byte:
             info = info_byte.decode("utf-8")
@@ -56,66 +63,72 @@ class CrawlList(threading.Thread):
         else:
             return None
 
-    def req_url(self, task_number):
+    def req_url(self, area, number, mark):
         while not self.stop_flag:
             try:
-                print(">>> {}".format(task_number))
-                self.query_string["page"] = str(task_number)
-                response = requests.get(url=self.url, params=self.query_string, headers=self.headers, timeout=30, verify=False)
+                print(">>> {} {} {}".format(area, number, mark))
+                self.query_string["page"] = str(number)
+                url = "https://gongshang.mingluji.com/{}/list".format(mark)
+                response = requests.get(url=url, params=self.query_string,
+                                        headers=self.headers, timeout=30,
+                                        verify=False, proxies={"https": self.get_proxy()})
                 return response
             except Exception as req_url_error:
-                # ip = self.get_proxy()
-                time.sleep(2)
+                time.sleep(1)
                 print("requests error: {}".format(req_url_error))
 
     def run(self):
         while not self.stop_flag:
-            task_number = self.get_task()
-            if not task_number:
-                print("redis is empty")
+            task_dict = self.get_task()
+            if not task_dict:
+                print("redis is empty, break")
                 break
 
-            response = self.req_url(task_number)
+            area = task_dict[0]
+            number = task_dict[1]
+            mark = task_dict[2]
 
-            html = etree.HTML(response.text)
-            results = html.xpath("//div[@class='item-list']/ol/li/div[@class='views-field views-field-title']/span[@class='field-content']/a")
-            if not results:
-                print("break {}".format(self.query_string))
-                self.redis_conn.sadd(self.redis_db, task_number)
-            for result in results:
-                name = result.xpath("./text()")[0]
-                href = result.xpath("./@href")[0]
-                print(name, self.base + href)
-                sql = "insert into company_list(name, url, area, source_href) VALUE (%s, %s, %s, %s)"
+            try:
+                response = self.req_url(area, number, mark)
 
-                with self.threading_lock:
-                    source_url = "https://gongshang.mingluji.com/{}/list" + "?page={}".format(self.url_location, task_number)
-                    self.mysql_cursor.execute(sql, [name, self.base + href, self.area_name, source_url])
-                    self.mysql_conn.commit()
+                html = etree.HTML(response.text)
+                results = html.xpath("//div[@class='item-list']/ol/li/div[@class='views-field views-field-title']/span[@class='field-content']/a")
+                if not results:
+                    print("break {}".format(self.query_string))
+                    self.redis_conn.sadd(self.redis_db, task_dict)
+                for result in results:
+                    name = result.xpath("./text()")[0]
+                    href = result.xpath("./@href")[0]
+                    print(name, self.base + href)
+                    sql = "insert into company_list(name, url, area, source_href) VALUE (%s, %s, %s, %s)"
+
+                    with self.threading_lock:
+                        source_url = "https://gongshang.mingluji.com/{}/list" + "?page={}".format(mark, number)
+                        self.mysql_cursor.execute(sql, [name, self.base + href, area, source_url])
+                        self.mysql_conn.commit()
+            except Exception:
+                print("task rollback to redis {}".format(task_dict))
+                self.redis_conn.sadd(self.redis_db, task_dict)
 
 
 def main():
     print("Connect to mysql...")
     mysql_db = "mingluji"
-    m_conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='mysql', db=mysql_db, charset='utf8')
+    m_conn = pymysql.connect(host='192.168.70.40', port=3306, user='root', passwd='mysql', db=mysql_db, charset='utf8')
     m_cursor = m_conn.cursor()
 
     # 连接redis
     print("Connect to redis...")
-    r_pool = redis.ConnectionPool(host="127.0.0.1", port=6379)
+    r_pool = redis.ConnectionPool(host="192.168.70.40", port=6379)
     r_conn = redis.Redis(connection_pool=r_pool)
-
-    # 请求参数
-    url_location = "tianjin"
-    area_name = "天津"
 
     # 线程列表
     threading_lock = threading.Lock()
-    thread_num = 3
+    thread_num = 8
     job_list = []
     try:
         for i in range(thread_num):
-            t = CrawlList(url_location, area_name, m_conn, m_cursor, r_conn, threading_lock)
+            t = CrawlList(m_conn, m_cursor, r_conn, threading_lock)
             t.start()
             job_list.append(t)
         for t in job_list:

@@ -1,3 +1,12 @@
+import redis
+
+
+# 连接redis
+print("Connect to redis...")
+r_pool = redis.ConnectionPool(host="192.168.70.40", port=6379)
+r_conn = redis.Redis(connection_pool=r_pool)
+
+
 """
 ("北京", 3193.20, "beijing"),
 ("天津", 247382, "tianjin"),
@@ -65,11 +74,11 @@ pro_pages_list = [['河北', 30435, 'hebei'],
                   ['西藏', 1776, 'xizang']]
 
 if __name__ == '__main__':
-    new = []
-    for pro in pro_list:
-        item = []
-        item.append(pro[0])
-        item.append(int(pro[1]/30)+800)
-        item.append(pro[2])
-        new.append(item)
-    print(new)
+    for pro in pro_pages_list:
+        area = pro[0]
+        number = pro[1]
+        mark = pro[2]
+        for i in range(number):
+            tup = (area, str(i), mark)
+            print(tup)
+            r_conn.sadd("mingluji", tup)
