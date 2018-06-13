@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>画一个力学图(Force)</title>
+<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+</head>
+<style type="text/css">
+.node {
+stroke: #fff;
+stroke-width: 1.5px;
+cursor:pointer;
+}
+.nodetext {
+fill: #000;
+font-size:12px;
+cursor:pointer;
+pointer-events:none;
+}
+</style>
+<body>
+<script type="text/javascript">
+var width = 960;
+var height = 600;
+//取得20个颜色的序列
+var color = d3.scale.category20();
+//定义画布
+var svg = d3.select("body").append("svg")
+.attr("width", width)
+.attr("height", height);
+//定义力学结构
+var force = d3.layout.force()
+.charge(-150)
+.linkDistance(100)
+.size([width, height]);
+//读取数据
+d3.json("force.php", function(error, graph) {
+force
+.nodes(graph.nodes)
+.links(graph.links)
+.start();
+//定义连线
+var link = svg.selectAll(".link")
+.data(graph.links)
+.enter()
+.append("line")
+.attr("class", "link")
+.attr("stroke","#09F")
+.attr("stroke-opacity","0.4")
+.style("stroke-width",1);
+//定义节点标记
+var node = svg.selectAll(".node")
+.data(graph.nodes)
+.enter()
+.append("g")
+.call(force.drag);
+//节点圆形标记
+node.append("circle")
+.attr("class", "node")
+.attr("r",function(d){return 10+d.group;})
+.style("fill", function(d) { return color(d.group); });
+//标记鼠标悬停的标签
+node.append("title")
+.text(function(d) { return d.name; });
+//节点上显示的姓名
+node.append("text")
+.attr("dy", ".3em")
+.attr("class","nodetext")
+.style("text-anchor", "middle")
+.text(function(d) { return d.name; });
+//开始力学动作
+force.on("tick", function() {
+link.attr("x1", function(d) { return d.source.x; })
+.attr("y1", function(d) { return d.source.y; })
+.attr("x2", function(d) { return d.target.x; })
+.attr("y2", function(d) { return d.target.y; });
+node.attr("transform", function(d){ return "translate("+d.x+"," + d.y + ")";});
+});
+});
+</script>
+</body>
+</html>

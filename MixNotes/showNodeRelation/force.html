@@ -11,6 +11,7 @@
     <body>  
 		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>  
         <script>
+            var fontSize = 12;
 
             var nodes = [
                         {name: "阿里巴巴"},
@@ -31,10 +32,8 @@
                         {source: 1, target: 6}
                         ];
 		
-		var width = 800;
-		var height = 800;
-		
-		
+		var width = 1920;
+		var height = 820;
 		var svg = d3.select("body")
 					.append("svg")
 					.attr("width",width)
@@ -44,10 +43,12 @@
 				.nodes(nodes)		//指定节点数组
 				.links(edges)		//指定连线数组
 				.size([width,height])	//指定范围
-				.linkDistance(150)	//指定连线长度
-				.charge(-400);	//相互之间的作用力
+				.linkDistance(250)	//指定连线长度
+				.charge(-400);  //相互之间的作用力
+
 
 		force.start();	//开始作用
+		force.linkStrength(0);	//开始作用
 
 		console.log(nodes);
 		console.log(edges);
@@ -67,7 +68,7 @@
 							.data(nodes)
 							.enter()
 							.append("circle")
-							.attr("r",20)
+							.attr("r",30)
 							.style("fill",function(d,i){
 								return color(i);
 							})
@@ -79,8 +80,9 @@
 							.enter()
 							.append("text")
 							.style("fill", "black")
-							.attr("dx", 20)
-							.attr("dy", 8)
+							.style("font-size", fontSize)
+							.attr("dx", -fontSize)
+							.attr("dy", fontSize/2)
 							.text(function(d){
 								return d.name;
 							});
