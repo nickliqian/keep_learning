@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>交互-拖拽节点</title>
+    <style>::-webkit-scrollbar{display:none;}html,body{overflow:hidden;}</style>
+</head>
+<body>
+<div id="mountNode"></div>
+<script>/*Fixing iframe window.innerHeight 0 issue in Safari*/document.body.clientHeight;</script>
+<script src="https://gw.alipayobjects.com/os/antv/assets/g6/2.0.0/g6.js"></script>
+<script src="https://gw.alipayobjects.com/os/antv/assets/g6/2.0.0/g6.js"></script>
+<script>
+var data = {
+  nodes: [{
+    id: '1',
+    name: '小米',
+    x: 80,
+    y: 150
+  }, {
+    id: '2',
+    name: '腾讯',
+    x: 200,
+    y: 150
+  }, {
+    id: '3',
+    name: '华为',
+    x: 320,
+    y: 150
+  }],
+  edges: [{
+    source: '1',
+    target: '2',
+    label: '投资'
+  }, {
+    source: '1',
+    target: '3',
+    label: '投资'
+  }]
+};
+var mode = 'red';
+var graph = new G6.Graph({
+  container: 'mountNode',
+  fitView: 'cc',
+  height: window.innerHeight,
+  modes: {
+    red: ['mouseEnterFillRed', 'mouseLeaveResetFill'],
+    green: ['mouseEnterFillGreen', 'mouseLeaveResetFill']
+  },
+  mode: mode
+});
+graph.node({
+  label: function label(model) {
+    return model.name;
+  }
+});
+graph.edge({
+  style: function style() {
+    return {
+      endArrow: true
+    };
+  }
+});
+graph.read(data);
+var node = void 0;
+var dx = void 0;
+var dy = void 0;
+graph.on('node:dragstart', function(ev) {
+  var item = ev.item;
+
+  var model = item.getModel();
+  node = item;
+  dx = model.x - ev.x;
+  dy = model.y - ev.y;
+});
+graph.on('node:drag', function(ev) {
+  node && graph.update(node, {
+    x: ev.x + dx,
+    y: ev.y + dy
+  });
+});
+graph.on('node:dragend', function(ev) {
+  node = undefined;
+});
+</script></body>
+</html>
