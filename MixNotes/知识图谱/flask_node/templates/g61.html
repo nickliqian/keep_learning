@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>交互-拖拽节点</title>
+    <style>::-webkit-scrollbar{display:none;}html,body{overflow:hidden;}</style>
+</head>
+<body>
+<div id="mountNode"></div>
+<script>/*Fixing iframe window.innerHeight 0 issue in Safari*/document.body.clientHeight;</script>
+<script src="https://gw.alipayobjects.com/os/antv/assets/g6/2.0.0/g6.js"></script>
+<script src="https://gw.alipayobjects.com/os/antv/assets/g6/2.0.0/g6.js"></script>
+<script src="https://gw.alipayobjects.com/os/antv/assets/lib/jquery-3.2.1.min.js"></script>
+<script>
+
+function isInArray(arr,value){
+    var index = $.inArray(value,arr);
+    if(index >= 0){
+        return true;
+    }
+    return false;
+}
+
+var graph_data = $.get("/getData", function(content){
+    var nodes = content.success.results.data.graph.nodes;
+    var edges = content.success.results.data.graph.relationships;
+    console.log("a", nodes);
+    console.log("b", edges);
+    draw_nodes(nodes, edges);
+});
+
+function draw_nodes(nodes_data, edges_data) {
+
+    var height = window.innerHeight;
+    var width = window.innerWidth;
+
+    var nodes = nodes_data;
+    var edges = edges_data;
+
+    var root_id;
+    nodes.forEach(function(value , index , array){
+        if (array[index].properties.key_id === "8c9f7ddc1a7bcee3d1f7676773fe9404") {
+            root_id = array[index].id;
+            console.log(root_id);
+        }
+    });
+
+    var index_down_1 = [];
+    var index_down_2 = [];
+    var index_down_3 = [];
+    edges.forEach(function(value , index , array){
+        if (array[index].source === root_id) {
+            index_down_1.push(array[index].target);
+        }
+
+    });
+
+    edges.forEach(function(value , index , array){
+        if (isInArray(index_down_1, array[index].source)) {
+            index_down_2.push(array[index].target);
+        }
+    });
+
+    edges.forEach(function(value , index , array){
+        if (isInArray(index_down_2, array[index].source)) {
+            index_down_3.push(array[index].target);
+        }
+    });
+
+    console.log(index_down_1);
+    console.log(index_down_2);
+    console.log(index_down_3);
+
+
+    nodes.forEach(function(value , index , array){
+      //do something
+        if (array[index].properties.key_id === "8c9f7ddc1a7bcee3d1f7676773fe9404") {
+            root_id = array[index].id;
+            console.log(root_id);
+            array[index].x = 300;
+            array[index].y = 600;
+        }
+        else {
+            if (isInArray(index_down_1, array[index].id)) {
+                array[index].x = 500*Math.random();
+                array[index].y = 700;
+            } else if (isInArray(index_down_2, array[index].id)){
+                array[index].x = 500*Math.random();
+                array[index].y = 800;
+            } else if (isInArray(index_down_3, array[index].id)){
+                array[index].x = 500*Math.random();
+                array[index].y = 900;
+            } else {
+                array[index].x = 500*Math.random();
+                array[index].y = 400;
+            }
+
+        }
+    });
+
+
+    var data = {
+      nodes: nodes,
+      edges: edges
+    };
+
+    console.log(data);
+
+    var mode = 'red';
+    var graph = new G6.Graph({
+      container: 'mountNode',
+      fitView: 'cc',
+      height: window.innerHeight,
+      width: window.innerWidth,
+      modes: {
+        red: ['mouseEnterFillRed', 'mouseLeaveResetFill'],
+        green: ['mouseEnterFillGreen', 'mouseLeaveResetFill']
+      },
+      mode: mode
+    });
+    graph.node({
+      label: function label(model) {
+        return model.properties.name;
+      }
+    });
+    graph.edge({
+      style: function style() {
+        return {
+          endArrow: true
+        };
+      }
+    });
+    graph.read(data);
+    var node = void 0;
+    var dx = void 0;
+    var dy = void 0;
+    graph.on('node:dragstart', function(ev) {
+      var item = ev.item;
+
+      var model = item.getModel();
+      node = item;
+      dx = model.x - ev.x;
+      dy = model.y - ev.y;
+    });
+    graph.on('node:drag', function(ev) {
+      node && graph.update(node, {
+        x: ev.x + dx,
+        y: ev.y + dy
+      });
+    });
+    graph.on('node:dragend', function(ev) {
+      node = undefined;
+    });
+}
+
+
+
+</script></body>
+</html>

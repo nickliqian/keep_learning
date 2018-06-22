@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>布局-综合</title>
+    <style>::-webkit-scrollbar{display:none;}html,body{overflow:hidden;}</style>
+</head>
+<body>
+<div id="mountNode"></div>
+<script>/*Fixing iframe window.innerHeight 0 issue in Safari*/document.body.clientHeight;</script>
+<script src="https://gw.alipayobjects.com/os/antv/assets/g6/2.0.0/g6.js"></script>
+<script src="https://gw.alipayobjects.com/os/antv/assets/g6/2.0.0/g6.js"></script>
+<script src="https://gw.alipayobjects.com/os/antv/assets/lib/jquery-3.2.1.min.js"></script>
+<script src="https://gw.alipayobjects.com/os/antv/assets/g6/2.0.0/g6Plugins.js"></script>
+<script>
+$('body').prepend('\n<button id="change_layout">\u6805\u683C\u5E03\u5C40</button>\n<button id="random_layout">\u6253\u6563\u5E03\u5C40</button>\n<button id="layout">\u6574\u7406\u5E03\u5C40</button>\n');
+var Util = G6.Util;
+var data = Util.createChainData(50);
+console.log(data);
+var width = window.innerWidth;
+var height = window.innerHeight;
+var setCol = 5;
+
+// 布局生成器
+var layoutCreator = function layoutCreator(col) {
+  return function(nodes) {
+    var hgap = 76;
+    var vgap = 100;
+
+    nodes.forEach(function(node, index) {
+      if (parseInt(index / col) % 2 === 0) {
+        node.x = (col - index % col) * hgap;
+      } else {
+        node.x = index % col * hgap + hgap;
+      }
+      node.y = parseInt(index / col) * vgap + vgap / 2;
+    });
+  };
+};
+var graph = new G6.Graph({
+  container: 'mountNode',
+  width: width,
+  height: height,
+  animate: true,
+  layout: {
+    processer: layoutCreator(setCol),
+    auto: false
+  },
+  modes: {
+    default: ['panNode']
+  }
+});
+graph.read(data);
+graph.layout();
+document.getElementById('layout').onclick = function() {
+  graph.layout();
+};
+document.getElementById('change_layout').onclick = function() {
+  if (setCol === 5) {
+    setCol = 6;
+  } else {
+    setCol = 5;
+  }
+  graph.changeLayout(layoutCreator(setCol));
+};
+document.getElementById('random_layout').onclick = function() {
+  graph.changeLayout(function(nodes) {
+    nodes.forEach(function(node) {
+      node.x = width * Math.random();
+      node.y = height * Math.random();
+    });
+  });
+};
+</script></body>
+</html>
