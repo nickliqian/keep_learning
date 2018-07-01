@@ -5,16 +5,17 @@ from sklearn.naive_bayes import MultinomialNB
 
 
 def mlt():
+    # 贝叶斯
     # 读取数据和分割数据
     news = fetch_20newsgroups(subset='all')
     # print(news.data)
-    # print(type(news.data))
-    # print(len(news.data))
+    print(type(news.data))
+    print(len(news.data))
     # print(news.data[0])
-    #
-    # print(news.target)
-    # print(type(news.target))
-    # print(news.target.shape)
+
+    print(news.target)
+    print(type(news.target))
+    print(news.target.shape)
     '''
         如果是中文需要提前分好词。
         data: -> x 特征值
