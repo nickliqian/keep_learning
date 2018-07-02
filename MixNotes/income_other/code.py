@@ -216,6 +216,18 @@ def main():
     # 网格搜索
     # grid_search(y)
 
+    """
+    # 通过网格搜索调参
+    param = {
+        'penalty': ['l1', 'l2'],
+    }
+    gc = GridSearchCV(logic, param_grid=param, cv=3)
+    gc.fit(x_train, y_train)
+    print('准确率：', gc.score(x_test, y_test))
+    print('最好参数：', gc.best_params_)
+    model_list.append({"model": gc, "auc": auc_value})
+    """
+
 
 if __name__ == '__main__':
     # 打开文件
