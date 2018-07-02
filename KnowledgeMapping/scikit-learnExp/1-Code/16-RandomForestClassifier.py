@@ -32,5 +32,6 @@ def random_forest():
     rf.fit(x_train, y_train)
     print(rf.score(x_test, y_test))
 
+
 if __name__ == "__main__":
     random_forest()

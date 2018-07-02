@@ -35,6 +35,7 @@ def logistic():
     # 预测
     print("准确率：", logic.score(x_test, y_test))
     log_predict = logic.predict(x_test)
+    print(log_predict)
     print("精确率和召回率：", classification_report(y_test, log_predict, labels=[2, 4], target_names=["良性", "恶性"]))
 
 

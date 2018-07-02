@@ -4,6 +4,8 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split, GridSearchCV
 
+
+# 网格搜索 + 最近邻分类器
 def main():
     # 导入数据集
     data = pd.read_csv("D://A//data//FBlocation//train.csv")

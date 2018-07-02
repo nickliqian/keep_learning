@@ -142,7 +142,7 @@ def crawl_all():
 
     i = 1
     for c in content:
-        if i > 27:
+        if i > 1320:
             print("{}/{} {}".format(i, total, c))
             get_day_data(c["href"])
         i += 1
