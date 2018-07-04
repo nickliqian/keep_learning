@@ -125,7 +125,7 @@ def main():
     model_list.append({"model": logic, "auc": auc_value})
     # 绘图
     plt.title('LogisticRegression AUC')
-    plt.plot(fpr, tpr, 'b', label='AUC_LOGIC = %0.3f' % auc_value)
+    plt.plot(fpr, tpr, 'r', label='AUC_LOGIC = %0.3f' % auc_value)
     plt.legend(loc='lower right')
     plt.plot([0, 1], [0, 1], 'r--')
     plt.xlim([0.0, 1.0])
@@ -194,7 +194,7 @@ def main():
     model_list.append({"model": rf, "auc": auc_value})
     # 绘图
     plt.title('RandomForestClassifier AUC')
-    plt.plot(fpr, tpr, 'b', label='AUC_RF = %0.3f' % auc_value)
+    plt.plot(fpr, tpr, 'y', label='AUC_RF = %0.3f' % auc_value)
     plt.legend(loc='lower right')
     plt.plot([0, 1], [0, 1], 'r--')
     plt.xlim([0.0, 1.0])
