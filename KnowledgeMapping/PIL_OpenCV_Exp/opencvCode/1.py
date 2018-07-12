@@ -1,6 +1,8 @@
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
+
+
 # 读取文件和显示图形
 img = cv2.imread('45.jpg', 0)
 plt.imshow(img, cmap='gray', interpolation='bicubic')
