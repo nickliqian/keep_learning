@@ -7,7 +7,7 @@ from lxml import etree
 
 
 def check_mail(mail):
-    url = "http://mail.bccto.me/getmail"
+    url = "http://www.bccto.me/getmail"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36",
     }
@@ -21,7 +21,9 @@ def check_mail(mail):
             "_": var_b,
         }
         response = requests.post(url=url, headers=headers, data=data)
+        print(response.text)
         r_data = json.loads(response.text)
+
         result = r_data["mail"]
         if result:
             print("Get mail -> {}".format(result))

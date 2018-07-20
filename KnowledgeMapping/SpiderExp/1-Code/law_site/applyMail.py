@@ -39,47 +39,60 @@ class RunMail(object):
         href = "http://mail.bccto.me/win/{}/{}".format(mail_string, msg)
         print(href)
         print("Mail page url <{}>".format(href))
-        # # 请求邮件，抽取激活地址
-        # active_href = self.req_mail_href(href)
-        # # 请求激活地址
-        # self.req_active_href(active_href)
+        # 请求邮件，抽取激活地址
+        active_href = self.req_mail_href(href)
+        # 请求激活地址
+        self.req_active_href(active_href)
 
     @staticmethod
     def random_string():
         num = random.randint(7, 13)
         ran_str = ''.join(random.sample(string.ascii_letters + string.digits, num))
         # return ran_str
-        return "pUPKsdbAO"
+        return "0bmomfiwkq"
 
     # Get cookies
     def keep_session(self):
-        url = "http://mail.bccto.me/"
+        url = "http://www.bccto.me/"
         headers = {
-            'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36",
+            'Accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+            'Accept-Encoding': "gzip, deflate",
+            'Accept-Language': "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+            'Cache-Control': "no-cache",
+            'Connection': "keep-alive",
+            'Host': "www.bccto.me",
+            'Pragma': "no-cache",
+            'Referer': "https://www.baidu.com/link?url=Ec_jowVsHws7ayJ5E9PhdIf2LvFZ36lGea6uidXWwwe&wd=&eqid=8a965ba20003c948000000065b505f3c",
+            'Upgrade-Insecure-Requests': "1",
+            'User-Agent': "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36",
         }
         self.sess.request("GET", url, headers=headers, timeout=60)
         print("Keep Session")
 
     # Apply mail
     def apply_mail(self):
-        url = "http://mail.bccto.me/applymail"
+        url = "http://www.bccto.me/applymail"
         payload = {
             "mail": self.mail,
         }
+        print(payload)
         headers = {
-            'accept': "application/json, text/javascript, */*; q=0.01",
-            'accept-encoding': "gzip, deflate",
-            'accept-language': "zh-CN,zh;q=0.9",
-            'cache-control': "no-cache",
-            'connection': "keep-alive",
-            'content-type': "application/x-www-form-urlencoded",
-            'host': "mail.bccto.me",
-            'origin': "http://mail.bccto.me",
-            'pragma': "no-cache",
-            'referer': "http://mail.bccto.me/",
-            'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36",
+            'Accept': "application/json, text/javascript, */*; q=0.01",
+            'Accept-Encoding': "gzip, deflate",
+            'Accept-Language': "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+            'Cache-Control': "no-cache",
+            'Connection': "keep-alive",
+            'Content-Length': "31",
+            'Content-Type': "application/x-www-form-urlencoded",
+            'Host': "www.bccto.me",
+            'Origin': "http://www.bccto.me",
+            'Pragma': "no-cache",
+            'Referer': "http://www.bccto.me/",
+            'User-Agent': "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36",
+            'X-Requested-With': "XMLHttpRequest",
         }
         response = self.sess.request("POST", url, data=payload, headers=headers, timeout=60)
+        print(response.text)
         response_json = json.loads(response.text)
         req_mail_status = response_json["success"]
         if req_mail_status:
@@ -91,9 +104,21 @@ class RunMail(object):
 
     # Monitor mail
     def check_mail(self):
-        url = "http://mail.bccto.me/getmail"
+        url = "http://www.bccto.me/getmail"
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36",
+            'Accept': "application/json, text/javascript, */*; q=0.01",
+            'Accept-Encoding': "gzip, deflate",
+            'Accept-Language': "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+            'Cache-Control': "no-cache",
+            'Connection': "keep-alive",
+            'Content-Length': "63",
+            'Content-Type': "application/x-www-form-urlencoded",
+            'Host': "www.bccto.me",
+            'Origin': "http://www.bccto.me",
+            'Pragma': "no-cache",
+            'Referer': "http://www.bccto.me/",
+            'User-Agent': "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36",
+            'X-Requested-With': "XMLHttpRequest",
         }
         while True:
             var_a = str(time.time()).replace(".", "")[:-7]
@@ -146,10 +171,10 @@ class RunMail(object):
         }
         response = requests.get(url=active_href, headers=headers)
         print(response.text)
-        # html = etree.HTML(response.text)
-        # active_href = html.xpath("//a/@href")[0]
-        # print(active_href)
-        # return active_href
+        html = etree.HTML(response.text)
+        active_href = html.xpath("//a/@href")[0]
+        print(active_href)
+        return active_href
 
 
 if __name__ == '__main__':
