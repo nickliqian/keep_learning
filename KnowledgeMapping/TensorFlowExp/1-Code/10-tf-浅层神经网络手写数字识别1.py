@@ -34,7 +34,7 @@ def main():
 
         sess.run(init_op)
 
-        for i in range(10):
+        for i in range(100):
             mnist_x, mnist_y = mnist.train.next_batch(50)
 
             # 运行梯度下降OP

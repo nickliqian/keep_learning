@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
-
+import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 def weight_variable(shape):
     w = tf.Variable(tf.random_normal(shape=shape, mean=0.0, stddev=1.0))
