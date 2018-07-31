@@ -1,11 +1,12 @@
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
+import fire
 
 
-def main(argv):
+def main(is_train):
 
     # 获取数据实例
-    mnist = input_data.read_data_sets("D:/A/data/mnist/input_data/", one_hot=True)
+    mnist = input_data.read_data_sets("/home/nick/Desktop/jupyterNotebook/data/mnist/input_data", one_hot=True)
 
     # 准备数据占位符，x ->[None, 784]  y_true-->[None, 10]
     with tf.variable_scope("data"):
@@ -53,6 +54,8 @@ def main(argv):
     # 合并变量
     merged = tf.summary.merge_all()
 
+    saver = tf.train.Saver()
+
     with tf.Session() as sess:
 
         # 初始化变量
@@ -61,26 +64,36 @@ def main(argv):
         # 建立事件文件
         filewriter = tf.summary.FileWriter("./tmp11/", graph=sess.graph)
 
-        # 指定迭代次数去训练
-        for i in range(1000):
+        if is_train:
+            # 指定迭代次数去训练
+            for i in range(5000):
 
-            mnist_x, mnist_y = mnist.train.next_batch(50)
+                mnist_x, mnist_y = mnist.train.next_batch(50)
 
-            # 运行梯度下降op
-            sess.run(train_op, feed_dict={x: mnist_x, y_true: mnist_y})
+                # 运行梯度下降op
+                sess.run(train_op, feed_dict={x: mnist_x, y_true: mnist_y})
 
-            print("准确率：", sess.run(accuracy, feed_dict={x: mnist_x, y_true: mnist_y}))
+                print("准确率：", sess.run(accuracy, feed_dict={x: mnist_x, y_true: mnist_y}))
 
-            # 运行收集op
-            summary = sess.run(merged, feed_dict={x: mnist_x, y_true: mnist_y})
+                # 运行收集op
+                summary = sess.run(merged, feed_dict={x: mnist_x, y_true: mnist_y})
 
-            # 写入事件文件
-            filewriter.add_summary(summary, i)
+                # 写入事件文件
+                filewriter.add_summary(summary, i)
 
-        print("测试集里面的准确率：", sess.run(accuracy, feed_dict={x: mnist.test.images, y_true: mnist.test.labels}))
-
+            print("测试集里面的准确率：", sess.run(accuracy, feed_dict={x: mnist.test.images, y_true: mnist.test.labels}))
+            saver.save(sess, "./ckpt/")
+        else:
+            # 加载模型
+            saver.restore(sess, "./ckpt/")
+            for i in range(100):
+                x_test, y_test = mnist.test.next_batch(1)
+                print("图片{} 原始值{} 目标值{}"
+                      .format(i,
+                              tf.argmax(y_test, 1).eval(),
+                              tf.argmax(sess.run(y_predict, feed_dict={x: x_test, y_true: y_test}), 1).eval()))
     return None
 
 
 if __name__ == "__main__":
-    tf.app.run()
+    main(0)

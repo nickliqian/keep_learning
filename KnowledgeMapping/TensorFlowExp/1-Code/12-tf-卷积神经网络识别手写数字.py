@@ -3,6 +3,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
+
 def weight_variable(shape):
     w = tf.Variable(tf.random_normal(shape=shape, mean=0.0, stddev=1.0))
     return w
@@ -23,18 +24,26 @@ def model():
     # 卷积层1
     with tf.variable_scope("conv1"):
         # 初始化卷积层1的参数，5*5 filter的大小，1是图片输入通道，32输出filter数量
-        w_conv1 = weight_variable([5, 5, 1, 32])
+        w_conv1 = weight_variable([5, 5, 1, 32])  # filter
 
-        # 初始化偏置量
+        # 初始化偏置量 一个卷积核有一个偏置量
         b_con1 = bias_variable([32])
 
-        # 对输入图片改变形状
-        x_shape = tf.reshape(x, [-1, 28, 28, 1])
+        # 对输入图片改变形状  [None, 784] -> [-1, 28, 28, 1]
+        x_shape = tf.reshape(x, [-1, 28, 28, 1])  # input
 
         # 进行卷积，激活，池化操作
+        # input, filter, strides, padding, use_cudnn_on_gpu=True, data_format="NHWC", name=None
+        # 输入    卷积核   步长     边缘,     use_cudnn_on_gpu=True, data_format="NHWC", name=None
+        # 卷积 + 偏置量
         x_conv2d1 = tf.nn.conv2d(x_shape, w_conv1, strides=[1, 1, 1, 1], padding="SAME") + b_con1
+        # 激活
         x_relu1 = tf.nn.relu(x_conv2d1)
-
+        # 池化
+        # value, ksize, strides, padding, data_format="NHWC", name=None
+        # 输入   池化窗口
+        # 池化窗口 [batch, height, width, channels]  [1, height, width, 1]
+        # 步长    [batch, height, width, channels]  [1, stride,stride, 1]
         x_pool1 = tf.nn.max_pool(x_relu1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
 
     # 卷积层2
@@ -50,6 +59,7 @@ def model():
         x_relu2 = tf.nn.relu(x_conv2d2)
         # x_relu2 = tf.nn.relu(tf.nn.conv2d(x_pool1, w_conv2, strides=[1, 1, 1, 1], padding="SAME") + b_conv2)
 
+        # ksize 池化窗口大小
         x_pool2 = tf.nn.max_pool(x_relu2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
 
     # 全连接层1
@@ -79,7 +89,7 @@ def model():
 
 def main():
 
-    mnist = input_data.read_data_sets("D:/A/data/mnist/input_data/", one_hot=True)
+    mnist = input_data.read_data_sets("/home/nick/Desktop/jupyterNotebook/data/mnist/input_data", one_hot=True)
 
     # 构建好模型，得出输出结果
     x, y_true, y_predict = model()
@@ -99,7 +109,7 @@ def main():
         accuracy = tf.reduce_mean(tf.cast(equal_list, tf.float32))
 
     init_op= tf.global_variables_initializer()
-
+    saver = tf.train.Saver()
     # 会话
     with tf.Session() as sess:
         # 初始化
@@ -116,6 +126,15 @@ def main():
             print("准确率：", sess.run(accuracy, feed_dict={x: mnist_x, y_true: mnist_y}))
 
         print("测试集里面的准确率：", sess.run(accuracy, feed_dict={x: mnist.test.images, y_true: mnist.test.labels}))
+
+        # 加载模型
+        saver.restore(sess, "./ckpt/")
+        for i in range(100):
+            x_test, y_test = mnist.test.next_batch(1)
+            print("图片{} 原始值{} 目标值{}"
+                  .format(i,
+                          tf.argmax(y_test, 1).eval(),
+                          tf.argmax(sess.run(y_predict, feed_dict={x: x_test, y_true: y_test}), 1).eval()))
 
     return None
 

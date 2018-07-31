@@ -114,8 +114,11 @@ with tf.Session() as sess:
         if it % 5 == 0:
             iterate_accuracy = accuracy.eval(feed_dict={x: input_images, y_: input_labels, keep_prob: 1.0})
             print('iteration %d: accuracy %s' % (it, iterate_accuracy))
-            if iterate_accuracy >= 1:
+            if iterate_accuracy >= 0.9:
                 break
 
     print('完成训练!')
     save_path = saver.save(sess, "./save/model.ckpt")
+
+
+
