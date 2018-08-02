@@ -108,7 +108,7 @@ def main():
         equal_list = tf.equal(tf.argmax(y_true, 1), tf.argmax(y_predict, 1))
         accuracy = tf.reduce_mean(tf.cast(equal_list, tf.float32))
 
-    init_op= tf.global_variables_initializer()
+    init_op = tf.global_variables_initializer()
     saver = tf.train.Saver()
     # 会话
     with tf.Session() as sess:
