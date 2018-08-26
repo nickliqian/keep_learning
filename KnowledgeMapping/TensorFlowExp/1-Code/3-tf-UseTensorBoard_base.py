@@ -1,5 +1,10 @@
 import tensorflow as tf
 import numpy as np
+import os
+
+
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 # 输入数据
 x_data = np.linspace(-1, 1, 300)[:, np.newaxis]
