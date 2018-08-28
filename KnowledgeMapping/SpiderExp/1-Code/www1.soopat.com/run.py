@@ -1,10 +1,18 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 import requests
+from lxml import etree
+
+"""
+验证码地址
+"""
 
 url = "http://www1.soopat.com/Home/Result"
 
-querystring = {"SearchWord":"SQR:('乐视控股(北京)有限公司')","PatentIndex":"10"}
+querystring = {
+    "SearchWord": "SQR:('乐视控股(北京)有限公司')",
+    "PatentIndex": "10"
+}
 
 headers = {
     'accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
@@ -18,8 +26,18 @@ headers = {
     'upgrade-insecure-requests': "1",
     'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36",
     'postman-token': "6ecc3b3f-d2c2-dde3-1635-a15f8b567dda"
-    }
+}
 
 response = requests.request("GET", url, headers=headers, params=querystring)
 
-print(response.text)
+# print(response.text)
+
+
+html = etree.HTML(response.text)
+ele = html.xpath("//div")
+print(ele)
+if ele:
+    raw = etree.tounicode(ele[0], method='html')
+    print(raw)
+else:
+    print("no tags")
