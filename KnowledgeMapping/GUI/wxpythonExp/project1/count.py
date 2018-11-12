@@ -13,8 +13,8 @@ def resizeBitmap(image, width=100, height=100):
 class CalcFrame(demo1.Frame):
     def __init__(self, parent):
         demo1.Frame.__init__(self, parent)
-        self.img_dir_path = "C:\\Users\\Nick\\Desktop\\wxpythonCode\\FailImg0829"
-        self.img_output_path = "C:\\Users\\Nick\\Desktop\\wxpythonCode\\output"
+        # self.img_dir_path = "C:\\Users\\Nick\\Desktop\\wxpythonCode\\FailImg0829"
+        # self.img_output_path = "C:\\Users\\Nick\\Desktop\\wxpythonCode\\output"
         self.img_list = os.listdir(self.img_dir_path)
         self.img_loc = 1
         self.now_img_name = self.img_list[self.img_loc]
