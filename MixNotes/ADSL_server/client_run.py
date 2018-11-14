@@ -18,11 +18,13 @@ print("redis_host: {}".format(redis_host))
 print("redis_password: {}".format(redis_password))
 
 # 连接redis
-redis_client = redis.StrictRedis(host=redis_host, port=6379, password=redis_password, decode_responses=True)
+redis_pool = redis.ConnectionPool(host=redis_host, port=6379, password=redis_password, decode_responses=True)
+redis_client = redis.Redis(connection_pool=redis_pool)
 print("连接redis")
 
 while True:
     # 重启宽带
+    print("start restart pppoe")
     subprocess.getstatusoutput("pppoe-stop")
     time.sleep(0.5)
     (status, output) = subprocess.getstatusoutput("pppoe-start")
@@ -44,14 +46,17 @@ while True:
                                     timeout=5)
             if response.status_code == 200:
                 print("连接测试成功")
-                redis_client.delete("adsl_ip")
-                redis_client.sadd("adsl_ip", "{}:{}".format(ip, port))
+                # redis_client.delete("adsl_ip")
+                r = redis_client.set("adsl_ip", "{}:{}".format(ip, port))
+                print("redis set result: {}".format(r))
 
                 print("insert success")
 
-                print("等待100s重拨")
-                time.sleep(100)
-
+                print("等待30s重拨")
+                for i in range(1, 31):
+                    time.sleep(1)
+                    print("time: {}s".format(i), end='\r')
+                print()
             else:
                 print("连接测试失败")
                 time.sleep(3)
