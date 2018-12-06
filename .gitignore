@@ -107,3 +107,6 @@ ENV/
 
 # jupiter_notebook
 .ipynb_checkpoints
+
+
+logs/
