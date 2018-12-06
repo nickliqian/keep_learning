@@ -110,3 +110,5 @@ ENV/
 
 
 logs/
+
+ocr.dll
