@@ -2,7 +2,6 @@
 # -*- coding: UTF-8 -*-
 import os
 import time
-import shutil
 from PIL import Image
 from queue import Queue
 from threading import Thread
@@ -16,22 +15,23 @@ def change_type(q):
             break
         file = q.get()
         try:
-            print(file)
+            # print(file)
             input_file = os.path.join(base_dir, file)
-            img = Image.open(input_file)
-
             output_file = os.path.join(output_dir, file.replace(".jpg", ".png"))
+            print("{} -> {}".format(input_file, output_file))
+            img = Image.open(input_file)
             img.save(output_file)
 
             myhash = hashlib.md5()
-            with open(output_file, "wb") as f:
+            with open(output_file, "rb") as f:
                 b = f.read()
                 myhash.update(b)
                 md5_value = myhash.hexdigest()
             print(md5_value)
 
-        except OSError:
-            pass
+        except Exception as e:
+            with open("error_log", "w") as f:
+                f.write("{} {}".format(e, type(e)))
 
 
 def main():
@@ -48,7 +48,7 @@ def main():
             q.put(f)
 
     task_list = list()
-    for i in range(4):
+    for i in range(1):
         t = Thread(target=change_type, args=(q,))
         t.start()
         task_list.append(t)
