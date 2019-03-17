@@ -56,12 +56,12 @@ def gen_epochs(n, num_steps):
 
 
 # 使之定义为reuse模式，循环使用，保持参数相同
-def rnn_cell(rnn_input, state):
+def rnn_cell(rnn_input, state):  # [5, 2], [5, 10]
     with tf.variable_scope('rnn_cell', reuse=True):
         W = tf.get_variable('W', [n_classes + state_size, state_size])
         b = tf.get_variable('b', [state_size], initializer=tf.constant_initializer(0.0))
 
-    # 定义rnn_cell具体的操作，这里使用的是最简单的rnn，不是LSTM
+    # 定义rnn_cell具体的操作，这里使用的是最简单的rnn，不是LSTM  tf.concat((rnn_input, state), 1) => [5, 12]
     return tf.tanh(tf.matmul(tf.concat((rnn_input, state), 1), W) + b)
 
 
@@ -108,9 +108,10 @@ y = tf.placeholder(tf.int32, [batch_size, num_steps])  # [5, 10]
 init_state = tf.zeros([batch_size, state_size])  # [5, 10] -> all zero
 
 # 将输入转化为one-hot编码，两个类别。[batch_size, num_steps, num_classes]
-x_one_hot = tf.one_hot(x, n_classes)
+x_one_hot = tf.one_hot(x, n_classes)  # [5, 10, 2]
+print(x_one_hot)  # x_one_hot = [5, 10, 2]
 # 将输入unstack，即在num_steps上解绑，方便给每个循环单元输入。这里可以看出RNN每个cell都处理一个batch的输入（即batch个二进制样本输入）
-rnn_inputs = tf.unstack(x_one_hot, axis=1)  # [[5 ,2], [5 ,2], [5 ,2], [5 ,2], [5 ,2]]
+rnn_inputs = tf.unstack(x_one_hot, axis=1)  # [[5 ,2], [5 ,2], [5 ,2], [5 ,2], [5 ,2] ... ] 10个神经元
 # 定义rnn_cell的权重参数，
 with tf.variable_scope('rnn_cell'):
     W = tf.get_variable('W', [n_classes + state_size, state_size])  # [12, 10]
@@ -122,8 +123,8 @@ rnn_outputs = []
 # 循环num_steps次，即将一个序列输入RNN模型
 for rnn_input in rnn_inputs:
     state = rnn_cell(rnn_input, state)  # [5, 2], [5, 10]
-    rnn_outputs.append(state)
-final_state = rnn_outputs[-1]
+    rnn_outputs.append(state)  # [5, 12]
+final_state = rnn_outputs[-1]  # 最后一个元素
 
 # cell = tf.contrib.rnn.BasicRNNCell(state_size)
 # rnn_outputs,final_state = tf.contrib.rnn.static_rnn(cell,rnn_inputs,initial_state=init_state)
