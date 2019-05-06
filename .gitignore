@@ -112,3 +112,7 @@ ENV/
 logs/
 
 ocr.dll
+
+123456.csv
+
+KnowledgeMapping/JupyterSource/2-Code/model
