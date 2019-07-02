@@ -9,6 +9,7 @@ def mmscaler():
     # feature_range 映射到指定范围
     maxmin = MinMaxScaler(feature_range=[2,3])
     data = maxmin.fit_transform([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    # maxmin.inverse_transform()
     print(data)
 
 
