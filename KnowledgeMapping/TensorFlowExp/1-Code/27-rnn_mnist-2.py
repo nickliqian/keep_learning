@@ -77,7 +77,9 @@ def main():
     # 梯度下降
     optm = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost)
     # 准确率
-    accr = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1)), tf.float32))
+    label_p = tf.argmax(pred, 1)
+    label_o = tf.argmax(y, 1)
+    accr = tf.reduce_mean(tf.cast(tf.equal(label_p, label_o), tf.float32))
 
     init = tf.global_variables_initializer()
     print("Network Ready!")
@@ -103,11 +105,11 @@ def main():
             print(batch_xs.shape)
             print(batch_ys.shape)
             a, b, c, d, f, g = sess.run([optm, rmodel["X1"], rmodel["X2"], rmodel["H_1"], rmodel["LSTM_O"], rmodel["LSTM_S"]], feed_dict=feeds)
-            print("X1", b.shape)
-            print("X2", c.shape)
-            print("H_1", len(d), d[0].shape)
-            print("LSTM_O", len(f), f[0].shape)
-            print("LSTM_S", len(g), g[0].shape)
+            # print("X1", b.shape)
+            # print("X2", c.shape)
+            # print("H_1", len(d), d[0].shape)
+            # print("LSTM_O", len(f), f[0].shape)
+            # print("LSTM_S", len(g), g[0].shape)
             # print("lstm_cell", e)
 
             avg_cost += sess.run(cost, feed_dict=feeds) / total_batch
@@ -115,13 +117,20 @@ def main():
             if epoch % display_step == 0:
                 print("Epoch: {}/{} cost: {}".format(epoch, training_epochs, avg_cost))
                 feeds = {x: batch_xs, y: batch_ys}
-                train_acc = sess.run(accr, feed_dict=feeds)
+                train_acc, label_p_o, label_o_o = sess.run([accr, pred, label_o], feed_dict=feeds)
                 print("Training accuracy: {}".format(train_acc))
+                # print(label_p_o)
+                # print(label_p_o.shape)
+                # print(label_o_o)
+                # print(label_o_o.shape)
 
-                testimgs = testimgs.reshape((ntest, nsteps, diminput))
-                feeds = {x: testimgs, y: testlabels}
-                test_acc = sess.run(accr, feed_dict=feeds)
-                print("Test accuracy: {}".format(test_acc))
+                print(label_p_o[0])
+                print(label_p_o[1])
+
+                # testimgs = testimgs.reshape((ntest, nsteps, diminput))
+                # feeds = {x: testimgs, y: testlabels}
+                # test_acc = sess.run(accr, feed_dict=feeds)
+                # print("Test accuracy: {}".format(test_acc))
     print("Optimization Finished")
 
 
