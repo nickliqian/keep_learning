@@ -19,7 +19,7 @@ b = tf.Variable(tf.constant(0.0, dtype=tf.float32, shape=[self.classes]), name="
 
 output = tf.matmul(outputs_reshape, W) + b
 output_reshape = tf.reshape(output, [batch_size, -1, self.classes])
-output_transpose = tf.transpose(_reshape, perm=[1, 0, 2])
+output_transpose = tf.transpose(output_reshape, perm=[1, 0, 2])
 # 使用损失函数 ctc_loss，该函数内部做了soft_max操作，所以全连接输出直接输入，否则编码错误
 loss = tf.nn.ctc_loss(labels=self.labels, inputs=output_transpose, sequence_length=self.seq_len)
 
