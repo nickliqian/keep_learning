@@ -264,10 +264,10 @@ def main():
     proxies = get_proxy()
 
     # 采集列表
-    # crawl_list(m_conn, m_cursor, proxies)
+    crawl_list(m_conn, m_cursor, proxies)
 
     # 采集详情
-    crawl_detail(m_conn, m_cursor, proxies)
+    # crawl_detail(m_conn, m_cursor, proxies)
 
 
 if __name__ == '__main__':
