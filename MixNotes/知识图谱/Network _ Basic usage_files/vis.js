@@ -3566,7 +3566,7 @@ var Validator = function () {
    * @param {Object} referenceOptions
    * @param {Object} subObject
    * @returns {boolean}
-   * @static
+   * @StaticFile
    */
 
 
@@ -3588,7 +3588,7 @@ var Validator = function () {
      * @param {Object} options
      * @param {Object} referenceOptions
      * @param {array} path    | where to look for the actual option
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -3607,7 +3607,7 @@ var Validator = function () {
      * @param {Object} options
      * @param {Object} referenceOptions
      * @param {array} path    | where to look for the actual option
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -3654,7 +3654,7 @@ var Validator = function () {
      * @param {string}  referenceOption  | Usually this is the same as option, except when handling an __any__ tag.
      * @param {string}  refOptionObj     | This is the type object from the reference options
      * @param {Array}   path             | where in the object is the option
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -3687,7 +3687,7 @@ var Validator = function () {
      *
      * @param {Object|boolean|number|string|Array.<number>|Date|Node|Moment|undefined|null} object
      * @returns {string}
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -3737,7 +3737,7 @@ var Validator = function () {
      * @param {string} option
      * @param {Object} options
      * @param {Array.<string>} path
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -3771,7 +3771,7 @@ var Validator = function () {
      * @param {Array} path    | where to look for the actual option
      * @param {boolean} [recursive=false]
      * @returns {{closestMatch: string, path: Array, distance: number}}
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -3815,7 +3815,7 @@ var Validator = function () {
      * @param {Object} option
      * @param {string} prefix
      * @returns {String}
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -3846,7 +3846,7 @@ var Validator = function () {
     /**
      * @param {Object} options
      * @returns {String}
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -3870,7 +3870,7 @@ var Validator = function () {
      * @param {string} a
      * @param {string} b
      * @returns {Array.<Array.<number>>}}
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -4024,7 +4024,7 @@ var $export = function (type, name, source) {
       };
       F[PROTOTYPE] = C[PROTOTYPE];
       return F;
-    // make static versions for prototype methods
+    // make StaticFile versions for prototype methods
     })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
     // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
     if (IS_PROTO) {
@@ -4037,7 +4037,7 @@ var $export = function (type, name, source) {
 // type bitmap
 $export.F = 1;   // forced
 $export.G = 2;   // global
-$export.S = 4;   // static
+$export.S = 4;   // StaticFile
 $export.P = 8;   // proto
 $export.B = 16;  // bind
 $export.W = 32;  // wrap
@@ -7963,7 +7963,7 @@ var Node = function () {
     *
     * @param {object} options
     * @param {Node.id} id
-     * @static
+     * @StaticFile
     */
 
   }], [{
@@ -8001,7 +8001,7 @@ var Node = function () {
      * @param {boolean} [allowDeletion=false]
      * @param {Object} [globalOptions={}]
      * @param {Object} [groupList]
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -8183,7 +8183,7 @@ var ComponentUtil = function () {
      * @param {point} point
      * @param {rotationPoint} [rotationPoint] if specified, the rotation that applies to the rectangle.
      * @returns {boolean}  true if point within rectangle, false otherwise
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -15420,7 +15420,7 @@ var NetworkUtil = function () {
    * @param {Array.<Node>} allNodes
    * @param {Array.<Node>} [specificNodes=[]]
    * @returns {{minX: number, maxX: number, minY: number, maxY: number}}
-   * @static
+   * @StaticFile
    */
 
 
@@ -15464,7 +15464,7 @@ var NetworkUtil = function () {
      * @param {Array.<Node>} allNodes
      * @param {Array.<Node>} [specificNodes=[]]
      * @returns {{minX: number, maxX: number, minY: number, maxY: number}}
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -15504,7 +15504,7 @@ var NetworkUtil = function () {
     /**
      * @param {object} range = {minX: minX, maxX: maxX, minY: minY, maxY: maxY};
      * @returns {{x: number, y: number}}
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -15519,7 +15519,7 @@ var NetworkUtil = function () {
      * @param {vis.Item} item
      * @param {'node'|undefined} type
      * @returns {{}}
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -25926,7 +25926,7 @@ var Label = function () {
      * @param {Object} outOptions  out-parameter, object in which to store the parse results (if any)
      * @param {Object} inOptions  font options to parse
      * @return {boolean} true if font parsed as string, false otherwise
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -27480,7 +27480,7 @@ var EndPoint = function () {
      *
      * @param {Array<Point>} points
      * @param {ArrowData} arrowData
-     * @static
+     * @StaticFile
      */
     value: function transform(points, arrowData) {
       if (!(points instanceof Array)) {
@@ -27507,7 +27507,7 @@ var EndPoint = function () {
      *
      * @param {CanvasRenderingContext2D} ctx
      * @param {Array.<Point>} points
-     * @static
+     * @StaticFile
      */
 
   }, {
@@ -27547,7 +27547,7 @@ var Arrow = function (_EndPoint) {
      *
      * @param {CanvasRenderingContext2D} ctx
      * @param {ArrowData} arrowData
-     * @static
+     * @StaticFile
      */
     value: function draw(ctx, arrowData) {
       // Normalized points of closed path, in the order that they should be drawn.
@@ -27580,7 +27580,7 @@ var Circle = function () {
      *
      * @param {CanvasRenderingContext2D} ctx
      * @param {ArrowData} arrowData
-     * @static
+     * @StaticFile
      */
     value: function draw(ctx, arrowData) {
       var point = { x: -0.4, y: 0 };
@@ -27611,7 +27611,7 @@ var Bar = function () {
      *
      * @param {CanvasRenderingContext2D} ctx
      * @param {ArrowData} arrowData
-     * @static
+     * @StaticFile
      */
     value: function draw(ctx, arrowData) {
       /*
@@ -27655,7 +27655,7 @@ var EndPoints = function () {
      *
      * @param {CanvasRenderingContext2D} ctx
      * @param {ArrowData} arrowData
-     * @static
+     * @StaticFile
      */
     value: function draw(ctx, arrowData) {
       var type;
@@ -37776,7 +37776,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         if (!_handlers) {
           wrapper._handlers[event] = _handlers = [];
 
-          // register the static, propagated handler
+          // register the StaticFile, propagated handler
           hammer.on(event, propagatedHandler);
         }
         _handlers.push(handler);
@@ -37806,7 +37806,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             wrapper._handlers[event] = _handlers;
           }
           else {
-            // remove static, propagated handler
+            // remove StaticFile, propagated handler
             hammer.off(event, propagatedHandler);
             delete wrapper._handlers[event];
           }
@@ -37846,7 +37846,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
 
     /**
-     * A static event handler, applying event propagation.
+     * A StaticFile event handler, applying event propagation.
      * @param {Object} event
      */
     function propagatedHandler(event) {
@@ -42766,14 +42766,14 @@ Network.prototype.setData = function (data) {
   this.setOptions(data && data.options);
   // set all data
   if (data && data.dot) {
-    console.log('The dot property has been deprecated. Please use the static convertDot method to convert DOT into vis.network format and use the normal data format with nodes and edges. This converter is used like this: var data = vis.network.convertDot(dotString);');
+    console.log('The dot property has been deprecated. Please use the StaticFile convertDot method to convert DOT into vis.network format and use the normal data format with nodes and edges. This converter is used like this: var data = vis.network.convertDot(dotString);');
     // parse DOT file
     var dotData = dotparser.DOTToGraph(data.dot);
     this.setData(dotData);
     return;
   } else if (data && data.gephi) {
     // parse DOT file
-    console.log('The gephi property has been deprecated. Please use the static convertGephi method to convert gephi into vis.network format and use the normal data format with nodes and edges. This converter is used like this: var data = vis.network.convertGephi(gephiJson);');
+    console.log('The gephi property has been deprecated. Please use the StaticFile convertGephi method to convert gephi into vis.network format and use the normal data format with nodes and edges. This converter is used like this: var data = vis.network.convertGephi(gephiJson);');
     var gephiData = gephiParser.parseGephi(data.gephi);
     this.setData(gephiData);
     return;
@@ -47398,7 +47398,7 @@ var EdgesHandler = function () {
     value: function bindEventListeners() {
       var _this2 = this;
 
-      // this allows external modules to force all dynamic curves to turn static.
+      // this allows external modules to force all dynamic curves to turn StaticFile.
       this.body.emitter.on("_forceDisableDynamicCurves", function (type) {
         var emit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
@@ -49260,7 +49260,7 @@ var PhysicsEngine = function () {
 
         this.adaptiveCounter += 1;
       } else {
-        // case for the static timestep, we reset it to the one in options and take a normal step.
+        // case for the StaticFile timestep, we reset it to the one in options and take a normal step.
         this.timestep = this.options.timestep;
         this.physicsStep();
       }
@@ -56210,10 +56210,10 @@ var LayoutEngine = function () {
         if (_this2.options.hierarchical.enabled !== true) {
           return;
         }
-        // get the type of static smooth curve in case it is required
+        // get the type of StaticFile smooth curve in case it is required
         var type = _this2.direction.curveType();
 
-        // force all edges into static smooth curves.
+        // force all edges into StaticFile smooth curves.
         _this2.body.emitter.emit('_forceDisableDynamicCurves', type, false);
       });
     }
@@ -56300,11 +56300,11 @@ var LayoutEngine = function () {
           allOptions.physics = { solver: 'hierarchicalRepulsion' };
         }
 
-        // get the type of static smooth curve in case it is required
+        // get the type of StaticFile smooth curve in case it is required
         var type = this.direction.curveType();
 
         // disable smooth curves if nothing is defined. If smooth curves have been turned on,
-        // turn them into static smooth curves.
+        // turn them into StaticFile smooth curves.
         if (allOptions.edges === undefined) {
           this.optionsBackup.edges = { smooth: { enabled: true, type: 'dynamic' } };
           allOptions.edges = { smooth: false };
@@ -56341,7 +56341,7 @@ var LayoutEngine = function () {
           }
         }
 
-        // Force all edges into static smooth curves.
+        // Force all edges into StaticFile smooth curves.
         // Only applies to edges that do not use the global options for smooth.
         this.body.emitter.emit('_forceDisableDynamicCurves', type);
       }

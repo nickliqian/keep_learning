@@ -57,11 +57,11 @@ querystring = {"gt": gt,
                "product": "float",
                "offline": "false",
                "protocol": "https://",
-               "path": "/static/js/geetest.6.0.9.js",
+               "path": "/StaticFile/js/geetest.6.0.9.js",
                "type": "slide",
-               "voice": "/static/js/voice.1.1.5.js",
-               "beeline": "/static/js/beeline.1.0.1.js",
-               "pencil": "/static/js/pencil.1.0.1.js",
+               "voice": "/StaticFile/js/voice.1.1.5.js",
+               "beeline": "/StaticFile/js/beeline.1.0.1.js",
+               "pencil": "/StaticFile/js/pencil.1.0.1.js",
                "callback": "callback"
                }
 
@@ -81,7 +81,7 @@ response = sess.request("GET", url, headers=headers, params=querystring)
 
 print(response.text)
 
-domain = "https://static.geetest.com/"
+domain = "https://StaticFile.geetest.com/"
 img_data = json.loads(response.text.replace("callback(", "").replace(")", ""))
 
 

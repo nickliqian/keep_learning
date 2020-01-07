@@ -54,7 +54,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
              *
              * @return {Object} The new object.
              *
-             * @static
+             * @StaticFile
              *
              * @example
              *
@@ -96,7 +96,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
              *
              * @return {Object} The new object.
              *
-             * @static
+             * @StaticFile
              *
              * @example
              *
@@ -289,7 +289,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {WordArray} The random word array.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -340,7 +340,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {string} The hex string.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -369,7 +369,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {WordArray} The word array.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -400,7 +400,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {string} The Latin1 string.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -428,7 +428,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {WordArray} The word array.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -459,7 +459,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {string} The UTF-8 string.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -480,7 +480,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {WordArray} The word array.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -708,7 +708,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {Function} The shortcut function.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -727,7 +727,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {Function} The shortcut function.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -767,7 +767,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {string} The Base64 string.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -814,7 +814,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {WordArray} The word array.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -1089,7 +1089,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
      *
      * @return {WordArray} The hash.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -1106,7 +1106,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
      *
      * @return {WordArray} The HMAC.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -1221,7 +1221,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
      *
      * @return {WordArray} The hash.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -1238,7 +1238,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
      *
      * @return {WordArray} The HMAC.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -1402,7 +1402,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
      *
      * @return {WordArray} The hash.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -1419,7 +1419,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
      *
      * @return {WordArray} The HMAC.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -1447,7 +1447,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {string} The UTF-16 BE string.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -1475,7 +1475,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {WordArray} The word array.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -1506,7 +1506,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {string} The UTF-16 LE string.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -1534,7 +1534,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
          *
          * @return {WordArray} The word array.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -1840,7 +1840,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      *
      * @return {WordArray} The hash.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -1857,7 +1857,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      *
      * @return {WordArray} The HMAC.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -2107,7 +2107,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      *
      * @return {WordArray} The derived key.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -2221,7 +2221,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      *
      * @return {WordArray} The derived key.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -2270,7 +2270,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      *
      * @return {WordArray} The hash.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -2287,7 +2287,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      *
      * @return {WordArray} The HMAC.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -2861,7 +2861,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      *
      * @return {WordArray} The hash.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -2878,7 +2878,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      *
      * @return {WordArray} The HMAC.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -3166,7 +3166,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      *
      * @return {WordArray} The hash.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -3183,7 +3183,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      *
      * @return {WordArray} The HMAC.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -3231,7 +3231,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      *
      * @return {WordArray} The hash.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -3248,7 +3248,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      *
      * @return {WordArray} The HMAC.
      *
-     * @static
+     * @StaticFile
      *
      * @example
      *
@@ -3298,7 +3298,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @return {Cipher} A cipher instance.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -3316,7 +3316,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @return {Cipher} A cipher instance.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -3425,7 +3425,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @return {Object} An object with encrypt and decrypt shortcut functions.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -3485,7 +3485,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          * @param {Cipher} cipher A block cipher instance.
          * @param {Array} iv The IV words.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -3501,7 +3501,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          * @param {Cipher} cipher A block cipher instance.
          * @param {Array} iv The IV words.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -3633,7 +3633,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          * @param {WordArray} data The data to pad.
          * @param {number} blockSize The multiple that the data should be padded to.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -3665,7 +3665,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @param {WordArray} data The data to unpad.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -3825,7 +3825,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @return {string} The OpenSSL-compatible string.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -3853,7 +3853,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @return {CipherParams} The cipher params object.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -3903,7 +3903,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @return {CipherParams} A cipher params object.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -3945,7 +3945,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @return {WordArray} The plaintext.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -3974,7 +3974,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @return {CipherParams} The unserialized ciphertext.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -4008,7 +4008,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @return {CipherParams} A cipher params object with the key, IV, and salt.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -4057,7 +4057,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @return {CipherParams} A cipher params object.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -4093,7 +4093,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @return {WordArray} The plaintext.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -4348,7 +4348,7 @@ CryptoJS.pad.NoPadding = {
          *
          * @return {string} The hexadecimally encoded string.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *
@@ -4365,7 +4365,7 @@ CryptoJS.pad.NoPadding = {
          *
          * @return {CipherParams} The cipher params object.
          *
-         * @static
+         * @StaticFile
          *
          * @example
          *

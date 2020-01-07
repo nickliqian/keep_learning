@@ -9,7 +9,7 @@ import requests
 from fontTools.ttLib import TTFont
 
 
-url = "https://static.tianyancha.com/fonts-styles/fonts/b1/b17d9d87/tyc-num.woff"
+url = "https://StaticFile.tianyancha.com/fonts-styles/fonts/b1/b17d9d87/tyc-num.woff"
 
 headers = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36",
@@ -19,7 +19,7 @@ with open("./font.woff", "wb") as f:
     f.write(r.content)
 
 
-url = "https://static.tianyancha.com/fonts-styles/fonts/b1/b17d9d87/tyc-num.ttf"
+url = "https://StaticFile.tianyancha.com/fonts-styles/fonts/b1/b17d9d87/tyc-num.ttf"
 
 headers = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36",

@@ -101,7 +101,7 @@ def get_html(url):
 
 # 请求js密码字符串
 def get_js_password():
-    url = "http://cdn.jandan.net/static/min/1db6c1a9c900052d56757120ca96add6.06100501.js"
+    url = "http://cdn.jandan.net/StaticFile/min/1db6c1a9c900052d56757120ca96add6.06100501.js"
     r = requests.get(url, headers=headers)
     pattern = r'\(e,"(.*?)"\);var\sa=\$'
     r_list = re.findall(pattern, r.text)
