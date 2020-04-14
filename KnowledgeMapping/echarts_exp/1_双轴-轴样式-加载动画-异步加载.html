@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <script src="src/echarts.js"></script>
+    <script src="src/jquery-3.5.0.min.js"></script>
+</head>
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="width: 600px;height:400px;"></div>
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('main'));
+
+    myChart.setOption({
+            title: {
+                text: '带看次数和新增房源量'
+            },
+            legend: {
+                data: ['新增房源量', '带看次数']
+            },
+            xAxis: {
+                type: "category",
+                data: []
+            },
+            yAxis: [{
+                type: "value",
+                name: "新增房源量",
+                axisLine: {//y轴线的颜色以及宽度
+                    show: true,
+                    lineStyle: {
+                        color: "#c53d2a",
+                        width: 5,
+                        type: "solid"
+                    },
+                },
+                axisLabel: {
+                    color: "#0a1710",
+                }
+            }, {
+                type: "value",
+                name: "带看次数",
+                axisLine: {//y轴线的颜色以及宽度
+                    show: true,
+                    lineStyle: {
+                        color: "#2640c5",
+                        width: 5,
+                        type: "solid"
+                    },
+                },
+                axisLabel: {
+                    color: "#0a1710",
+                }
+            }],
+            tooltip: {},
+            series: [
+                {
+                    name: '新增房源量',
+                    type: 'line',
+                    data: [],
+                    smooth: true,
+                    yAxisIndex: 0,
+                    itemStyle: {
+                        normal: {
+                            color: "#c53d2a",
+                        }
+                    }
+                },
+                {
+                    name: '带看次数',
+                    type: 'line',
+                    data: [],
+                    smooth: true,
+                    yAxisIndex: 1,
+                    itemStyle: {
+                        normal: {
+                            color: "#2640c5",
+                        }
+                    }
+                }]
+        });
+
+    // 在画布出现之后就展示loading动画
+    myChart.showLoading();
+
+    $.get("src/priceTrend.json").done(function (data) {
+
+        // 数据获取到后就隐藏loading动画
+        myChart.hideLoading();
+
+        // 补充数据
+        myChart.setOption({
+            xAxis: {
+                data: data.duration
+            },
+            series: [
+                {
+                    name: "新增房源量",
+                    data: data.houseAmount
+                },
+                {
+                    name: "带看次数",
+                    data: data.showAmount
+                }
+            ]
+        })
+
+    });
+
+
+</script>
+</body>
+</html>

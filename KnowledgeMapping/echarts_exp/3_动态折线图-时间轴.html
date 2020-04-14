@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <script src="src/echarts.js"></script>
+</head>
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="width: 600px;height:400px;"></div>
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('main'));
+    var base = +new Date(2014, 9, 3);  // +加号是把该变量转为number类型 => 1412265600000
+    var oneDay = 24 * 3600 * 1000;
+    var time_list = [];
+
+    var data = [Math.random() * 150];  // 生成包含一个数字的列表
+    var now = new Date(base);  // 将时间戳转为标准时间对象 => Fri Oct 03 2014 00:00:00 GMT+0800 (中国标准时间)
+
+    function addData(shift) {
+        now = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/');  // 年月日组合 2014/10/3
+        time_list.push(now);  // 加入时间数组
+        data.push((Math.random() - 0.4) * 10 + data[data.length - 1]);  // 在最后一个元素的基础上加上随机值后，添加到数据列表
+        // 时间数组比数据数组少一个元素
+
+        // shift() 方法用于把数组的第一个元素从其中删除，并返回第一个元素的值。
+        // 时间数组和数据数组的第一个元素抛弃
+        if (shift) {
+            time_list.shift();
+            data.shift();
+        }
+
+        now = new Date(+new Date(now) + oneDay);  // now变量增加一天
+    }
+
+    // 将时间数组和数据数组初始化，此时不执行shift，迭代次数99次
+    for (var i = 1; i < 100; i++) {
+        addData();
+    }
+
+    // 初始化完成查看数组长度
+    console.log("===");
+    console.log(time_list.length);
+    console.log(data.length);
+    console.log("===");
+
+
+    option = {
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: time_list
+        },
+        yAxis: {
+            boundaryGap: [0, '50%'],
+            type: 'value'
+        },
+        series: [
+            {
+                name: '成交',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                stack: 'a',
+                areaStyle: {
+                    normal: {}
+                },
+                data: data
+            }
+        ]
+    };
+
+    setInterval(function () {
+        addData(true);  // 这里更新数据会删掉之前的数据避免占用性能
+        myChart.setOption({
+            xAxis: {
+                data: time_list
+            },
+            series: [{
+                name: '成交',
+                data: data
+            }]
+        });
+    }, 500);
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <script src="src/echarts.js"></script>
+</head>
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="width: 600px;height:400px;"></div>
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('main'));
+    var data = [];
+
+    for (var i = 0; i < 10; i++) {
+        data[i] = 0
+    }
+
+    function update() {
+        for (var i = 0; i < 10; i++) {
+            data[i] += Math.floor(Math.random() * 10);
+        }
+    }
+
+    function getDate() {
+
+        var myDate = new Date();
+
+        //获取当前年
+        var year = myDate.getFullYear();
+
+        //获取当前月
+        var month = myDate.getMonth() + 1;
+
+        //获取当前日
+        var date = myDate.getDate();
+        var h = myDate.getHours(); //获取当前小时数(0-23)
+        var m = myDate.getMinutes(); //获取当前分钟数(0-59)
+        var s = myDate.getSeconds();
+
+        //获取当前时间
+
+        var now = year + '-' + conver(month) + "-" + conver(date) + " " + conver(h) + ':' + conver(m) + ":" + conver(s);
+        return now
+    }
+
+    //日期时间处理
+    function conver(s) {
+        return s < 10 ? '0' + s : s;
+    }
+
+    update();
+
+    console.log(data);
+
+
+    option = {
+        title: {
+            text: getDate(),
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: true
+        },
+        yAxis: {
+            boundaryGap: [0, '50%'],
+            type: 'value'
+        },
+        series: [
+            {
+                name: '成交',
+                type: 'bar',
+                smooth: true,
+                symbol: 'none',
+                stack: 'a',
+                areaStyle: {
+                    normal: {}
+                },
+                data: data
+            }
+        ]
+    };
+
+    myChart.setOption(option);
+    setInterval(function () {
+        update();
+        myChart.setOption({
+            title: {
+                text: getDate(),
+            },
+            series: [{
+                name: '成交',
+                data: data
+            }]
+        });
+    }, 500);
+</script>
+</body>
+</html>
